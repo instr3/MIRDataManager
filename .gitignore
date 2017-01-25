@@ -250,3 +250,21 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Others
+/MIREditor/annotator/libstdc++-6.dll
+/MIREditor/annotator/libwinpthread-1.dll
+/MIREditor/annotator/Qt5Core.dll
+/MIREditor/annotator/Qt5Network.dll
+/MIREditor/annotator/Qt5Xml.dll
+/MIREditor/annotator/sonic-annotator.exe
+/MIREditor/annotator/icudt53.dll
+/MIREditor/annotator/icuin53.dll
+/MIREditor/annotator/icuuc53.dll
+/MIREditor/annotator/libgcc_s_dw2-1.dll
+/MIREditor/piano.sf2
+bass.dll
+Bass.Net.dll
+bass_fx.dll
+bassmidi.dll
+settings.ini
