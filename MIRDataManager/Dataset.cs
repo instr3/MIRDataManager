@@ -10,7 +10,7 @@ namespace MIRDataManager
     class Dataset
     {
         public List<DataFile> DataFiles;
-        public Dataset(string path)
+        public Dataset(string path,bool configInfoOnly)
         {
             DataFiles = new List<DataFile>();
             DirectoryInfo dir = new DirectoryInfo(path);
@@ -19,7 +19,7 @@ namespace MIRDataManager
                 if(file.Extension==".arc")
                 {
                     // Todo: Add Try-Catch
-                    DataFile dataFile = new DataFile(file.FullName);
+                    DataFile dataFile = new DataFile(file.FullName,configInfoOnly);
                     DataFiles.Add(dataFile);
                 }
             }

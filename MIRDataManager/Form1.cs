@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Un4seen.Bass;
@@ -16,6 +17,7 @@ namespace MIRDataManager
 {
     public partial class Form1 : Form
     {
+        public DataFile CurrentSelectedDataFile;
         Dataset dataset;
         List<DataFile> listedDataFiles;
         public Form1()
@@ -118,9 +120,9 @@ namespace MIRDataManager
         }
         private void TryPlay(string songPath)
         {
-            if(File.Exists(songPath))
+            if (File.Exists(songPath))
             {
-                labelHint.Text = "";
+                labelHint.Text = "双击进行标记。音频文件" + songPath;
                 if (checkBoxAutoplay.Checked)
                 {
                     axWindowsMediaPlayer2.URL = songPath;
@@ -128,8 +130,77 @@ namespace MIRDataManager
             }
             else
             {
-                labelHint.Text = "音频文件丢失："+Environment.NewLine + songPath;
+                labelHint.Text = "谱面/音频未找到，请先下载："+Environment.NewLine + songPath;
                 axWindowsMediaPlayer2.URL = "";
+            }
+        }
+        private double GetMP3Length(string fileName)
+        {
+            int stream = Bass.BASS_StreamCreateFile(fileName, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            long len_in_byte = Bass.BASS_ChannelGetLength(stream, BASSMode.BASS_POS_BYTES);
+            double time = Bass.BASS_ChannelBytes2Seconds(stream, len_in_byte);
+            Bass.BASS_StreamFree(stream);
+            return time;
+        }
+        private void StartEditor(string parameters)
+        {
+            axWindowsMediaPlayer2.Ctlcontrols.pause();
+            Text = "Please wait...";
+            Process process = Process.Start("MIREditor.exe", parameters);
+            process.WaitForExit();
+            Text = "Please refresh";
+            if (checkBoxAutoScan.Checked)
+                buttonRescan_Click(null, null);
+            else if (checkBoxAutoRefresh.Checked)
+                buttonRefresh_Click(null, null);
+        }
+        private void ExportArchiveByFileName(string fileName, bool exportMusic)
+        {
+            using (StreamReader sr = new StreamReader(Program.ArchiveFolder + "\\" + fileName))
+            {
+                SongInfo songInfo = new SongInfo(sr.ReadToEnd());
+                Exporter exporter = new Exporter(songInfo,
+                    GetMP3Length(Program.DatasetMusicFolder + "\\" + songInfo.MusicConfigure.Location));
+                exporter.ExportToFolder(Program.ExportFolder,
+                    Path.GetFileNameWithoutExtension(fileName),
+                    exportMusic,
+                    Program.DatasetMusicFolder + "\\" + songInfo.MusicConfigure.Location);
+            }
+        }
+
+        public void UpdateSelectedDataFile(DataFile dataFile)
+        {
+            string songPath = Program.DatasetMusicFolder + "\\" + dataFile.SongInfo.MusicConfigure.Location;
+            TryPlay(songPath);
+            CurrentSelectedDataFile = dataFile;
+            if(dataFile.SongInfo.MiscConfigure.osuMapID!=0)
+            {
+                groupBoxDownloadManager.Visible = true;
+                progressBarDownload.Visible = false;
+                linkLabelAutoDownload.Visible = false;
+                linkLabelManualDownload.Visible = false;
+                buttonDeleteOsuMap.Visible = false;
+                if (!File.Exists(songPath))
+                {
+                    if(dataFile.Downloading)
+                    {
+                        progressBarDownload.Visible = true;
+                        progressBarDownload.Value = 0;
+                    }
+                    else
+                    {
+                        linkLabelAutoDownload.Visible = true;
+                        linkLabelManualDownload.Visible = true;
+                    }
+                }
+                else
+                {
+                    buttonDeleteOsuMap.Visible = true;
+                }
+            }
+            else
+            {
+                groupBoxDownloadManager.Visible = false;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -137,7 +208,7 @@ namespace MIRDataManager
             MaximizeBox = false;
             labelHint.Text = "";
             comboBoxScoreFilter.SelectedIndex = 0;
-            dataset = new Dataset(Program.ArchiveFolder);
+            dataset = new Dataset(Program.ArchiveFolder, true);
             UpdateListView();
             InitAllOsuSongFolders();
             UpdateNotCreatedList();
@@ -186,7 +257,7 @@ namespace MIRDataManager
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
-            dataset = new Dataset(Program.ArchiveFolder);
+            dataset = new Dataset(Program.ArchiveFolder, true);
             UpdateListView();
         }
 
@@ -195,9 +266,9 @@ namespace MIRDataManager
             if (listView1.SelectedItems.Count == 0) return;
             string rawFileName=listView1.SelectedItems[0].SubItems[0].Text;
             string fileName = rawFileName.EndsWith(".arc") ? Path.GetFileNameWithoutExtension(rawFileName) : rawFileName;
-            TextInputForm textInputForm = new TextInputForm(fileName);
+            TextInputForm textInputForm = new TextInputForm(fileName,"请输入新文件名");
             textInputForm.ShowDialog();
-            if(textInputForm.Tag.ToString()!="")
+            if(textInputForm.Tag!=null&& textInputForm.Tag.ToString()!="")
             {
                 string newFileName = textInputForm.Tag.ToString();
                 if (!newFileName.EndsWith(".arc")) newFileName += ".arc";
@@ -286,28 +357,6 @@ namespace MIRDataManager
             UpdateListView();
             MessageBox.Show("导出完成，成功 " + successCount + " 个，失败 " + failCount + " 个。");
         }
-        private double GetMP3Length(string fileName)
-        {
-            int stream = Bass.BASS_StreamCreateFile(fileName, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            long len_in_byte = Bass.BASS_ChannelGetLength(stream, BASSMode.BASS_POS_BYTES);
-            double time = Bass.BASS_ChannelBytes2Seconds(stream, len_in_byte);
-            Bass.BASS_StreamFree(stream);
-            return time;
-        }
-        private void ExportArchiveByFileName(string fileName,bool exportMusic)
-        {
-            using (StreamReader sr = new StreamReader(Program.ArchiveFolder + "\\" + fileName))
-            {
-                SongInfo songInfo = new SongInfo(sr.ReadToEnd());
-                Exporter exporter = new Exporter(songInfo, 
-                    GetMP3Length(Program.DatasetMusicFolder + "\\" + songInfo.MusicConfigure.Location));
-                exporter.ExportToFolder(Program.ExportFolder,
-                    Path.GetFileNameWithoutExtension(fileName),
-                    exportMusic,
-                    Program.DatasetMusicFolder + "\\" + songInfo.MusicConfigure.Location);
-            }
-        }
-
         private void buttonSelectAll_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem item in listView1.Items)
@@ -321,7 +370,7 @@ namespace MIRDataManager
                 MessageBox.Show("没有选中任何项目");
             else
             {
-                string hints = "你确实要删除以下项目吗？";
+                string hints = "你确实要删除以下项目的标注文件吗？谱面文件将不会被删除。";
                 foreach (ListViewItem it in listView1.SelectedItems)
                     hints += Environment.NewLine + it.SubItems[0].Text;
                 if(MessageBox.Show(hints,"警告",MessageBoxButtons.YesNo)==DialogResult.Yes)
@@ -330,6 +379,10 @@ namespace MIRDataManager
                     {
                         string fileName = it.SubItems[0].Text;
                         File.Delete(Program.ArchiveFolder + "\\" + fileName);
+                        if(File.Exists(Program.ArchiveFolder + "\\" + fileName + ".vampcache"))
+                        {
+                            File.Delete(Program.ArchiveFolder + "\\" + fileName + ".vampcache");
+                        }
                     }
                     buttonRefresh_Click(sender, e);
                 }
@@ -355,7 +408,7 @@ namespace MIRDataManager
             if (listView1.SelectedItems.Count == 0) return;
             if (e.Button == MouseButtons.Right)
                 listView1_DoubleClick(sender, e);
-            TryPlay(Program.DatasetMusicFolder + "\\" + listView1.SelectedItems[0].Tag.ToString());
+            UpdateSelectedDataFile(listedDataFiles[listView1.SelectedItems[0].Index]);
 
         }
 
@@ -370,21 +423,10 @@ namespace MIRDataManager
                 string songPath = GetSongPathInFolder(Program.DatasetMusicFolder + "\\" + text);
                 if(!string.IsNullOrEmpty(songPath))
                 {
+                    groupBoxDownloadManager.Visible = false;
                     TryPlay(songPath);
                 }
             }
-        }
-        private void StartEditor(string parameters)
-        {
-            axWindowsMediaPlayer2.Ctlcontrols.pause();
-            Text = "Please wait...";
-            Process process = Process.Start("MIREditor.exe", parameters);
-            process.WaitForExit();
-            Text = "Please refresh";
-            if(checkBoxAutoScan.Checked)
-                buttonRescan_Click(null, null);
-            else if (checkBoxAutoRefresh.Checked)
-                buttonRefresh_Click(null, null);
         }
 
         private void buttonDeleteUncreatedFolder_Click(object sender, EventArgs e)
@@ -418,6 +460,154 @@ namespace MIRDataManager
                 }
             }
 
+        }
+        #region TestCodes
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Dataset tempSet = new Dataset(Program.ArchiveFolder, false);
+            foreach(DataFile f in tempSet.DataFiles)
+            {
+                //if(f.SongInfo.MiscConfigure.osuMapID==0)
+                {
+                    int folderNumber = 0;
+                    string dirName = f.FileName;
+                    if (dirName.Contains(' '))
+                    {
+                        string folderNumberString;
+                        folderNumberString = dirName.Substring(0, dirName.IndexOf(' '));
+                        int.TryParse(folderNumberString, out folderNumber);
+                    }
+                    if(folderNumber!=0 && folderNumber!=12)
+                    {
+                        f.SongInfo.MiscConfigure.osuMapID = folderNumber;
+                        f.SaveToFile();
+                    }
+                    else
+                    {
+                        using (StreamReader sr = new StreamReader(Program.DatasetMusicFolder + "\\" + f.SongInfo.MiscConfigure.LinkedFile))
+                        {
+                            while (!sr.EndOfStream)
+                            {
+                                string buffer = sr.ReadLine();
+                                string DivisorRegex;
+                                Match match;
+                                DivisorRegex = @"^BeatmapSetID:\s*(?<n>[0-9]+)\s*$";
+                                match = Regex.Match(buffer, DivisorRegex);
+                                if (match.Success)
+                                {
+                                    f.SongInfo.MiscConfigure.osuMapID = int.Parse(match.Groups["n"].Value);
+                                    continue;
+                                }
+                            }
+                        }
+                        if (f.SongInfo.MiscConfigure.osuMapID == 0)
+                        {
+                            TextInputForm textInputForm = new TextInputForm(f.FileName, "请找到并输入下列曲目的osu beatmap set id！");
+                            textInputForm.ShowDialog();
+                            int result = 0;
+                            if (textInputForm.Tag != null)
+                                if (int.TryParse(textInputForm.Tag.ToString(), out result))
+                                    f.SongInfo.MiscConfigure.osuMapID = result;
+                        }
+                        if (f.SongInfo.MiscConfigure.osuMapID != 0)
+                        {
+                            string oldpath = Program.DatasetMusicFolder + "\\" + Path.GetDirectoryName(f.SongInfo.MusicConfigure.Location);
+                            string newpath = Program.DatasetMusicFolder + "\\" + f.SongInfo.MiscConfigure.osuMapID.ToString() + " " + Path.GetDirectoryName(f.SongInfo.MusicConfigure.Location);
+                            f.SongInfo.MusicConfigure.Location = f.SongInfo.MiscConfigure.osuMapID.ToString() + " " + f.SongInfo.MusicConfigure.Location;
+                            f.SongInfo.MiscConfigure.LinkedFile = f.SongInfo.MiscConfigure.osuMapID.ToString() + " " + f.SongInfo.MiscConfigure.LinkedFile;
+                            Directory.Move(oldpath, newpath);
+                            f.SaveToFile();
+                            File.Move(Program.ArchiveFolder + "\\" + f.FileName, Program.ArchiveFolder + "\\" + f.SongInfo.MiscConfigure.osuMapID.ToString() + " " + f.FileName);
+                            if(File.Exists(Program.ArchiveFolder + "\\" + f.FileName + ".vampcache"))
+                            {
+                                File.Move(Program.ArchiveFolder + "\\" + f.FileName + ".vampcache", Program.ArchiveFolder + "\\" + f.SongInfo.MiscConfigure.osuMapID.ToString() + " " + f.FileName + ".vampcache");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Dataset tempSet = new Dataset(Program.ArchiveFolder, false);
+            foreach (DataFile f in tempSet.DataFiles)
+            {
+                if(!File.Exists(Program.DatasetMusicFolder + "\\" + f.SongInfo.MusicConfigure.Location))
+                {
+                    if(File.Exists(Program.DatasetMusicFolder + "\\" + f.SongInfo.MiscConfigure.LinkedFile))
+                    {
+                        using (StreamReader sr = new StreamReader(Program.DatasetMusicFolder + "\\" + f.SongInfo.MiscConfigure.LinkedFile))
+                        {
+                            while (!sr.EndOfStream)
+                            {
+                                string buffer = sr.ReadLine();
+                                string DivisorRegex;
+                                Match match;
+                                DivisorRegex = @"^AudioFilename:\s*(?<n>[^$]+)\s*$";
+                                match = Regex.Match(buffer, DivisorRegex);
+                                if (match.Success)
+                                {
+                                    f.SongInfo.MusicConfigure.Location=Path.GetDirectoryName(f.SongInfo.MiscConfigure.LinkedFile) + "/" + match.Groups["n"].Value;
+                                    f.SaveToFile();
+                                    continue;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        #endregion
+        private void linkLabelAutoDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (CurrentSelectedDataFile == null) return;
+            int id = CurrentSelectedDataFile.SongInfo.MiscConfigure.osuMapID;
+            if (id == 0)
+            {
+                MessageBox.Show("没有osu Beatmap Set ID信息，无法下载");
+                return;
+            }
+            DataDownloader downloader = new DataDownloader(CurrentSelectedDataFile, this);
+            downloader.StartDownload();
+        }
+
+        private void linkLabelManualDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (CurrentSelectedDataFile == null) return;
+            int id = CurrentSelectedDataFile.SongInfo.MiscConfigure.osuMapID;
+            if (id == 0)
+            {
+                MessageBox.Show("没有osu Beatmap Set ID信息，无法下载");
+                return;
+            }
+            Process.Start(string.Format(Program.OsuMapLink, id));
+        }
+
+        private void buttonDeleteOsuMap_Click(object sender, EventArgs e)
+        {
+            if (CurrentSelectedDataFile == null) return;
+            int id = CurrentSelectedDataFile.SongInfo.MiscConfigure.osuMapID;
+            if (id == 0)
+            {
+                MessageBox.Show("没有osu Beatmap Set ID信息，无法下载");
+                return;
+            }
+            string dirName = Path.GetDirectoryName(CurrentSelectedDataFile.SongInfo.MusicConfigure.Location);
+            if(MessageBox.Show("你确定要删除歌曲文件夹下的 " + dirName + " 及其子目录下的全部内容吗？" + Environment.NewLine + "标注文件(.arc)将不会删除。","警告",MessageBoxButtons.YesNo)==DialogResult.Yes)
+            {
+                axWindowsMediaPlayer2.URL = "";
+                try
+                {
+                    Directory.Delete(Path.Combine(Program.DatasetMusicFolder, dirName), true);
+                }
+                catch
+                {
+                    MessageBox.Show("删除失败！");
+                }
+                UpdateSelectedDataFile(CurrentSelectedDataFile);
+            }
         }
     }
 }

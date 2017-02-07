@@ -74,6 +74,7 @@
             this.checkBoxExportMusic = new System.Windows.Forms.CheckBox();
             this.button_ExportTXT = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.comboBoxConfigConfidence = new System.Windows.Forms.ListBox();
             this.textBoxConfigTagger = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -156,7 +157,8 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonSave = new System.Windows.Forms.Button();
+            this.textBoxOSUMapID = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -467,7 +469,7 @@
             this.radioButtonRelative.Size = new System.Drawing.Size(63, 22);
             this.radioButtonRelative.TabIndex = 8;
             this.radioButtonRelative.TabStop = true;
-            this.radioButtonRelative.Text = "大调罗马";
+            this.radioButtonRelative.Text = "相对和弦";
             this.radioButtonRelative.UseVisualStyleBackColor = true;
             this.radioButtonRelative.CheckedChanged += new System.EventHandler(this.radioButtonRelative_CheckedChanged);
             // 
@@ -595,6 +597,8 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label17);
+            this.groupBox7.Controls.Add(this.textBoxOSUMapID);
             this.groupBox7.Controls.Add(this.buttonSave);
             this.groupBox7.Controls.Add(this.comboBoxConfigConfidence);
             this.groupBox7.Controls.Add(this.textBoxConfigTagger);
@@ -606,6 +610,16 @@
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "重要配置";
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(32, 180);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(155, 22);
+            this.buttonSave.TabIndex = 3;
+            this.buttonSave.Text = "保存快捷键(Ctrl+S)";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // comboBoxConfigConfidence
             // 
@@ -619,7 +633,7 @@
             "3（不确定正确）",
             "4（基本正确）",
             "5（已审核正确）"});
-            this.comboBoxConfigConfidence.Location = new System.Drawing.Point(54, 31);
+            this.comboBoxConfigConfidence.Location = new System.Drawing.Point(54, 17);
             this.comboBoxConfigConfidence.Name = "comboBoxConfigConfidence";
             this.comboBoxConfigConfidence.Size = new System.Drawing.Size(133, 106);
             this.comboBoxConfigConfidence.TabIndex = 4;
@@ -628,7 +642,7 @@
             // textBoxConfigTagger
             // 
             this.textBoxConfigTagger.Enabled = false;
-            this.textBoxConfigTagger.Location = new System.Drawing.Point(54, 153);
+            this.textBoxConfigTagger.Location = new System.Drawing.Point(54, 127);
             this.textBoxConfigTagger.Name = "textBoxConfigTagger";
             this.textBoxConfigTagger.Size = new System.Drawing.Size(133, 21);
             this.textBoxConfigTagger.TabIndex = 3;
@@ -637,7 +651,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(11, 156);
+            this.label16.Location = new System.Drawing.Point(11, 130);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(41, 12);
             this.label16.TabIndex = 2;
@@ -646,7 +660,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(11, 31);
+            this.label13.Location = new System.Drawing.Point(11, 17);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(29, 12);
             this.label13.TabIndex = 0;
@@ -1540,15 +1554,23 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
-            // buttonSave
+            // textBoxOSUMapID
             // 
-            this.buttonSave.Location = new System.Drawing.Point(32, 180);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(155, 22);
-            this.buttonSave.TabIndex = 3;
-            this.buttonSave.Text = "保存快捷键(Ctrl+S)";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.textBoxOSUMapID.Enabled = false;
+            this.textBoxOSUMapID.Location = new System.Drawing.Point(54, 153);
+            this.textBoxOSUMapID.Name = "textBoxOSUMapID";
+            this.textBoxOSUMapID.Size = new System.Drawing.Size(133, 21);
+            this.textBoxOSUMapID.TabIndex = 5;
+            this.textBoxOSUMapID.TextChanged += new System.EventHandler(this.textBoxOSUMapID_TextChanged);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(11, 156);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(35, 12);
+            this.label17.TabIndex = 6;
+            this.label17.Text = "mapID";
             // 
             // MainForm
             // 
@@ -1737,5 +1759,7 @@
         private System.Windows.Forms.Button buttonChroma;
         private System.Windows.Forms.Button buttonRawChord;
         private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox textBoxOSUMapID;
     }
 }

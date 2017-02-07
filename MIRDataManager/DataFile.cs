@@ -8,16 +8,32 @@ using System.Threading.Tasks;
 
 namespace MIRDataManager
 {
-    class DataFile
+    public class DataFile
     {
         public SongInfo SongInfo;
         public string FileName;
-        public DataFile(string filePath)
+        public string FilePath;
+        public bool ConfigInfoOnly;
+        public bool Downloading;
+        public DataFile(string filePath, bool configInfoOnly)
         {
+            FilePath = filePath;
             FileName = Path.GetFileName(filePath);
             using (StreamReader sw = new StreamReader(filePath))
             {
-                SongInfo = new SongInfo(sw.ReadToEnd(), true);
+                SongInfo = new SongInfo(sw.ReadToEnd(), configInfoOnly);
+            }
+            ConfigInfoOnly = configInfoOnly;
+        }
+        public void SaveToFile()
+        {
+            if(ConfigInfoOnly)
+            {
+                throw new NotSupportedException();
+            }
+            using (StreamWriter sw = new StreamWriter(FilePath))
+            {
+                sw.Write(SongInfo.ToString());
             }
         }
     }

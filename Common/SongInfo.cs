@@ -27,6 +27,7 @@ namespace Common
         public class MiscConfig
         {
             public string LinkedFile { get; set; }
+            public int osuMapID { get; set; }
         }
         public MusicConfig MusicConfigure;
         public TagConfig TagConfigure;

@@ -1,4 +1,4 @@
-﻿namespace MIRDataManager
+﻿namespace MIREditor
 {
     partial class TextInputForm
     {

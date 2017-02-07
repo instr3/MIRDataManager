@@ -13,6 +13,8 @@ namespace MIRDataManager
         public static string ExportFolder;
         public static string DatasetMusicFolder;
 
+        public static string OsuMapLink;
+        public static string OsuMirrorDownloadLink;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -23,6 +25,8 @@ namespace MIRDataManager
             ArchiveFolder = INIReader.Data["ArchiveFolder"];
             ExportFolder = INIReader.Data["ExportFolder"];
             DatasetMusicFolder = INIReader.Data["DatasetMusicFolder"];
+            OsuMapLink = INIReader.Data["OsuMapLink"];
+            OsuMirrorDownloadLink = INIReader.Data["OsuMirrorDownloadLink"];
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

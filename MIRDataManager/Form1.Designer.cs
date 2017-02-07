@@ -52,7 +52,9 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.buttonDeleteUncreatedFolder = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.listViewNotCreated = new System.Windows.Forms.ListView();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -61,12 +63,18 @@
             this.checkBoxAutoRefresh = new System.Windows.Forms.CheckBox();
             this.labelHint = new System.Windows.Forms.Label();
             this.checkBoxAutoScan = new System.Windows.Forms.CheckBox();
+            this.linkLabelAutoDownload = new System.Windows.Forms.LinkLabel();
+            this.linkLabelManualDownload = new System.Windows.Forms.LinkLabel();
+            this.groupBoxDownloadManager = new System.Windows.Forms.GroupBox();
+            this.buttonDeleteOsuMap = new System.Windows.Forms.Button();
+            this.progressBarDownload = new System.Windows.Forms.ProgressBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer2)).BeginInit();
+            this.groupBoxDownloadManager.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -298,7 +306,9 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.buttonDeleteUncreatedFolder);
+            this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.listViewNotCreated);
             this.tabPage2.Controls.Add(this.buttonRescan);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -309,6 +319,17 @@
             this.tabPage2.Text = "未创建曲目";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(232, 407);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(64, 23);
+            this.button2.TabIndex = 19;
+            this.button2.Text = "搞2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // buttonDeleteUncreatedFolder
             // 
             this.buttonDeleteUncreatedFolder.Location = new System.Drawing.Point(80, 407);
@@ -318,6 +339,17 @@
             this.buttonDeleteUncreatedFolder.Text = "删除目录";
             this.buttonDeleteUncreatedFolder.UseVisualStyleBackColor = true;
             this.buttonDeleteUncreatedFolder.Click += new System.EventHandler(this.buttonDeleteUncreatedFolder_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(154, 407);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(64, 23);
+            this.button1.TabIndex = 18;
+            this.button1.Text = "搞";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // listViewNotCreated
             // 
@@ -380,9 +412,9 @@
             // 
             // labelHint
             // 
-            this.labelHint.Location = new System.Drawing.Point(20, 280);
+            this.labelHint.Location = new System.Drawing.Point(20, 267);
             this.labelHint.Name = "labelHint";
-            this.labelHint.Size = new System.Drawing.Size(148, 178);
+            this.labelHint.Size = new System.Drawing.Size(148, 125);
             this.labelHint.TabIndex = 16;
             this.labelHint.Text = "labelHint";
             // 
@@ -396,11 +428,65 @@
             this.checkBoxAutoScan.Text = "自动扫描";
             this.checkBoxAutoScan.UseVisualStyleBackColor = true;
             // 
+            // linkLabelAutoDownload
+            // 
+            this.linkLabelAutoDownload.AutoSize = true;
+            this.linkLabelAutoDownload.Location = new System.Drawing.Point(6, 17);
+            this.linkLabelAutoDownload.Name = "linkLabelAutoDownload";
+            this.linkLabelAutoDownload.Size = new System.Drawing.Size(53, 12);
+            this.linkLabelAutoDownload.TabIndex = 18;
+            this.linkLabelAutoDownload.TabStop = true;
+            this.linkLabelAutoDownload.Text = "自动下载";
+            this.linkLabelAutoDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAutoDownload_LinkClicked);
+            // 
+            // linkLabelManualDownload
+            // 
+            this.linkLabelManualDownload.AutoSize = true;
+            this.linkLabelManualDownload.Location = new System.Drawing.Point(75, 17);
+            this.linkLabelManualDownload.Name = "linkLabelManualDownload";
+            this.linkLabelManualDownload.Size = new System.Drawing.Size(53, 12);
+            this.linkLabelManualDownload.TabIndex = 19;
+            this.linkLabelManualDownload.TabStop = true;
+            this.linkLabelManualDownload.Text = "手动下载";
+            this.linkLabelManualDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelManualDownload_LinkClicked);
+            // 
+            // groupBoxDownloadManager
+            // 
+            this.groupBoxDownloadManager.Controls.Add(this.buttonDeleteOsuMap);
+            this.groupBoxDownloadManager.Controls.Add(this.progressBarDownload);
+            this.groupBoxDownloadManager.Controls.Add(this.linkLabelAutoDownload);
+            this.groupBoxDownloadManager.Controls.Add(this.linkLabelManualDownload);
+            this.groupBoxDownloadManager.Location = new System.Drawing.Point(11, 401);
+            this.groupBoxDownloadManager.Name = "groupBoxDownloadManager";
+            this.groupBoxDownloadManager.Size = new System.Drawing.Size(161, 63);
+            this.groupBoxDownloadManager.TabIndex = 21;
+            this.groupBoxDownloadManager.TabStop = false;
+            this.groupBoxDownloadManager.Text = "osu!下载管理";
+            this.groupBoxDownloadManager.Visible = false;
+            // 
+            // buttonDeleteOsuMap
+            // 
+            this.buttonDeleteOsuMap.Location = new System.Drawing.Point(45, 20);
+            this.buttonDeleteOsuMap.Name = "buttonDeleteOsuMap";
+            this.buttonDeleteOsuMap.Size = new System.Drawing.Size(69, 26);
+            this.buttonDeleteOsuMap.TabIndex = 21;
+            this.buttonDeleteOsuMap.Text = "删除谱面";
+            this.buttonDeleteOsuMap.UseVisualStyleBackColor = true;
+            this.buttonDeleteOsuMap.Click += new System.EventHandler(this.buttonDeleteOsuMap_Click);
+            // 
+            // progressBarDownload
+            // 
+            this.progressBarDownload.Location = new System.Drawing.Point(6, 32);
+            this.progressBarDownload.Name = "progressBarDownload";
+            this.progressBarDownload.Size = new System.Drawing.Size(145, 23);
+            this.progressBarDownload.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1100, 527);
+            this.Controls.Add(this.groupBoxDownloadManager);
             this.Controls.Add(this.checkBoxAutoScan);
             this.Controls.Add(this.labelHint);
             this.Controls.Add(this.checkBoxAutoRefresh);
@@ -422,6 +508,8 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer2)).EndInit();
+            this.groupBoxDownloadManager.ResumeLayout(false);
+            this.groupBoxDownloadManager.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -460,6 +548,13 @@
         private System.Windows.Forms.Button buttonDeleteUncreatedFolder;
         private System.Windows.Forms.Label labelHint;
         private System.Windows.Forms.CheckBox checkBoxAutoScan;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.LinkLabel linkLabelAutoDownload;
+        private System.Windows.Forms.LinkLabel linkLabelManualDownload;
+        private System.Windows.Forms.GroupBox groupBoxDownloadManager;
+        public System.Windows.Forms.ProgressBar progressBarDownload;
+        private System.Windows.Forms.Button buttonDeleteOsuMap;
     }
 }
 

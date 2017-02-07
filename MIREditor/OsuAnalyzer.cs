@@ -101,12 +101,21 @@ namespace MIREditor
                             songinfo.MusicConfigure.Extension = musicFile.Extension.Replace(".", "");
                             songinfo.MusicConfigure.MD5 = MiscWrapper.GetFileMD5(musicFile.FullName);
                             songinfo.MusicConfigure.Source = "OSU";
+                            continue;
                         }
                         DivisorRegex = @"^Title:\s*(?<n>[^$]+)\s*$";
                         match = Regex.Match(buffer, DivisorRegex);
                         if (match.Success)
                         {
                             songinfo.MusicConfigure.Title = match.Groups["n"].Value;
+                            continue;
+                        }
+                        DivisorRegex = @"^BeatmapSetID:\s*(?<n>[0-9]+)\s*$";
+                        match = Regex.Match(buffer, DivisorRegex);
+                        if (match.Success)
+                        {
+                            songinfo.MiscConfigure.osuMapID= int.Parse(match.Groups["n"].Value);
+                            continue;
                         }
                     }
                 }
@@ -114,6 +123,25 @@ namespace MIREditor
             if (songinfo.MusicConfigure.MetreNumber == 0)
             {
                 songinfo.MusicConfigure.MetreNumber = 4;
+            }
+            if (songinfo.MiscConfigure.osuMapID == 0)
+            {
+                int folderNumber = 0;
+                if (dir.Name.Contains(' '))
+                {
+                    string folderNumberString;
+                    folderNumberString = dir.Name.Substring(0, dir.Name.IndexOf(' '));
+                    int.TryParse(folderNumberString, out folderNumber);
+                }
+                TextInputForm textInputForm = new TextInputForm(folderNumber.ToString(), "由于格式过旧，请手动指定Beatmap Set ID");
+                textInputForm.ShowDialog();
+                if (textInputForm.Tag != null)
+                {
+                    if(int.TryParse(textInputForm.Tag.ToString(),out folderNumber))
+                    {
+                        songinfo.MiscConfigure.osuMapID = folderNumber;
+                    }
+                }
             }
             GetBeatInfo(songinfo, timingPoints);
             return songinfo;

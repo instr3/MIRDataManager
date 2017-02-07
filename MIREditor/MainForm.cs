@@ -281,6 +281,7 @@ namespace MIREditor
 
                 comboBoxConfigConfidence.SelectedIndex = Program.TL.Info.TagConfigure.Confidence;
                 textBoxConfigTagger.Text = Program.TL.Info.TagConfigure.Tagger;
+                textBoxOSUMapID.Text = Program.TL.Info.MiscConfigure.osuMapID.ToString();
                 Text = "Edit Mode: " + Program.TL.Info.MusicConfigure.Title;
             }
             else
@@ -544,6 +545,17 @@ namespace MIREditor
                 Program.TL.Info.TagConfigure.Tagger = textBoxConfigTagger.Text;
 
         }
+        private void textBoxOSUMapID_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                int result;
+                if (int.TryParse(textBoxOSUMapID.Text, out result))
+                {
+                    Program.TL.Info.MiscConfigure.osuMapID = result;
+                }
+            }
+        }
 
         private void comboBoxConfigConfidence_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -757,7 +769,7 @@ namespace MIREditor
         {
             dataGridViewChord.CurrentCell = null;
         }
-
+        
 
         private void checkBoxMouseSwitch_CheckedChanged(object sender, EventArgs e)
         {
