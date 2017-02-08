@@ -23,9 +23,24 @@ namespace MIREditor
         public string preloadFile = null;
         public string preCreateFile = null;
         MouseButtons listenMouseButton = MouseButtons.Right, inputMouseButton = MouseButtons.Left;
+        #region off topic functions
+        void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            object o = dataGridViewChord.Rows[e.RowIndex].HeaderCell.Value;
+
+            e.Graphics.DrawString(
+                o != null ? o.ToString() : "",
+                dataGridViewChord.Font,
+                Brushes.Black,
+                new PointF((float)e.RowBounds.Left + 2, (float)e.RowBounds.Top + 4));
+        }
+        #endregion
+
         public MainForm(string[] args)
         {
             InitializeComponent();
+            dataGridViewChord.RowHeadersDefaultCellStyle.Padding = new Padding(dataGridViewChord.RowHeadersWidth);
+            dataGridViewChord.RowPostPaint += new DataGridViewRowPostPaintEventHandler(dataGridView1_RowPostPaint);
             ChordLabels = new Label[] { ChordLabel1,ChordLabel2,ChordLabel3,ChordLabel4,ChordLabel5,ChordLabel6,
                 ChordLabel7,ChordLabel8,ChordLabel9,ChordLabel10,ChordLabel11,ChordLabel12,ChordLabelN,ChordLabelX,ChordLabelQ
             };
@@ -665,42 +680,36 @@ namespace MIREditor
         private void InitChordKeyboardRows()
         {
             dataGridViewChord.Rows.Clear();
-            relativeChordRows = new DataGridViewRow[6];
-            absoluteChordRows = new DataGridViewRow[6];
+            relativeChordRows = new DataGridViewRow[Chord.GetChordTemplatesCount()];
+            absoluteChordRows = new DataGridViewRow[Chord.GetChordTemplatesCount()];
             for (int i = 0; i < relativeChordRows.Length; ++i)
             {
                 relativeChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = relativeChordRows[i];
-                row.Height = 30;
-                row.HeaderCell.Value = new string[] { "M", "m", "-", "+", "4", "2" }[i];
+                row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
             }
             dataGridViewChord.Rows.AddRange(relativeChordRows);
-            for (int i = 0; i < 12; ++i)
+            for (int i = 0; i < relativeChordRows.Length; ++i)
             {
-                SetGridCellChord(relativeChordRows[0].Cells[i], Chord.SimpleTraid(i, true), Tonalty.MajMinTonalty(0,true));
-                SetGridCellChord(relativeChordRows[1].Cells[i], Chord.SimpleTraid(i, false), Tonalty.MajMinTonalty(0, true));
-                SetGridCellChord(relativeChordRows[2].Cells[i], Chord.DiminishTraid(i), Tonalty.MajMinTonalty(0, true));
-                SetGridCellChord(relativeChordRows[3].Cells[i], Chord.AugmentedTraid(i), Tonalty.MajMinTonalty(0, true));
-                SetGridCellChord(relativeChordRows[4].Cells[i], Chord.Suspended4Traid(i), Tonalty.MajMinTonalty(0, true));
-                SetGridCellChord(relativeChordRows[5].Cells[i], Chord.Suspended2Traid(i), Tonalty.MajMinTonalty(0, true));
+                for (int j = 0; j < 12; ++j)
+                {
+                    SetGridCellChord(relativeChordRows[i].Cells[j], Chord.EnumerateChord(i,j), Tonalty.MajMinTonalty(0, true));
+                }
             }
             dataGridViewChord.Rows.Clear();
             for (int i = 0; i < absoluteChordRows.Length; ++i)
             {
                 absoluteChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = absoluteChordRows[i];
-                row.Height = 30;
-                row.HeaderCell.Value = new string[] { "M", "m", "-", "+", "4", "2" }[i];
+                row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
             }
             dataGridViewChord.Rows.AddRange(absoluteChordRows);
-            for (int i = 0; i < 12; ++i)
+            for (int i = 0; i < relativeChordRows.Length; ++i)
             {
-                SetGridCellChord(absoluteChordRows[0].Cells[i], Chord.SimpleTraid(i, true), Tonalty.NoTonalty);
-                SetGridCellChord(absoluteChordRows[1].Cells[i], Chord.SimpleTraid(i, false), Tonalty.NoTonalty);
-                SetGridCellChord(absoluteChordRows[2].Cells[i], Chord.DiminishTraid(i), Tonalty.NoTonalty);
-                SetGridCellChord(absoluteChordRows[3].Cells[i], Chord.AugmentedTraid(i), Tonalty.NoTonalty);
-                SetGridCellChord(absoluteChordRows[4].Cells[i], Chord.Suspended4Traid(i), Tonalty.NoTonalty);
-                SetGridCellChord(absoluteChordRows[5].Cells[i], Chord.Suspended2Traid(i), Tonalty.NoTonalty);
+                for (int j = 0; j < 12; ++j)
+                {
+                    SetGridCellChord(absoluteChordRows[i].Cells[j], Chord.EnumerateChord(i, j), Tonalty.NoTonalty);
+                }
             }
             dataGridViewChord.Rows.Clear();
         }

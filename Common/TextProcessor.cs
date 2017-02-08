@@ -13,6 +13,12 @@ namespace Common
         {
             return str.StartsWith("[") && str.EndsWith("]");
         }
+        public static List<string> LinesToList(string str)
+        {
+            return str.Split('\n')
+                .Select(s => s.Trim())
+                .Where(s => s != "").ToList();
+        }
         public static object GetClass(List<string> textlines,Type type)
         {
             if(IsDelimiter(textlines[0]))
@@ -28,9 +34,13 @@ namespace Common
                 }
                 int eq = line.IndexOf('=');
                 if (eq == -1) throw new FormatException("Config File Corrupted");
-                string left = line.Substring(0, eq);
-                string right = line.Substring(eq + 1);
+                string left = line.Substring(0, eq).Trim();
+                string right = line.Substring(eq + 1).Trim();
                 PropertyInfo prop = type.GetProperty(left);
+                if(prop==null)
+                {
+                    throw new ArgumentException("类" + type.Name + "不存在属性" + left);
+                }
                 prop.SetValue(obj, Convert.ChangeType(right, prop.PropertyType));
             }
             textlines.Clear();
@@ -40,19 +50,19 @@ namespace Common
         {
             int eq = line.IndexOf('=');
             if (eq == -1) throw new FormatException("Config File Corrupted");
-            return int.Parse(line.Substring(eq + 1));
+            return int.Parse(line.Substring(eq + 1).Trim());
         }
         public static string GetStringValue(string line)
         {
             int eq = line.IndexOf('=');
             if (eq == -1) throw new FormatException("Config File Corrupted");
-            return line.Substring(eq + 1);
+            return line.Substring(eq + 1).Trim();
         }
         public static string GetKey(string line)
         {
             int eq = line.IndexOf('=');
             if (eq == -1) throw new FormatException("Config File Corrupted");
-            return line.Substring(0, eq);
+            return line.Substring(0, eq).Trim();
         }
         public static string AddBlock(string name)
         {

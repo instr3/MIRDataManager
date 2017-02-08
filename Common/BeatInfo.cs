@@ -27,7 +27,7 @@ namespace Common
             Time = double.Parse(groups[0]);
             BarAttribute = int.Parse(groups[1]);
             Tonalty = new Tonalty(groups[2]);
-            Chord = new Chord(groups[3]);
+            Chord = Chord.GetChordByAbsoluteChordName(groups[3]);
         }
         public override string ToString()
         {

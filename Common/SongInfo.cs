@@ -41,8 +41,8 @@ namespace Common
         }
         public SongInfo(string dataString,bool configInfoOnly=false)
         {
-            List<string> lines = dataString.Split('\n').Select(s => s.Trim('\r', ' ', '\t')).Where(s=>s!="").ToList();
-            while(lines.Count>0)
+            List<string> lines = TextProcessor.LinesToList(dataString);
+            while (lines.Count>0)
             {
                 if(TextProcessor.IsDelimiter(lines[0]))
                 {
@@ -134,7 +134,7 @@ namespace Common
                         maxAtStr = kv.Key;
                     }
                 }
-                Beats[i].Chord = new Chord(maxAtStr);
+                Beats[i].Chord = Chord.GetChordByAbsoluteChordName(maxAtStr);
             }
 
         }

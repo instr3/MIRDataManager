@@ -74,6 +74,8 @@
             this.checkBoxExportMusic = new System.Windows.Forms.CheckBox();
             this.button_ExportTXT = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBoxOSUMapID = new System.Windows.Forms.TextBox();
             this.buttonSave = new System.Windows.Forms.Button();
             this.comboBoxConfigConfidence = new System.Windows.Forms.ListBox();
             this.textBoxConfigTagger = new System.Windows.Forms.TextBox();
@@ -157,8 +159,6 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.textBoxOSUMapID = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -611,6 +611,24 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "重要配置";
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(11, 156);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(35, 12);
+            this.label17.TabIndex = 6;
+            this.label17.Text = "mapID";
+            // 
+            // textBoxOSUMapID
+            // 
+            this.textBoxOSUMapID.Enabled = false;
+            this.textBoxOSUMapID.Location = new System.Drawing.Point(54, 153);
+            this.textBoxOSUMapID.Name = "textBoxOSUMapID";
+            this.textBoxOSUMapID.Size = new System.Drawing.Size(133, 21);
+            this.textBoxOSUMapID.TabIndex = 5;
+            this.textBoxOSUMapID.TextChanged += new System.EventHandler(this.textBoxOSUMapID_TextChanged);
+            // 
             // buttonSave
             // 
             this.buttonSave.Location = new System.Drawing.Point(32, 180);
@@ -1022,9 +1040,10 @@
             this.dataGridViewChord.Location = new System.Drawing.Point(7, 16);
             this.dataGridViewChord.MultiSelect = false;
             this.dataGridViewChord.Name = "dataGridViewChord";
+            this.dataGridViewChord.RowHeadersWidth = 30;
             this.dataGridViewChord.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGridViewChord.RowTemplate.Height = 40;
             this.dataGridViewChord.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewChord.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewChord.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewChord.Size = new System.Drawing.Size(548, 195);
             this.dataGridViewChord.TabIndex = 21;
@@ -1553,24 +1572,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
-            // 
-            // textBoxOSUMapID
-            // 
-            this.textBoxOSUMapID.Enabled = false;
-            this.textBoxOSUMapID.Location = new System.Drawing.Point(54, 153);
-            this.textBoxOSUMapID.Name = "textBoxOSUMapID";
-            this.textBoxOSUMapID.Size = new System.Drawing.Size(133, 21);
-            this.textBoxOSUMapID.TabIndex = 5;
-            this.textBoxOSUMapID.TextChanged += new System.EventHandler(this.textBoxOSUMapID_TextChanged);
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(11, 156);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(35, 12);
-            this.label17.TabIndex = 6;
-            this.label17.Text = "mapID";
             // 
             // MainForm
             // 

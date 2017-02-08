@@ -17,7 +17,7 @@ namespace Common
             Data = new Dictionary<string, string>();
             using (StreamReader sr = new StreamReader(Filename))
             {
-                string[] lines = sr.ReadToEnd().Split('\n').Select(s => s.Trim('\r', '\t', ' ')).Where(s => s != "").ToArray();
+                List<string> lines = TextProcessor.LinesToList(sr.ReadToEnd());
                 foreach(string line in lines)
                 {
                     if (TextProcessor.IsDelimiter(line)) continue;

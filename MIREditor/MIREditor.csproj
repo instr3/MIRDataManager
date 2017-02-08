@@ -57,7 +57,6 @@
     <Compile Include="ChordClipboard.cs" />
     <Compile Include="ChordEditor.cs" />
     <Compile Include="ChromaVisualizer.cs" />
-    <Compile Include="ColorSchema.cs" />
     <Compile Include="ArchiveManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MainForm.cs">

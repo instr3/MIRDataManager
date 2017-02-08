@@ -65,7 +65,7 @@ namespace Common
             {
                 list.Add(new RawChord(
                     double.Parse(splited[i * 2 + 1]),
-                    splited[i * 2 + 2].Substring(1, splited[i * 2 + 2].Length - 3))
+                    splited[i * 2 + 2].Substring(1, splited[i * 2 + 2].Length - 4))
                     );
             }
             for (int i = 0; i < n - 1; ++i)
