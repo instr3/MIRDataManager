@@ -49,6 +49,7 @@ namespace MIREditor
 
         public Tonalty GetCurrentTonalty()
         {
+            if (Info.Beats.Count < 2) return Tonalty.NoTonalty;
             int id = BeatEditor.GetPreviousBeatID(Program.TL.CurrentTime);
             if (id == -1) id = 0;
             return Info.Beats[id].Tonalty;
@@ -79,6 +80,7 @@ namespace MIREditor
         }
         public void DrawTonalty()
         {
+            if (Info.Beats.Count < 2) return;
             double tempLeftMostTime = TL.LeftMostTime, tempRightMostTime = TL.RightMostTime;
             int left = BeatEditor.GetPreviousBeatID(tempLeftMostTime) - 1, right = BeatEditor.GetNextBeatID(tempRightMostTime);
             // Get the previous of previous beat of the left bound and the next beat of the right bound.
@@ -123,6 +125,7 @@ namespace MIREditor
         public void DrawChroma()
         {
             if (Info.Chroma == null) return;
+            if (Info.Beats.Count < 2) return;
             int lpos = TL.Time2Pos(0);
             if (lpos < 0) lpos = 0;
             Tonalty tonalty = GetCurrentTonalty();

@@ -108,6 +108,18 @@
             this.pianoLabelX = new System.Windows.Forms.Label();
             this.pianoLabelN = new System.Windows.Forms.Label();
             this.dataGridViewChord = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -147,18 +159,11 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.buttonCutInsertChord = new System.Windows.Forms.Button();
+            this.button_BEExtendBeat = new System.Windows.Forms.Button();
+            this.button_BERemoveLeft = new System.Windows.Forms.Button();
+            this.button_BERemoveRight = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -187,6 +192,7 @@
             this.groupBox11.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.SuspendLayout();
             // 
             // TimelinePictureBox
@@ -686,6 +692,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.groupBox12);
             this.tabPage2.Controls.Add(this.groupBox9);
             this.tabPage2.Controls.Add(this.groupBox8);
             this.tabPage2.Controls.Add(this.groupBox6);
@@ -782,9 +789,9 @@
             this.groupBox8.BackColor = System.Drawing.Color.White;
             this.groupBox8.Controls.Add(this.comboBox_Metre);
             this.groupBox8.Controls.Add(this.label14);
-            this.groupBox8.Location = new System.Drawing.Point(348, 284);
+            this.groupBox8.Location = new System.Drawing.Point(433, 287);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(270, 55);
+            this.groupBox8.Size = new System.Drawing.Size(185, 84);
             this.groupBox8.TabIndex = 14;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "全局节拍操作";
@@ -803,7 +810,7 @@
             "7",
             "8",
             "9"});
-            this.comboBox_Metre.Location = new System.Drawing.Point(97, 20);
+            this.comboBox_Metre.Location = new System.Drawing.Point(107, 34);
             this.comboBox_Metre.Name = "comboBox_Metre";
             this.comboBox_Metre.Size = new System.Drawing.Size(62, 20);
             this.comboBox_Metre.TabIndex = 1;
@@ -812,7 +819,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(14, 25);
+            this.label14.Location = new System.Drawing.Point(24, 39);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(77, 12);
             this.label14.TabIndex = 0;
@@ -824,7 +831,7 @@
             this.groupBox6.Controls.Add(this.button_BEBarStart);
             this.groupBox6.Controls.Add(this.button_BENew);
             this.groupBox6.Controls.Add(this.button_BEDelete);
-            this.groupBox6.Location = new System.Drawing.Point(208, 284);
+            this.groupBox6.Location = new System.Drawing.Point(203, 377);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(119, 116);
             this.groupBox6.TabIndex = 12;
@@ -843,6 +850,7 @@
             // 
             // button_BENew
             // 
+            this.button_BENew.Enabled = false;
             this.button_BENew.Location = new System.Drawing.Point(9, 49);
             this.button_BENew.Name = "button_BENew";
             this.button_BENew.Size = new System.Drawing.Size(95, 23);
@@ -1049,6 +1057,90 @@
             this.dataGridViewChord.TabIndex = 21;
             this.dataGridViewChord.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewChord_CellMouseDown);
             this.dataGridViewChord.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewChord_CellMouseUp);
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "C";
+            this.Column1.Name = "Column1";
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column1.Width = 42;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "C#";
+            this.Column2.Name = "Column2";
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 42;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "D";
+            this.Column3.Name = "Column3";
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column3.Width = 42;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Eb";
+            this.Column4.Name = "Column4";
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column4.Width = 42;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "E";
+            this.Column5.Name = "Column5";
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column5.Width = 42;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "F";
+            this.Column6.Name = "Column6";
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column6.Width = 42;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "F#";
+            this.Column7.Name = "Column7";
+            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column7.Width = 42;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "G";
+            this.Column8.Name = "Column8";
+            this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column8.Width = 42;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Ab";
+            this.Column9.Name = "Column9";
+            this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column9.Width = 42;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "A";
+            this.Column10.Name = "Column10";
+            this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column10.Width = 42;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "Bb";
+            this.Column11.Name = "Column11";
+            this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column11.Width = 42;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "B";
+            this.Column12.Name = "Column12";
+            this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column12.Width = 42;
             // 
             // groupBox3
             // 
@@ -1488,89 +1580,59 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
-            // Column1
+            // groupBox12
             // 
-            this.Column1.HeaderText = "C";
-            this.Column1.Name = "Column1";
-            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column1.Width = 42;
+            this.groupBox12.BackColor = System.Drawing.Color.White;
+            this.groupBox12.Controls.Add(this.button_BERemoveRight);
+            this.groupBox12.Controls.Add(this.button_BERemoveLeft);
+            this.groupBox12.Controls.Add(this.button_BEExtendBeat);
+            this.groupBox12.Controls.Add(this.buttonCutInsertChord);
+            this.groupBox12.Location = new System.Drawing.Point(203, 287);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(214, 84);
+            this.groupBox12.TabIndex = 16;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "杂项操作";
             // 
-            // Column2
+            // buttonCutInsertChord
             // 
-            this.Column2.HeaderText = "C#";
-            this.Column2.Name = "Column2";
-            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column2.Width = 42;
+            this.buttonCutInsertChord.Location = new System.Drawing.Point(9, 20);
+            this.buttonCutInsertChord.Name = "buttonCutInsertChord";
+            this.buttonCutInsertChord.Size = new System.Drawing.Size(95, 23);
+            this.buttonCutInsertChord.TabIndex = 0;
+            this.buttonCutInsertChord.Text = "和弦切分(Ins)";
+            this.buttonCutInsertChord.UseVisualStyleBackColor = true;
+            this.buttonCutInsertChord.Click += new System.EventHandler(this.buttonCutInsertChord_Click);
             // 
-            // Column3
+            // button_BEExtendBeat
             // 
-            this.Column3.HeaderText = "D";
-            this.Column3.Name = "Column3";
-            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column3.Width = 42;
+            this.button_BEExtendBeat.Location = new System.Drawing.Point(110, 20);
+            this.button_BEExtendBeat.Name = "button_BEExtendBeat";
+            this.button_BEExtendBeat.Size = new System.Drawing.Size(95, 23);
+            this.button_BEExtendBeat.TabIndex = 2;
+            this.button_BEExtendBeat.Text = "延拓节拍至此";
+            this.button_BEExtendBeat.UseVisualStyleBackColor = true;
+            this.button_BEExtendBeat.Click += new System.EventHandler(this.button_BEExtendBeat_Click);
             // 
-            // Column4
+            // button_BERemoveLeft
             // 
-            this.Column4.HeaderText = "Eb";
-            this.Column4.Name = "Column4";
-            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column4.Width = 42;
+            this.button_BERemoveLeft.Location = new System.Drawing.Point(9, 49);
+            this.button_BERemoveLeft.Name = "button_BERemoveLeft";
+            this.button_BERemoveLeft.Size = new System.Drawing.Size(95, 23);
+            this.button_BERemoveLeft.TabIndex = 3;
+            this.button_BERemoveLeft.Text = "删除之前节拍";
+            this.button_BERemoveLeft.UseVisualStyleBackColor = true;
+            this.button_BERemoveLeft.Click += new System.EventHandler(this.button_BERemoveLeft_Click);
             // 
-            // Column5
+            // button_BERemoveRight
             // 
-            this.Column5.HeaderText = "E";
-            this.Column5.Name = "Column5";
-            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column5.Width = 42;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "F";
-            this.Column6.Name = "Column6";
-            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column6.Width = 42;
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "F#";
-            this.Column7.Name = "Column7";
-            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column7.Width = 42;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "G";
-            this.Column8.Name = "Column8";
-            this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column8.Width = 42;
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Ab";
-            this.Column9.Name = "Column9";
-            this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column9.Width = 42;
-            // 
-            // Column10
-            // 
-            this.Column10.HeaderText = "A";
-            this.Column10.Name = "Column10";
-            this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column10.Width = 42;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "Bb";
-            this.Column11.Name = "Column11";
-            this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column11.Width = 42;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "B";
-            this.Column12.Name = "Column12";
-            this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column12.Width = 42;
+            this.button_BERemoveRight.Location = new System.Drawing.Point(110, 49);
+            this.button_BERemoveRight.Name = "button_BERemoveRight";
+            this.button_BERemoveRight.Size = new System.Drawing.Size(95, 23);
+            this.button_BERemoveRight.TabIndex = 4;
+            this.button_BERemoveRight.Text = "删除之后节拍";
+            this.button_BERemoveRight.UseVisualStyleBackColor = true;
+            this.button_BERemoveRight.Click += new System.EventHandler(this.button_BERemoveRight_Click);
             // 
             // MainForm
             // 
@@ -1626,6 +1688,7 @@
             this.groupBox11.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.groupBox12.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1761,5 +1824,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.Button button_BEExtendBeat;
+        private System.Windows.Forms.Button buttonCutInsertChord;
+        private System.Windows.Forms.Button button_BERemoveRight;
+        private System.Windows.Forms.Button button_BERemoveLeft;
     }
 }

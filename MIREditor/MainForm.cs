@@ -24,57 +24,8 @@ namespace MIREditor
         public string preloadFile = null;
         public string preCreateFile = null;
         MouseButtons listenMouseButton = MouseButtons.Right, inputMouseButton = MouseButtons.Left;
-        #region off topic functions
-        void dataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        {
-            object o = dataGridViewChord.Rows[e.RowIndex].HeaderCell.Value;
 
-            e.Graphics.DrawString(
-                o != null ? o.ToString() : "",
-                FontManager.Instance.ChordFont,
-                Brushes.Black,
-                new PointF((float)e.RowBounds.Left + 2, (float)e.RowBounds.Top + 4));
-        }
-        void dataGridView_CellPainting(object sender,DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-            using (Brush gridBrush = new SolidBrush(dataGridViewChord.GridColor),
-                backColorBrush = e.CellStyle.ForeColor == e.CellStyle.BackColor ?
-                new SolidBrush(e.CellStyle.BackColor) as Brush :
-                new LinearGradientBrush(new Point(0, e.CellBounds.Top), new Point(0, e.CellBounds.Bottom), e.CellStyle.BackColor, e.CellStyle.ForeColor))
-            {
-                using (Pen gridLinePen = new Pen(gridBrush))
-                {
-                    // Erase the cell.
-                    e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
-
-                    // Draw the grid lines (only the right and bottom lines;
-                    // DataGridView takes care of the others).
-                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
-                        e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
-                        e.CellBounds.Bottom - 1);
-                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
-                        e.CellBounds.Top, e.CellBounds.Right - 1,
-                        e.CellBounds.Bottom);
-
-                    // Draw the text content of the cell, ignoring alignment.
-                    if (e.Value != null)
-                    {
-                        StringFormat stringFormat = new StringFormat();
-                        stringFormat.Alignment = StringAlignment.Center;
-                        stringFormat.LineAlignment = StringAlignment.Center;
-                        e.Graphics.DrawString((string)e.Value, e.CellStyle.Font, Brushes.Black,
-                            new Rectangle(e.CellBounds.Left - 2, e.CellBounds.Top, e.CellBounds.Width + 4, e.CellBounds.Height), stringFormat);
-                        //e.Graphics.DrawString((string)e.Value, e.CellStyle.Font,
-                        //    Brushes.Black, e.CellBounds.Left+e.CellBounds.Width/2,
-                        //    e.CellBounds.Top + e.CellBounds.Height / 2, stringFormat);
-                    }
-                    e.Handled = true;
-                }
-            }
-        }
-        #endregion
-
+        #region init
         public MainForm(string[] args)
         {
             InitializeComponent();
@@ -134,34 +85,61 @@ namespace MIREditor
                 新建ToolStripMenuItem_Click(sender, e);
                 openOSUFileDialog.InitialDirectory = Program.DatasetMusicFolder;
             }
-
-
         }
-        private void timer1_Tick(object sender, EventArgs e)
+        public void RefreshInterface()
         {
+            tabControl1_SelectedIndexChanged(null, null);
+            Triggers.ChordLabelChangeTrigger = true;
+            RelativeLabelTonalty = Tonalty.NoTonalty;
             if (Program.TL != null)
             {
-                Program.TL.Draw();
-                //if (Triggers.ChordLabelChangeTrigger)
-                //{
-                Tonalty currentTonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
-                if (Triggers.ChordLabelChangeTrigger||RelativeLabelTonalty.ToString()!= currentTonalty.ToString())
+                trackBarVolumeMain.DataBindings.Clear();
+                trackBarVolumeMain.DataBindings.Add("Value", Program.TL, "VolumeMain", true, DataSourceUpdateMode.OnPropertyChanged);
+                trackBarVolumeMIDI.DataBindings.Clear();
+                trackBarVolumeMIDI.DataBindings.Add("Value", Program.MidiManager, "VolumeNote", true, DataSourceUpdateMode.OnPropertyChanged);
+                trackBarMIDIDelay.DataBindings.Clear();
+                trackBarMIDIDelay.DataBindings.Add("Value", Program.MidiManager, "NoteDelay", true, DataSourceUpdateMode.OnPropertyChanged);
+                checkBoxAutoPlayChord.DataBindings.Clear();
+                checkBoxAutoPlayChord.DataBindings.Add("Checked", Program.TL.ChordEditor, "AutoPlayMidi", true, DataSourceUpdateMode.OnPropertyChanged);
+                comboBox_Metre.Text = Program.TL.Info.MusicConfigure.MetreNumber.ToString();
+                //if (Program.TL.Info.Tonalty != -1)
+                //    comboBox_GLTonalty.SelectedIndex = Program.TL.Info.Tonalty;
+                comboBoxAlignBeats.Items.Clear();
+                Program.TL.ChordEditor.AlignBeats = new List<int>();
+                int bd = Program.TL.Info.MusicConfigure.MetreNumber;
+                for (int i = 1; i < bd; ++i)
                 {
-                    Triggers.ChordLabelChangeTrigger = false;
-                    RelativeLabelTonalty = currentTonalty;
-                    for (int i = 0; i < 15; ++i)
+                    if (bd % i == 0)
                     {
-                        ChordLabels[i].Text =
-                            Program.TL.ChordEditor.GetChordLabelTextUnderTonalty(i, RelativeLabelTonalty);
+                        comboBoxAlignBeats.Items.Add(i + "拍");
+                        Program.TL.ChordEditor.AlignBeats.Add(i);
                     }
-                    if(checkBoxChordKeyboard.Checked)
-                        InitChordKeyboard();
                 }
-                //}
+                int index = comboBoxAlignBeats.Items.Count;
+                for (int i = 1; i * bd <= 12 || i == 1; i *= 2)
+                {
+                    comboBoxAlignBeats.Items.Add(i + "小节");
+                    Program.TL.ChordEditor.AlignBeats.Add(i * bd);
+                }
+                comboBoxAlignBeats.SelectedIndex = index;
+                radioButtonAbsolute.DataBindings.Clear();
+                radioButtonAbsolute.DataBindings.Add("Checked", Program.TL, "NotRelativeLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+                radioButtonRelative.DataBindings.Clear();
+                radioButtonRelative.DataBindings.Add("Checked", Program.TL, "RelativeLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+
+                comboBoxConfigConfidence.SelectedIndex = Program.TL.Info.TagConfigure.Confidence;
+                textBoxConfigTagger.Text = Program.TL.Info.TagConfigure.Tagger;
+                textBoxOSUMapID.Text = Program.TL.Info.MiscConfigure.osuMapID.ToString();
+                Text = "Edit Mode: " + Program.TL.Info.MusicConfigure.Title;
             }
-
+            else
+            {
+                Text = "Chord Editor";
+            }
         }
+        #endregion
 
+        #region capture controls
         private void TimelinePictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (Program.TL != null)
@@ -203,7 +181,7 @@ namespace MIREditor
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             e.SuppressKeyPress = true;
-            if(Program.TL!=null)
+            if (Program.TL != null)
                 Program.TL.KeyEvent(e.KeyCode, e.Control, e.Alt, e.Shift);
         }
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -212,9 +190,12 @@ namespace MIREditor
                 Program.TL.KeyUp(e.KeyCode, e.Control, e.Alt, e.Shift);
 
         }
+        #endregion
+
+        #region chordlabel input
         private int GetChordLabelIndex(object sender)
         {
-            for(int i=0;i<ChordLabels.Length;++i)
+            for (int i = 0; i < ChordLabels.Length; ++i)
             {
                 if (ChordLabels[i] == sender)
                     return i;
@@ -240,113 +221,22 @@ namespace MIREditor
         }
         private void ChordLabels_MouseClick(object sender, MouseEventArgs e)
         {
-            if(Program.TL!=null)
+            if (Program.TL != null)
             {
                 int id = GetChordLabelIndex(sender);
                 if (e.Button == listenMouseButton && id < 12)
                 {
-                    Program.MidiManager.PlayChordNotes(Program.TL.ChordEditor.GetChordFromInputUnderTonalty(id,RelativeLabelTonalty));
+                    Program.MidiManager.PlayChordNotes(Program.TL.ChordEditor.GetChordFromInputUnderTonalty(id, RelativeLabelTonalty));
                 }
-                else if(e.Button==inputMouseButton)
+                else if (e.Button == inputMouseButton)
                 {
-                    Program.TL.ChordEditor.PerformInputChordIDUnderTonalty(id,RelativeLabelTonalty);
+                    Program.TL.ChordEditor.PerformInputChordIDUnderTonalty(id, RelativeLabelTonalty);
                 }
             }
         }
+        #endregion
 
-        internal void ActivateTimer()
-        {
-            timer1.Enabled = true;
-        }
-
-        internal void DeactivateTimer()
-        {
-            timer1.Enabled = false;
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MessageBox.Show("Label Clicked");
-            Focus();
-        }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MessageBox.Show("Label2 Click");
-        }
-
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (Program.TL != null)
-            {
-                Program.TL.ChordEditor.Enabled = false;
-                Program.TL.BeatEditor.Enabled = false;
-                switch (tabControl1.SelectedTab.Text)
-                {
-                    case "和弦":
-                        Program.TL.ChordEditor.Enabled = true;
-                        break;
-                    case "节拍与调性":
-                        Program.TL.BeatEditor.Enabled = true;
-                        break;
-                }
-            }
-        }
-
-        public void RefreshInterface()
-        {
-            tabControl1_SelectedIndexChanged(null, null);
-            Triggers.ChordLabelChangeTrigger = true;
-            RelativeLabelTonalty = Tonalty.NoTonalty;
-            if (Program.TL!=null)
-            {
-                trackBarVolumeMain.DataBindings.Clear();
-                trackBarVolumeMain.DataBindings.Add("Value", Program.TL, "VolumeMain", true, DataSourceUpdateMode.OnPropertyChanged);
-                trackBarVolumeMIDI.DataBindings.Clear();
-                trackBarVolumeMIDI.DataBindings.Add("Value", Program.MidiManager, "VolumeNote", true, DataSourceUpdateMode.OnPropertyChanged);
-                trackBarMIDIDelay.DataBindings.Clear();
-                trackBarMIDIDelay.DataBindings.Add("Value", Program.MidiManager, "NoteDelay", true, DataSourceUpdateMode.OnPropertyChanged);
-                checkBoxAutoPlayChord.DataBindings.Clear();
-                checkBoxAutoPlayChord.DataBindings.Add("Checked", Program.TL.ChordEditor, "AutoPlayMidi", true, DataSourceUpdateMode.OnPropertyChanged);
-                comboBox_Metre.Text = Program.TL.Info.MusicConfigure.MetreNumber.ToString();
-                //if (Program.TL.Info.Tonalty != -1)
-                //    comboBox_GLTonalty.SelectedIndex = Program.TL.Info.Tonalty;
-                comboBoxAlignBeats.Items.Clear();
-                Program.TL.ChordEditor.AlignBeats = new List<int>();
-                int bd = Program.TL.Info.MusicConfigure.MetreNumber;
-                for (int i=1;i< bd; ++i)
-                {
-                    if(bd % i==0)
-                    {
-                        comboBoxAlignBeats.Items.Add(i + "拍");
-                        Program.TL.ChordEditor.AlignBeats.Add(i);
-                    }
-                }
-                int index = comboBoxAlignBeats.Items.Count;
-                for (int i=1;i*bd<=12||i==1;i*=2)
-                {
-                    comboBoxAlignBeats.Items.Add(i + "小节");
-                    Program.TL.ChordEditor.AlignBeats.Add(i * bd);
-                }
-                comboBoxAlignBeats.SelectedIndex = index;
-                radioButtonAbsolute.DataBindings.Clear();
-                radioButtonAbsolute.DataBindings.Add("Checked", Program.TL, "NotRelativeLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-                radioButtonRelative.DataBindings.Clear();
-                radioButtonRelative.DataBindings.Add("Checked", Program.TL, "RelativeLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-
-                comboBoxConfigConfidence.SelectedIndex = Program.TL.Info.TagConfigure.Confidence;
-                textBoxConfigTagger.Text = Program.TL.Info.TagConfigure.Tagger;
-                textBoxOSUMapID.Text = Program.TL.Info.MiscConfigure.osuMapID.ToString();
-                Text = "Edit Mode: " + Program.TL.Info.MusicConfigure.Title;
-            }
-            else
-            {
-                Text = "Chord Editor";
-            }
-
-
-        }
-
+        #region menu
         private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openInfoFileDialog.ShowDialog() == DialogResult.Cancel)
@@ -395,7 +285,7 @@ namespace MIREditor
                 return;
             }
             SongInfo info = OsuAnalyzer.ExtractFromOSUFile(openOSUFileDialog.FileName);
-            if(info!=null)
+            if (info != null)
             {
                 ArchiveManager.SwitchSongInfo(info);
             }
@@ -410,7 +300,7 @@ namespace MIREditor
         {
             if (Program.TL != null)
             {
-                if(Program.EditManager.CanUndo)
+                if (Program.EditManager.CanUndo)
                 {
                     List<BeatInfo> beats = Program.EditManager.Undo(Program.TL.Info);
                     if (beats == null)
@@ -449,19 +339,20 @@ namespace MIREditor
             撤销ToolStripMenuItem.Text = "撤销" + Program.EditManager.LastUndoInfo;
             重做ToolStripMenuItem.Text = "重做" + Program.EditManager.LastRedoInfo;
         }
+        private void 关于ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Made by instr3");
+        }
+        #endregion
 
+        #region beat editor
         private void comboBoxAlignBeats_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(Program.TL!=null&&comboBoxAlignBeats.SelectedIndex!=-1)
+            if (Program.TL != null && comboBoxAlignBeats.SelectedIndex != -1)
             {
                 Program.TL.ChordEditor.AlignBeat =
                     Program.TL.ChordEditor.AlignBeats[comboBoxAlignBeats.SelectedIndex];
             }
-        }
-
-        private void BeatEditorButton_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("wtf");
         }
 
         private void button_BEDivide_Click(object sender, EventArgs e)
@@ -539,7 +430,7 @@ namespace MIREditor
 
         private void comboBox_TETonalty_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Program.TL != null&&comboBox_TETonalty.SelectedIndex!=-1)
+            if (Program.TL != null && comboBox_TETonalty.SelectedIndex != -1)
                 Program.TL.BeatEditor.TonaltyModify(comboBox_TETonalty.SelectedItem as string);
             comboBox_TETonalty.SelectedIndex = -1;
         }
@@ -550,74 +441,28 @@ namespace MIREditor
                 Program.TL.BeatEditor.TonaltySwitchMajMin();
 
         }
-
-        private void button_ExportTXT_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(Program.FullArchiveFilePath))
-                另存为ToolStripMenuItem_Click(sender, e);
-            if (string.IsNullOrEmpty(Program.FullArchiveFilePath))
-                return;
-            if (Program.TL!=null)
-            {
-                Exporter exporter = new Exporter(Program.TL.Info, Program.TL.MP3Length);
-                try
-                {
-                    exporter.ExportToFolder(Program.ExportFolder,
-                        Path.GetFileNameWithoutExtension(Program.FullArchiveFilePath),
-                        checkBoxExportMusic.Checked,
-                        Program.DatasetMusicFolder + "\\" + Program.TL.Info.MusicConfigure.Location);
-                    Logger.Log("Exported successfully.");
-                }
-                catch(Exception ex)
-                {
-                    Logger.Log("[Error]" + ex.Message);
-                }
-
-            }
-
-        }
-
-        private void radioButtonAbsolute_CheckedChanged(object sender, EventArgs e)
-        {
-            Triggers.ChordLabelChangeTrigger = true;
-        }
-
-        private void radioButtonRelative_CheckedChanged(object sender, EventArgs e)
-        {
-            Triggers.ChordLabelChangeTrigger = true;
-
-        }
-
-        private void 关于ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Made by instr3");
-        }
-
-
-        private void textBoxConfigTagger_TextChanged(object sender, EventArgs e)
+        private void button_BEExtendBeat_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
-                Program.TL.Info.TagConfigure.Tagger = textBoxConfigTagger.Text;
+                Program.TL.BeatEditor.ExtendBeat();
 
         }
-        private void textBoxOSUMapID_TextChanged(object sender, EventArgs e)
+
+        private void button_BERemoveLeft_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
-            {
-                int result;
-                if (int.TryParse(textBoxOSUMapID.Text, out result))
-                {
-                    Program.TL.Info.MiscConfigure.osuMapID = result;
-                }
-            }
+                Program.TL.BeatEditor.RemoveLeft();
         }
 
-        private void comboBoxConfigConfidence_SelectedIndexChanged(object sender, EventArgs e)
+        private void button_BERemoveRight_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
-                Program.TL.Info.TagConfigure.Confidence = comboBoxConfigConfidence.SelectedIndex;
-        }
+                Program.TL.BeatEditor.RemoveRight();
 
+        }
+        #endregion
+
+        #region shortcut buttons
         private void buttonPause_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
@@ -644,6 +489,11 @@ namespace MIREditor
             if (Program.TL != null)
                 Program.TL.KeyEvent(Keys.Oemcomma, false, false, false);
 
+        }
+        private void buttonCutInsertChord_Click(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.KeyEvent(Keys.Insert, false, false, false);
         }
 
         private void buttonRightBracket_Click(object sender, EventArgs e)
@@ -683,7 +533,9 @@ namespace MIREditor
             if (Program.TL != null)
                 labelScale_Down = false;
         }
+        #endregion
 
+        #region chord keyboard functions
         private void checkBoxChordKeyboard_CheckedChanged(object sender, EventArgs e)
         {
             groupBoxChordKeyboard.Visible = checkBoxChordKeyboard.Checked;
@@ -829,7 +681,177 @@ namespace MIREditor
         {
             dataGridViewChord.CurrentCell = null;
         }
+
+        void dataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            object o = dataGridViewChord.Rows[e.RowIndex].HeaderCell.Value;
+
+            e.Graphics.DrawString(
+                o != null ? o.ToString() : "",
+                FontManager.Instance.ChordFont,
+                Brushes.Black,
+                new PointF((float)e.RowBounds.Left + 2, (float)e.RowBounds.Top + 4));
+        }
+        void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            using (Brush gridBrush = new SolidBrush(dataGridViewChord.GridColor),
+                backColorBrush = e.CellStyle.ForeColor == e.CellStyle.BackColor ?
+                new SolidBrush(e.CellStyle.BackColor) as Brush :
+                new LinearGradientBrush(new Point(0, e.CellBounds.Top), new Point(0, e.CellBounds.Bottom), e.CellStyle.BackColor, e.CellStyle.ForeColor))
+            {
+                using (Pen gridLinePen = new Pen(gridBrush))
+                {
+                    // Erase the cell.
+                    e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
+
+                    // Draw the grid lines (only the right and bottom lines;
+                    // DataGridView takes care of the others).
+                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
+                        e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
+                        e.CellBounds.Bottom - 1);
+                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
+                        e.CellBounds.Top, e.CellBounds.Right - 1,
+                        e.CellBounds.Bottom);
+
+                    // Draw the text content of the cell, ignoring alignment.
+                    if (e.Value != null)
+                    {
+                        StringFormat stringFormat = new StringFormat();
+                        stringFormat.Alignment = StringAlignment.Center;
+                        stringFormat.LineAlignment = StringAlignment.Center;
+                        e.Graphics.DrawString((string)e.Value, e.CellStyle.Font, Brushes.Black,
+                            new Rectangle(e.CellBounds.Left - 2, e.CellBounds.Top, e.CellBounds.Width + 4, e.CellBounds.Height), stringFormat);
+                        //e.Graphics.DrawString((string)e.Value, e.CellStyle.Font,
+                        //    Brushes.Black, e.CellBounds.Left+e.CellBounds.Width/2,
+                        //    e.CellBounds.Top + e.CellBounds.Height / 2, stringFormat);
+                    }
+                    e.Handled = true;
+                }
+            }
+        }
+        #endregion
+
+        #region exporter
         
+        private void button_ExportTXT_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(Program.FullArchiveFilePath))
+                另存为ToolStripMenuItem_Click(sender, e);
+            if (string.IsNullOrEmpty(Program.FullArchiveFilePath))
+                return;
+            if (Program.TL != null)
+            {
+                Exporter exporter = new Exporter(Program.TL.Info, Program.TL.MP3Length);
+                try
+                {
+                    exporter.ExportToFolder(Program.ExportFolder,
+                        Path.GetFileNameWithoutExtension(Program.FullArchiveFilePath),
+                        checkBoxExportMusic.Checked,
+                        Program.DatasetMusicFolder + "\\" + Program.TL.Info.MusicConfigure.Location);
+                    Logger.Log("Exported successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("[Error]" + ex.Message);
+                }
+
+            }
+
+        }
+        #endregion
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                Program.TL.Draw();
+                //if (Triggers.ChordLabelChangeTrigger)
+                //{
+                Tonalty currentTonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
+                if (Triggers.ChordLabelChangeTrigger || RelativeLabelTonalty.ToString() != currentTonalty.ToString())
+                {
+                    Triggers.ChordLabelChangeTrigger = false;
+                    RelativeLabelTonalty = currentTonalty;
+                    for (int i = 0; i < 15; ++i)
+                    {
+                        ChordLabels[i].Text =
+                            Program.TL.ChordEditor.GetChordLabelTextUnderTonalty(i, RelativeLabelTonalty);
+                    }
+                    if (checkBoxChordKeyboard.Checked)
+                        InitChordKeyboard();
+                }
+                //}
+            }
+
+        }
+        internal void ActivateTimer()
+        {
+            timer1.Enabled = true;
+        }
+
+        internal void DeactivateTimer()
+        {
+            timer1.Enabled = false;
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                Program.TL.ChordEditor.Enabled = false;
+                Program.TL.BeatEditor.Enabled = false;
+                switch (tabControl1.SelectedTab.Text)
+                {
+                    case "和弦":
+                        Program.TL.ChordEditor.Enabled = true;
+                        break;
+                    case "节拍与调性":
+                        Program.TL.BeatEditor.Enabled = true;
+                        break;
+                }
+            }
+        }
+
+
+
+        private void radioButtonAbsolute_CheckedChanged(object sender, EventArgs e)
+        {
+            Triggers.ChordLabelChangeTrigger = true;
+        }
+
+        private void radioButtonRelative_CheckedChanged(object sender, EventArgs e)
+        {
+            Triggers.ChordLabelChangeTrigger = true;
+
+        }
+
+
+
+        private void textBoxConfigTagger_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.Info.TagConfigure.Tagger = textBoxConfigTagger.Text;
+
+        }
+        private void textBoxOSUMapID_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                int result;
+                if (int.TryParse(textBoxOSUMapID.Text, out result))
+                {
+                    Program.TL.Info.MiscConfigure.osuMapID = result;
+                }
+            }
+        }
+
+        private void comboBoxConfigConfidence_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.Info.TagConfigure.Confidence = comboBoxConfigConfidence.SelectedIndex;
+        }
+
 
         private void checkBoxMouseSwitch_CheckedChanged(object sender, EventArgs e)
         {

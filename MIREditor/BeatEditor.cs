@@ -347,5 +347,63 @@ namespace MIREditor
             }
             
         }
+
+        public void RemoveLeft()
+        {
+            Program.EditManager.BeforePreformEdit(Info, "删除之前节奏");
+            double currentTime = TL.CurrentTime;
+            if (Info.Beats.Count(x => x.Time >= currentTime) < 2)
+                Logger.Log("[Error] You cannot remove so many beats.");
+            Info.Beats.RemoveAll(x => x.Time < currentTime);
+        }
+
+        public void RemoveRight()
+        {
+            Program.EditManager.BeforePreformEdit(Info, "删除之后节奏");
+            double currentTime = TL.CurrentTime;
+            if (Info.Beats.Count(x => x.Time <= currentTime) < 2)
+                Logger.Log("[Error] You cannot remove so many beats.");
+            Info.Beats.RemoveAll(x => x.Time > currentTime);
+        }
+
+        public void ExtendBeat()
+        {
+            if (Info.Beats.Count < 2) return;
+            double currentTime = TL.CurrentTime;
+            BeatInfo firstBeat = Info.Beats[0];
+            BeatInfo lastBeat = Info.Beats[Info.Beats.Count - 1];
+            BeatInfo addedBeat;
+            List<BeatInfo> addedList = new List<BeatInfo>();
+            if (firstBeat.Time> currentTime)
+            {
+                Program.EditManager.BeforePreformEdit(Info, "向前延拓节奏");
+                double deltaTime = (Info.Beats[1].Time - firstBeat.Time);
+                int i = 0;
+                do
+                {
+                    addedBeat = firstBeat.Clone() as BeatInfo;
+                    addedBeat.BarAttribute = 0;
+                    addedBeat.Time = firstBeat.Time - deltaTime * (++i);
+                    addedList.Add(addedBeat);
+                } while (addedBeat.Time > currentTime);
+                addedList.Reverse();
+                Info.Beats.InsertRange(0, addedList);
+            }
+            else if(lastBeat.Time<currentTime)
+            {
+                Program.EditManager.BeforePreformEdit(Info, "向后延拓节奏");
+                double deltaTime = (lastBeat.Time - Info.Beats[Info.Beats.Count - 2].Time);
+                int i = 0;
+                Info.Beats.RemoveAt(Info.Beats.Count - 1);
+                do
+                {
+                    addedBeat = Info.Beats[Info.Beats.Count - 2].Clone() as BeatInfo;
+                    addedBeat.BarAttribute = 0;
+                    addedBeat.Time = lastBeat.Time + deltaTime * (i++);
+                    addedList.Add(addedBeat);
+                } while (addedBeat.Time < currentTime);
+                Info.Beats.AddRange(addedList);
+            }
+        }
     }
 }
