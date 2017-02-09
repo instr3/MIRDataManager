@@ -19,7 +19,6 @@ namespace MIRDataManager
     {
         public DataFile CurrentSelectedDataFile;
         Dataset dataset;
-        List<DataFile> listedDataFiles;
         public Form1()
         {
             InitializeComponent();
@@ -91,7 +90,7 @@ namespace MIRDataManager
             string[] memoryText = memory.Select(i => listView1.Items[i].SubItems[0].Text).ToArray();
             int scroll = listView1.TopItem == null ? 0 : listView1.TopItem.Index;
             listView1.Items.Clear();
-            listedDataFiles = dataset.Where(textBoxSearch.Text, comboBoxScoreFilter.SelectedItem.ToString());
+            List<DataFile> listedDataFiles = dataset.Where(textBoxSearch.Text, comboBoxScoreFilter.SelectedItem.ToString());
             List<ListViewItem> collection = new List<ListViewItem>();
             foreach (DataFile f in listedDataFiles)
             {
@@ -103,7 +102,7 @@ namespace MIRDataManager
                     f.SongInfo.TagConfigure.Time.ToString("yyyy-MM-dd HH:mm:ss"),
                     f.SongInfo.TagConfigure.Confidence.ToString()
                 });
-                item.Tag = f.SongInfo.MusicConfigure.Location;
+                item.Tag = f;
                 collection.Add(item);
             }
             listView1.Items.AddRange(collection.ToArray());
@@ -408,7 +407,7 @@ namespace MIRDataManager
             if (listView1.SelectedItems.Count == 0) return;
             if (e.Button == MouseButtons.Right)
                 listView1_DoubleClick(sender, e);
-            UpdateSelectedDataFile(listedDataFiles[listView1.SelectedItems[0].Index]);
+            UpdateSelectedDataFile(listView1.SelectedItems[0].Tag as DataFile);
 
         }
 
