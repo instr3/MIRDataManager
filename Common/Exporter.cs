@@ -41,7 +41,7 @@ namespace Common
                 AppendLine(ref BeatTags, beat.Time.ToString("F7"), nextBeat.Time.ToString("F7"), tct);
                 ++tct;
             }
-
+            throw new NotImplementedException();
             for (int i = 0; i < beats.Count; ++i)
             {
                 BeatInfo beat = beats[i];

@@ -50,7 +50,7 @@ namespace MIREditor
             for(int i=0;i<count;++i)
             {
                 if (from + i >= beats.Count) break;
-                beats[from + i].Chord = line[i].Chord;
+                beats[from + i].SetChord(line[i]);
             }
             return true;
         }
@@ -69,6 +69,7 @@ namespace MIREditor
             int leftSameIndex = 0;
             for (int i = 0; i <=line.Count; ++i)
             {
+                // Todo: second chord
                 if (i == line.Count||line[i].Chord.ToString() != line[leftSameIndex].Chord.ToString())
                 {
                     if (line[leftSameIndex].Chord != null)

@@ -88,11 +88,25 @@ namespace Common
             for(int i=0;i<Beats.Count;++i)
             {
                 BeatInfo beatInfo = Beats[i];
-                string partString = string.Format(@"{{{0},{1},{2},{3}}}",
-                    beatInfo.Time.ToString("R"),
-                    beatInfo.BarAttribute,
-                    beatInfo.Tonalty,
-                    beatInfo.Chord);
+                string partString;
+                if (beatInfo.SecondChordPercent > 0)
+                {
+                    partString = string.Format(@"{{{0},{1},{2},{3},{4},{5}}}",
+                        beatInfo.Time.ToString("R"),
+                        beatInfo.BarAttribute,
+                        beatInfo.Tonalty,
+                        beatInfo.Chord,
+                        beatInfo.SecondChordPercent,
+                        beatInfo.SecondChord);
+                }
+                else
+                {
+                    partString = string.Format(@"{{{0},{1},{2},{3}}}",
+                        beatInfo.Time.ToString("R"),
+                        beatInfo.BarAttribute,
+                        beatInfo.Tonalty,
+                        beatInfo.Chord);
+                }
                 res += TextProcessor.AddAttribute("Beat_" + i, partString);
             }
             return res;
@@ -134,7 +148,7 @@ namespace Common
                         maxAtStr = kv.Key;
                     }
                 }
-                Beats[i].Chord = Chord.GetChordByAbsoluteChordName(maxAtStr);
+                Beats[i].SetChord(Chord.GetChordByAbsoluteChordName(maxAtStr));
             }
 
         }

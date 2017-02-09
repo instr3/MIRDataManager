@@ -110,5 +110,27 @@ namespace Common
         {
             return new Tonalty(tonalty.Root, !tonalty.MajMin);
         }
+
+        public static bool operator ==(Tonalty lhs, Tonalty rhs)
+        {
+            if (ReferenceEquals(lhs, null)) return ReferenceEquals(rhs, null);
+            if (ReferenceEquals(rhs, null)) return false;
+            return lhs.Root == rhs.Root &&
+                (lhs.Root == -1 || lhs.MajMin == rhs.MajMin);
+        }
+        public static bool operator !=(Tonalty lhs, Tonalty rhs)
+        {
+            return !(lhs == rhs);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is Tonalty)
+                return this == (Tonalty)obj;
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
 }

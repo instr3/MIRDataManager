@@ -279,6 +279,9 @@ namespace MIREditor
                 case Keys.Down:
                     MouseWheel(-120);
                     break;
+                case Keys.Insert:
+                    BeatEditor.SwitchCutSecondChord();
+                    break;
                 default:
                     for(int i=0;i<ChordEditor.InputKeys.Length;++i)
                     {

@@ -304,5 +304,48 @@ namespace MIREditor
                 }
             }
         }
+        private void SetSecondChord(BeatInfo beatInfo,Chord chord1,Chord chord2,double secondChordPrecent)
+        {
+            Program.EditManager.BeforePreformEdit(Info, "插入切分和弦" + chord1 + "-" + chord2 + "(" + (int)(secondChordPrecent * 100) + "%)");
+            beatInfo.SetChord(chord1, chord2, secondChordPrecent);
+        }
+        public void SwitchCutSecondChord()
+        {
+            int beatID = GetPreviousBeatID(TL.CurrentTime);
+            if (beatID < 0 || beatID == Info.Beats.Count - 1) return;
+            BeatInfo beat = Info.Beats[beatID];
+            Chord previousChord = beatID > 0 ? Info.Beats[beatID - 1].GetEndingChord() : Chord.NoChord;
+            Chord nextChord = beatID < Info.Beats.Count - 2 ? Info.Beats[beatID + 1].Chord : Chord.NoChord;
+            Chord currentChord1 = beat.Chord;
+            Chord currentChord2 = beat.SecondChordPercent == 0 ? currentChord1 : beat.SecondChord;
+            if(currentChord1==previousChord)
+            {
+                if(currentChord2==nextChord)// 1+2 to 0
+                {
+                    SetSecondChord(beat, currentChord1, null, 0);
+                }
+                else// 1 to 2
+                {
+                    SetSecondChord(beat, currentChord2, nextChord, 0.5);
+                }
+            }
+            else if(currentChord2==nextChord)
+            {
+                if(currentChord1==currentChord2)//2+0 to 1
+                {
+                    SetSecondChord(beat, previousChord, currentChord2, 0.5);
+                }
+                else// 2 to 0
+                {
+                    SetSecondChord(beat, currentChord1, null, 0);
+                }
+                
+            }
+            else // 0 to 1 or others to 1
+            {
+                SetSecondChord(beat, previousChord, currentChord1, 0.5);
+            }
+            
+        }
     }
 }

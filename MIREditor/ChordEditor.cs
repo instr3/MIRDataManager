@@ -98,7 +98,7 @@ namespace MIREditor
                 Program.EditManager.BeforePreformEdit(Info, "绘制 " + chord.ToString() + " 和弦");
                 for (int i = pointLeftBeatID; i < pointRightBeatID; ++i)
                 {
-                    Info.Beats[i].Chord = chord;
+                    Info.Beats[i].SetChord(chord);
                 }
             }
 
@@ -246,72 +246,98 @@ namespace MIREditor
 
         public void DrawChords()
         {
-            double tempLeftMostTime = TL.LeftMostTime, tempRightMostTime = TL.RightMostTime;
+            if (Info.Beats.Count < 2) return;
+            double tempLeftMostTime = TL.Pos2Time(-100), tempRightMostTime = TL.Pos2Time(TL.TargetRightPos + 100);
             int left = BeatEditor.GetPreviousBeatID(tempLeftMostTime)-1, right = BeatEditor.GetNextBeatID(tempRightMostTime);
             // Get the previous of previous beat of the left bound and the next beat of the right bound.
             if (left < 0) left = 0;
             if (right >= Info.Beats.Count) right = Info.Beats.Count - 1;
-            BeatInfo leftSameChord = Info.Beats[left];
-            for (int i = left; i <= right; ++i)
+            Chord lastChord = null;
+            Tonalty lastTonalty = null;
+            ClearChordSwitchPoint();
+            for (int i = left; i < right; ++i)
             {
                 BeatInfo beat = Info.Beats[i];
-                if(beat.Chord.ToString()!= leftSameChord.Chord.ToString()||i==right)
+                if (lastChord!=beat.Chord||lastTonalty!=beat.Tonalty)
                 {
-                    DrawChordAt(leftSameChord, Info.Beats[i]);
-                    leftSameChord = beat;
+                    SetChordSwitchPoint(beat.Time, beat.Chord, beat.Tonalty);
+                    lastChord = beat.Chord;
+                    lastTonalty = beat.Tonalty;
+                }
+                if (beat.SecondChordPercent>0)
+                {
+                    BeatInfo nextBeat = Info.Beats[i + 1];
+                    double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent;
+                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonalty);
+                    lastChord = beat.SecondChord;
+                    lastTonalty = beat.Tonalty;
                 }
             }
+            SetChordSwitchPoint(Info.Beats[right].Time, null, null);
             //Play chord parts
-            if(AutoPlayMidi)
+            if (AutoPlayMidi)
             {
-                double curTime = TL.CurrentTime;
-                pointLeftBeatID = BeatEditor.GetPreviousBeatID(curTime);
-                if (pointLeftBeatID == -1)
+                Chord newChord = tempPointingChord;
+                if (CurrentChord?.ToString() != newChord?.ToString())
                 {
-                    CurrentChord = null;
-                }
-                else
-                {
-                    Chord newChord = Info.Beats[pointLeftBeatID].Chord;
-                    if (CurrentChord?.ToString() != newChord?.ToString())
+                    CurrentChord = newChord;
+                    if (TL.Playing&&CurrentChord!=null)
                     {
-                        CurrentChord = newChord;
-                        if (TL.Playing)
-                        {
-                            Program.MidiManager.PlayChordNotes(CurrentChord);
-                        }
+                        Program.MidiManager.PlayChordNotes(CurrentChord);
                     }
                 }
             }
         }
-        public void DrawChordAt(BeatInfo leftBeat, BeatInfo rightBeat)
+        double tempLastSwitchTime;
+        Chord tempLastSwitchChord = null;
+        Tonalty tempLastSwitchTonalty = null;
+        Chord tempPointingChord = null;
+        private void ClearChordSwitchPoint()
         {
-            int leftPos = TL.Time2Pos(leftBeat.Time);
-            int rightPos = TL.Time2Pos(rightBeat.Time);
-            if (leftBeat.Chord != null)
+            tempLastSwitchChord = null;
+            tempLastSwitchTonalty = null;
+            tempPointingChord = null;
+        }
+        private void SetChordSwitchPoint(double time,Chord chord,Tonalty tonalty)
+        {
+            if(tempLastSwitchChord!=null)
             {
-                string chordName = leftBeat.Chord.ToString(leftBeat.Tonalty);
-                SolidBrush brush = new SolidBrush(ColorSchema.GetTransparentColorByChordName(chordName));
-                Color chordTextColor = ColorSchema.GetColorByChordName(chordName);
-                if (TL.RelativeLabel)
+                DrawChordBetween(tempLastSwitchTime, time, tempLastSwitchChord, tempLastSwitchTonalty);
+                if(tempLastSwitchTime<TL.CurrentTime&&time>=TL.CurrentTime)
                 {
-                    TL.G.FillRectangle(brush,
-                        new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
-                    TL.G.DrawString(chordName, chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
+                    tempPointingChord = tempLastSwitchChord;
+                }
+            }
+            tempLastSwitchTime = time;
+            tempLastSwitchChord = chord;
+            tempLastSwitchTonalty = tonalty;
+        }
+        private void DrawChordBetween(double leftTime, double rightTime,Chord chord,Tonalty tonalty)
+        {
+            int leftPos = TL.Time2Pos(leftTime);
+            int rightPos = TL.Time2Pos(rightTime);
+            
+            string chordName = chord.ToString(tonalty);
+            SolidBrush brush = new SolidBrush(ColorSchema.GetTransparentColorByChordName(chordName));
+            Color chordTextColor = ColorSchema.GetColorByChordName(chordName);
+            if (TL.RelativeLabel)
+            {
+                TL.G.FillRectangle(brush,
+                    new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
+                TL.G.DrawString(chordName, chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
 
-                }
-                else
-                {
-                    TL.G.FillRectangle(brush, new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
-                    TL.G.DrawString(leftBeat.Chord.ToString(), chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
-                }
-                int[] notes = leftBeat.Chord.ToNotes();
-                foreach(int note in notes)
-                {
-                    Rectangle rect = new Rectangle(leftPos, TL.ChromaVisualizer.ChromaStart + (11 - note) * TL.ChromaVisualizer.ChromaHeight, rightPos - leftPos, TL.ChromaVisualizer.ChromaHeight);
-                    TL.G.FillRectangle(brush, rect);
-                    TL.G.DrawRectangle(new Pen(chordTextColor), rect);
-                }
+            }
+            else
+            {
+                TL.G.FillRectangle(brush, new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
+                TL.G.DrawString(chord.ToString(), chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
+            }
+            int[] notes = chord.ToNotes();
+            foreach(int note in notes)
+            {
+                Rectangle rect = new Rectangle(leftPos, TL.ChromaVisualizer.ChromaStart + (11 - note) * TL.ChromaVisualizer.ChromaHeight, rightPos - leftPos, TL.ChromaVisualizer.ChromaHeight);
+                TL.G.FillRectangle(brush, rect);
+                TL.G.DrawRectangle(new Pen(chordTextColor), rect);
             }
         }
 
