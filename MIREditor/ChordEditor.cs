@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,11 +19,14 @@ namespace MIREditor
         private Timeline TL;
         private SongInfo Info;
         private BeatEditor BeatEditor { get { return TL.BeatEditor; } }
-        
+
+        public const int CHORD_PART_HEIGHT = 30;
+        public const int GRADIENT_START = 17;
+        public const int GRADIENT_END = 7;
 
         public bool ShowRawChord = false;
         private bool enabled;
-        public Font chordFont = SystemFonts.DefaultFont;
+        public Font chordFont = FontManager.Instance.ChordFont;
         Brush transbrush = new SolidBrush(Color.FromArgb(50, Color.White));
         Brush rawChordFontBrush = Brushes.White;
         Pen pointPen = new Pen(Color.LightGreen, 1);
@@ -227,7 +231,7 @@ namespace MIREditor
                     time2 = Info.Beats[pointRightBeatID].Time;
                 int pos1 = TL.Time2Pos(time1),
                     pos2 = TL.Time2Pos(time2);
-                Rectangle rect = new Rectangle(pos1, TL.HorizonHeight - 30, pos2 - pos1, 30);
+                Rectangle rect = new Rectangle(pos1, TL.HorizonHeight - CHORD_PART_HEIGHT, pos2 - pos1, CHORD_PART_HEIGHT);
                 TL.G.FillRectangle(transbrush, rect);
                 TL.G.DrawRectangle(pointPen, rect);
             }
@@ -237,7 +241,7 @@ namespace MIREditor
                     time2 = Info.Beats[selectionRightBeatID].Time;
                 int pos1 = TL.Time2Pos(time1),
                     pos2 = TL.Time2Pos(time2);
-                Rectangle rect = new Rectangle(pos1, TL.HorizonHeight - 30, pos2 - pos1, 30);
+                Rectangle rect = new Rectangle(pos1, TL.HorizonHeight - CHORD_PART_HEIGHT, pos2 - pos1, CHORD_PART_HEIGHT);
                 //TL.G.FillRectangle(transbrush, rect);
                 TL.G.DrawRectangle(selectionPen, rect);
             }
@@ -316,29 +320,55 @@ namespace MIREditor
         {
             int leftPos = TL.Time2Pos(leftTime);
             int rightPos = TL.Time2Pos(rightTime);
-            
+            if (leftPos > TL.TargetRightPos)
+                return;
+            if (rightPos > TL.TargetRightPos)
+                rightPos = TL.TargetRightPos;
             string chordName = chord.ToString(tonalty);
-            SolidBrush brush = new SolidBrush(ColorSchema.GetTransparentColorByChordName(chordName));
-            Color chordTextColor = ColorSchema.GetColorByChordName(chordName);
+            KeyValuePair<Color, Color> solidColors = ColorSchema.GetGradientColorByChordName(chordName);
+            KeyValuePair<Color, Color> transparentColors = ColorSchema.GetGradientTransparentColorByChordName(chordName);
             if (TL.RelativeLabel)
             {
-                TL.G.FillRectangle(brush,
-                    new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
-                TL.G.DrawString(chordName, chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
-
+                TL.G.DrawString(chordName, chordFont, new SolidBrush(solidColors.Key), leftPos, TL.HorizonHeight - CHORD_PART_HEIGHT);
             }
             else
             {
-                TL.G.FillRectangle(brush, new Rectangle(leftPos, TL.HorizonHeight - 30, rightPos - leftPos, 30));
-                TL.G.DrawString(chord.ToString(), chordFont, new SolidBrush(chordTextColor), leftPos, TL.HorizonHeight - 30f);
+                TL.G.DrawString(chord.ToString(), chordFont, new SolidBrush(solidColors.Key), leftPos, TL.HorizonHeight - CHORD_PART_HEIGHT);
             }
-            int[] notes = chord.ToNotes();
-            foreach(int note in notes)
+            if (solidColors.Key == solidColors.Value)
             {
-                Rectangle rect = new Rectangle(leftPos, TL.ChromaVisualizer.ChromaStart + (11 - note) * TL.ChromaVisualizer.ChromaHeight, rightPos - leftPos, TL.ChromaVisualizer.ChromaHeight);
-                TL.G.FillRectangle(brush, rect);
-                TL.G.DrawRectangle(new Pen(chordTextColor), rect);
+                TL.G.FillRectangle(new SolidBrush(transparentColors.Key),
+                    new Rectangle(leftPos, TL.HorizonHeight - CHORD_PART_HEIGHT, rightPos - leftPos, CHORD_PART_HEIGHT));
+                int[] notes = chord.ToNotes();
+                foreach (int note in notes)
+                {
+                    Rectangle rect = new Rectangle(leftPos, TL.ChromaVisualizer.ChromaStart + (11 - note) * TL.ChromaVisualizer.ChromaHeight, rightPos - leftPos, TL.ChromaVisualizer.ChromaHeight);
+                    TL.G.FillRectangle(new SolidBrush(transparentColors.Key), rect);
+                    TL.G.DrawRectangle(new Pen(solidColors.Key), rect);
+                }
             }
+            else
+            {
+                TL.G.FillRectangle(new SolidBrush(transparentColors.Key),
+                    new Rectangle(leftPos, TL.HorizonHeight - CHORD_PART_HEIGHT, rightPos - leftPos, CHORD_PART_HEIGHT - GRADIENT_START));
+                TL.G.FillRectangle(new LinearGradientBrush(new Point(0, TL.HorizonHeight - GRADIENT_START), new Point(0, TL.HorizonHeight - GRADIENT_END), transparentColors.Key, transparentColors.Value),
+                    new Rectangle(leftPos, TL.HorizonHeight - GRADIENT_START, rightPos - leftPos, GRADIENT_START - GRADIENT_END));
+                TL.G.FillRectangle(new SolidBrush(transparentColors.Value),
+                    new Rectangle(leftPos, TL.HorizonHeight - GRADIENT_END, rightPos - leftPos, GRADIENT_END));
+                
+                int[] notes = chord.ToNotes();
+                LinearGradientBrush gradientBrush = new LinearGradientBrush(new Point(0, TL.ChromaVisualizer.ChromaStart), new Point(0, TL.ChromaVisualizer.ChromaStart + TL.ChromaVisualizer.ChromaHeight),
+                    solidColors.Key, solidColors.Value);
+                LinearGradientBrush gradientTransBrush = new LinearGradientBrush(new Point(0, TL.ChromaVisualizer.ChromaStart), new Point(0, TL.ChromaVisualizer.ChromaStart + TL.ChromaVisualizer.ChromaHeight),
+                    transparentColors.Key, transparentColors.Value);
+                foreach (int note in notes)
+                {
+                    Rectangle rect = new Rectangle(leftPos, TL.ChromaVisualizer.ChromaStart + (11 - note) * TL.ChromaVisualizer.ChromaHeight, rightPos - leftPos, TL.ChromaVisualizer.ChromaHeight);
+                    TL.G.FillRectangle(gradientTransBrush, rect);
+                    TL.G.DrawRectangle(new Pen(gradientBrush), rect);
+                }
+            }
+            
         }
 
         public void MoveSelectionStart(double time)

@@ -45,6 +45,7 @@
     <Compile Include="Chord.cs" />
     <Compile Include="Chroma.cs" />
     <Compile Include="ColorSchema.cs" />
+    <Compile Include="FontManager.cs" />
     <Compile Include="INIReader.cs" />
     <Compile Include="RawChord.cs" />
     <Compile Include="SongInfo.cs" />
@@ -59,6 +60,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ColorSchema.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Font.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

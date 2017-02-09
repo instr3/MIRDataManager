@@ -20,9 +20,9 @@ namespace MIREditor
         public int ChromaTextHeight = 15;
 
         public bool Prepared;
-        Font tonaltyFont = SystemFonts.CaptionFont;
+        Font tonaltyFont = FontManager.Instance.NoteFont;
         Brush tonaltyBrush = Brushes.LightGreen;
-        Font noteFont = SystemFonts.CaptionFont;
+        Font noteFont = FontManager.Instance.NoteFont;
         Brush noteFrontBrush = Brushes.White;
         Brush noteBackBrush = Brushes.Black;
         Pen chromaSelectPen = Pens.LightGray;

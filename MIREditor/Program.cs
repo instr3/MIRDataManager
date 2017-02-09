@@ -21,7 +21,6 @@ namespace MIREditor
         public static MidiManager MidiManager;
 
 
-
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>

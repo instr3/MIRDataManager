@@ -108,18 +108,6 @@
             this.pianoLabelX = new System.Windows.Forms.Label();
             this.pianoLabelN = new System.Windows.Forms.Label();
             this.dataGridViewChord = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -159,6 +147,18 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -1021,7 +1021,7 @@
             this.dataGridViewChord.AllowUserToResizeColumns = false;
             this.dataGridViewChord.AllowUserToResizeRows = false;
             this.dataGridViewChord.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
-            this.dataGridViewChord.ColumnHeadersHeight = 30;
+            this.dataGridViewChord.ColumnHeadersHeight = 22;
             this.dataGridViewChord.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridViewChord.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
@@ -1040,100 +1040,15 @@
             this.dataGridViewChord.Location = new System.Drawing.Point(7, 16);
             this.dataGridViewChord.MultiSelect = false;
             this.dataGridViewChord.Name = "dataGridViewChord";
-            this.dataGridViewChord.RowHeadersWidth = 30;
+            this.dataGridViewChord.RowHeadersWidth = 25;
             this.dataGridViewChord.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridViewChord.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewChord.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewChord.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewChord.Size = new System.Drawing.Size(548, 195);
             this.dataGridViewChord.TabIndex = 21;
-            this.dataGridViewChord.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridViewChord.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewChord_CellMouseDown);
             this.dataGridViewChord.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewChord_CellMouseUp);
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "C";
-            this.Column1.Name = "Column1";
-            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column1.Width = 40;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "C#";
-            this.Column2.Name = "Column2";
-            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column2.Width = 40;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "D";
-            this.Column3.Name = "Column3";
-            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column3.Width = 40;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Eb";
-            this.Column4.Name = "Column4";
-            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column4.Width = 40;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "E";
-            this.Column5.Name = "Column5";
-            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column5.Width = 40;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "F";
-            this.Column6.Name = "Column6";
-            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column6.Width = 40;
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "F#";
-            this.Column7.Name = "Column7";
-            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column7.Width = 40;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "G";
-            this.Column8.Name = "Column8";
-            this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column8.Width = 40;
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Ab";
-            this.Column9.Name = "Column9";
-            this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column9.Width = 40;
-            // 
-            // Column10
-            // 
-            this.Column10.HeaderText = "A";
-            this.Column10.Name = "Column10";
-            this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column10.Width = 40;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "Bb";
-            this.Column11.Name = "Column11";
-            this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column11.Width = 40;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "B";
-            this.Column12.Name = "Column12";
-            this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column12.Width = 40;
             // 
             // groupBox3
             // 
@@ -1573,6 +1488,90 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "C";
+            this.Column1.Name = "Column1";
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column1.Width = 42;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "C#";
+            this.Column2.Name = "Column2";
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 42;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "D";
+            this.Column3.Name = "Column3";
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column3.Width = 42;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Eb";
+            this.Column4.Name = "Column4";
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column4.Width = 42;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "E";
+            this.Column5.Name = "Column5";
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column5.Width = 42;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "F";
+            this.Column6.Name = "Column6";
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column6.Width = 42;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "F#";
+            this.Column7.Name = "Column7";
+            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column7.Width = 42;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "G";
+            this.Column8.Name = "Column8";
+            this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column8.Width = 42;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Ab";
+            this.Column9.Name = "Column9";
+            this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column9.Width = 42;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "A";
+            this.Column10.Name = "Column10";
+            this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column10.Width = 42;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "Bb";
+            this.Column11.Name = "Column11";
+            this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column11.Width = 42;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "B";
+            this.Column12.Name = "Column12";
+            this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column12.Width = 42;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1740,6 +1739,16 @@
         private System.Windows.Forms.Label pianoLabelQ;
         private System.Windows.Forms.Label pianoLabelX;
         private System.Windows.Forms.Label pianoLabelN;
+        private System.Windows.Forms.CheckBox checkBoxMouseSwitch;
+        private System.Windows.Forms.Button buttonRightBracket;
+        private System.Windows.Forms.Button buttonLeftBracket;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.Button buttonVamp;
+        private System.Windows.Forms.Button buttonChroma;
+        private System.Windows.Forms.Button buttonRawChord;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox textBoxOSUMapID;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
@@ -1752,15 +1761,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
-        private System.Windows.Forms.CheckBox checkBoxMouseSwitch;
-        private System.Windows.Forms.Button buttonRightBracket;
-        private System.Windows.Forms.Button buttonLeftBracket;
-        private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.Button buttonVamp;
-        private System.Windows.Forms.Button buttonChroma;
-        private System.Windows.Forms.Button buttonRawChord;
-        private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox textBoxOSUMapID;
     }
 }

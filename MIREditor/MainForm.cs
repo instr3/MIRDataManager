@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,15 +25,53 @@ namespace MIREditor
         public string preCreateFile = null;
         MouseButtons listenMouseButton = MouseButtons.Right, inputMouseButton = MouseButtons.Left;
         #region off topic functions
-        void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        void dataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             object o = dataGridViewChord.Rows[e.RowIndex].HeaderCell.Value;
 
             e.Graphics.DrawString(
                 o != null ? o.ToString() : "",
-                dataGridViewChord.Font,
+                FontManager.Instance.ChordFont,
                 Brushes.Black,
                 new PointF((float)e.RowBounds.Left + 2, (float)e.RowBounds.Top + 4));
+        }
+        void dataGridView_CellPainting(object sender,DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            using (Brush gridBrush = new SolidBrush(dataGridViewChord.GridColor),
+                backColorBrush = e.CellStyle.ForeColor == e.CellStyle.BackColor ?
+                new SolidBrush(e.CellStyle.BackColor) as Brush :
+                new LinearGradientBrush(new Point(0, e.CellBounds.Top), new Point(0, e.CellBounds.Bottom), e.CellStyle.BackColor, e.CellStyle.ForeColor))
+            {
+                using (Pen gridLinePen = new Pen(gridBrush))
+                {
+                    // Erase the cell.
+                    e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
+
+                    // Draw the grid lines (only the right and bottom lines;
+                    // DataGridView takes care of the others).
+                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
+                        e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
+                        e.CellBounds.Bottom - 1);
+                    e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
+                        e.CellBounds.Top, e.CellBounds.Right - 1,
+                        e.CellBounds.Bottom);
+
+                    // Draw the text content of the cell, ignoring alignment.
+                    if (e.Value != null)
+                    {
+                        StringFormat stringFormat = new StringFormat();
+                        stringFormat.Alignment = StringAlignment.Center;
+                        stringFormat.LineAlignment = StringAlignment.Center;
+                        e.Graphics.DrawString((string)e.Value, e.CellStyle.Font, Brushes.Black,
+                            new Rectangle(e.CellBounds.Left - 2, e.CellBounds.Top, e.CellBounds.Width + 4, e.CellBounds.Height), stringFormat);
+                        //e.Graphics.DrawString((string)e.Value, e.CellStyle.Font,
+                        //    Brushes.Black, e.CellBounds.Left+e.CellBounds.Width/2,
+                        //    e.CellBounds.Top + e.CellBounds.Height / 2, stringFormat);
+                    }
+                    e.Handled = true;
+                }
+            }
         }
         #endregion
 
@@ -40,7 +79,8 @@ namespace MIREditor
         {
             InitializeComponent();
             dataGridViewChord.RowHeadersDefaultCellStyle.Padding = new Padding(dataGridViewChord.RowHeadersWidth);
-            dataGridViewChord.RowPostPaint += new DataGridViewRowPostPaintEventHandler(dataGridView1_RowPostPaint);
+            dataGridViewChord.RowPostPaint += new DataGridViewRowPostPaintEventHandler(dataGridView_RowPostPaint);
+            dataGridViewChord.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView_CellPainting);
             ChordLabels = new Label[] { ChordLabel1,ChordLabel2,ChordLabel3,ChordLabel4,ChordLabel5,ChordLabel6,
                 ChordLabel7,ChordLabel8,ChordLabel9,ChordLabel10,ChordLabel11,ChordLabel12,ChordLabelN,ChordLabelX,ChordLabelQ
             };
@@ -667,11 +707,18 @@ namespace MIREditor
             cell.Tag = chord;
             cell.Value = chord.ToString(tonalty);
             //cell.Style.BackColor = Color.FromArgb(color, color, color);
+            KeyValuePair<Color,Color> colors = ColorSchema.GetGradientColorByChordName(chord.ToString(tonalty));
             cell.Style.BackColor =
                 Lerp(
-                ColorSchema.GetColorByChordName(chord.ToString(tonalty)),
+                colors.Key,
                 Color.FromArgb(color, color, color),
                 0.8f);
+            cell.Style.ForeColor =
+                Lerp(
+                colors.Value,
+                Color.FromArgb(color, color, color),
+                0.8f);
+            cell.Style.Font = FontManager.Instance.ChordFont;
             //if (color == 255)
             //    cell.Style.Font = new Font(cell.InheritedStyle.Font, FontStyle.Underline);
             //cell.Style.ForeColor= Color.FromArgb(color, color, color);
@@ -702,6 +749,7 @@ namespace MIREditor
                 absoluteChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = absoluteChordRows[i];
                 row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
+                row.HeaderCell.Style.Font = FontManager.Instance.ChordFont;
             }
             dataGridViewChord.Rows.AddRange(absoluteChordRows);
             for (int i = 0; i < relativeChordRows.Length; ++i)
@@ -724,20 +772,23 @@ namespace MIREditor
             if (relativeMode)
             {
                 for (int i = 0; i < 12; ++i)
+                {
                     dataGridViewChord.Columns[i].HeaderText = "<" + Chord.Num2NoteString[i] + ">";
+                    dataGridViewChord.Columns[i].HeaderCell.Style.Font = FontManager.Instance.NoteFont;
+                }
                 dataGridViewChord.Rows.AddRange(relativeChordRows);
             }
             else
             {
                 for (int i = 0; i < 12; ++i)
+                {
                     dataGridViewChord.Columns[i].HeaderText = "<" + Chord.Num2Char[i] + ">";
+                    dataGridViewChord.Columns[i].HeaderCell.Style.Font = FontManager.Instance.NoteFont;
+                }
                 dataGridViewChord.Rows.AddRange(absoluteChordRows);
             }
             dataGridViewChord.Tag = relativeMode;
             dataGridViewChord.CurrentCell = null;
-        }
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
         }
 
         private void button1_Click(object sender, EventArgs e)
