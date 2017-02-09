@@ -173,7 +173,7 @@ namespace MIREditor
             bindingPictureBox.BackColor = Color.Black;
             Target = bindingPictureBox.CreateGraphics();
             Info = info;
-            MP3stream = Bass.BASS_StreamCreateFile(mp3Path, 0, 0, BASSFlag.BASS_SAMPLE_SOFTWARE);
+            MP3stream = Bass.BASS_StreamCreateFile(mp3Path, 0, 0, BASSFlag.BASS_SAMPLE_SOFTWARE | BASSFlag.BASS_STREAM_PRESCAN);
             MP3Length = MiscWrapper.GetMP3Length(MP3stream);
             VolumeMain = InitVolume;
             Bass.BASS_ChannelPlay(MP3stream, true);
