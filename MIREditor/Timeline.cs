@@ -19,6 +19,7 @@ namespace MIREditor
         public ChordEditor ChordEditor;
         public BeatEditor BeatEditor;
         public ChromaVisualizer ChromaVisualizer;
+        public ChordShortcuts ChordShortcuts;
 
         PictureBox pictureBox;
         BufferedGraphics myBuffer;
@@ -61,6 +62,7 @@ namespace MIREditor
         public bool IsMouseInControl = false;
         public bool IsShiftDown = false;
         public bool IsCtrlDown = false;
+        public bool IsAltDown = false;
 
 
         public int InitVolume = 50;
@@ -185,6 +187,7 @@ namespace MIREditor
             ChordEditor = new ChordEditor(this);
             BeatEditor = new BeatEditor(this);
             ChromaVisualizer = new ChromaVisualizer(this);
+            ChordShortcuts = new ChordShortcuts();
         }
         public void Init()
         {
@@ -204,6 +207,11 @@ namespace MIREditor
                     break;
                 case Keys.ControlKey:
                     IsCtrlDown = true;
+                    Triggers.ChordLabelChangeTrigger = true;
+                    break;
+                case Keys.Menu: // AltKey
+                    IsAltDown = true;
+                    Triggers.ChordLabelChangeTrigger = true;
                     break;
                 case Keys.Space:
                     Pause = !Pause;
@@ -258,12 +266,6 @@ namespace MIREditor
                     else if (BeatEditor.Enabled)
                         BeatEditor.ClearSelection();
                     break;
-                case Keys.N:
-                    ChordEditor.PerformInputChordIDUnderTonalty(12, Program.Form.RelativeLabelTonalty);
-                    break;
-                case Keys.X:
-                    ChordEditor.PerformInputChordIDUnderTonalty(13, Program.Form.RelativeLabelTonalty);
-                    break;
                 case Keys.F9:
                 case Keys.F10:
                 case Keys.F11:
@@ -283,13 +285,11 @@ namespace MIREditor
                     BeatEditor.SwitchCutSecondChord();
                     break;
                 default:
-                    for(int i=0;i<ChordEditor.InputKeys.Length;++i)
+                    Chord inputChord = ChordShortcuts.GetChordInput(ChordShortcuts.GetKeyID(keyCode), control, alt, shift, Program.Form.RelativeLabelTonalty, RelativeLabel);
+                    if(inputChord!=null)
                     {
-                        if(keyCode== ChordEditor.InputKeys[i])
-                        {
-                            ChordEditor.PerformInputChordIDUnderTonalty(i,Program.Form.RelativeLabelTonalty);
-                            return;
-                        }
+                        ChordEditor.PerformInputChord(inputChord);
+                        break;
                     }
                     Logger.Log(keyCode.ToString());
                     break;
@@ -338,6 +338,11 @@ namespace MIREditor
                     break;
                 case Keys.ControlKey:
                     IsCtrlDown = false;
+                    Triggers.ChordLabelChangeTrigger = true;
+                    break;
+                case Keys.Menu: // AltKey
+                    IsAltDown = false;
+                    Triggers.ChordLabelChangeTrigger = true;
                     break;
                 default:
                     break;

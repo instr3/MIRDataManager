@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,19 +10,33 @@ namespace Common
 {
     public class INIReader
     {
-        public string Filename { get; private set; }
-        public Dictionary<string, string> Data;
+        private string filename;
+        private Dictionary<string, string> data;
+        public IEnumerator GetEnumerator()
+        {
+            return data.GetEnumerator();
+        }
+        public string this[string key]
+        {
+            get
+            {
+                if (data.ContainsKey(key))
+                    return data[key];
+                else
+                    throw new Exception(filename + "文件中应该含有键" + key + "，但未找到！");
+            }
+        }
         public INIReader(string filename)
         {
-            Filename = filename;
-            Data = new Dictionary<string, string>();
-            using (StreamReader sr = new StreamReader(Filename))
+            this.filename = filename;
+            data = new Dictionary<string, string>();
+            using (StreamReader sr = new StreamReader(this.filename))
             {
                 List<string> lines = TextProcessor.LinesToList(sr.ReadToEnd());
                 foreach(string line in lines)
                 {
                     if (TextProcessor.IsDelimiter(line)) continue;
-                    Data[TextProcessor.GetKey(line)] = TextProcessor.GetStringValue(line);
+                    data[TextProcessor.GetKey(line)] = TextProcessor.GetStringValue(line);
                 }
             }
         }

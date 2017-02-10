@@ -30,10 +30,10 @@ namespace MIREditor
             Bass.BASS_Init(-1, 190000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
             INIReader INIReader = new INIReader("settings.ini");
-            ArchiveFolder = INIReader.Data["ArchiveFolder"];
-            ExportFolder = INIReader.Data["ExportFolder"];
-            DatasetMusicFolder = INIReader.Data["DatasetMusicFolder"];
-            TaggerName = INIReader.Data["TaggerName"];
+            ArchiveFolder = INIReader["ArchiveFolder"];
+            ExportFolder = INIReader["ExportFolder"];
+            DatasetMusicFolder = INIReader["DatasetMusicFolder"];
+            TaggerName = INIReader["TaggerName"];
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Form = new MainForm(args);

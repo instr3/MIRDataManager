@@ -29,21 +29,9 @@ namespace MIREditor
         public MainForm(string[] args)
         {
             InitializeComponent();
-            dataGridViewChord.RowHeadersDefaultCellStyle.Padding = new Padding(dataGridViewChord.RowHeadersWidth);
-            dataGridViewChord.RowPostPaint += new DataGridViewRowPostPaintEventHandler(dataGridView_RowPostPaint);
-            dataGridViewChord.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView_CellPainting);
-            ChordLabels = new Label[] { ChordLabel1,ChordLabel2,ChordLabel3,ChordLabel4,ChordLabel5,ChordLabel6,
-                ChordLabel7,ChordLabel8,ChordLabel9,ChordLabel10,ChordLabel11,ChordLabel12,ChordLabelN,ChordLabelX,ChordLabelQ
-            };
+            InitChordLabels();
             openOSUFileDialog.InitialDirectory = Program.DatasetMusicFolder;
             openInfoFileDialog.InitialDirectory = Program.ArchiveFolder;
-
-            for (int i = 0; i < 12; ++i)
-            {
-                dataGridViewChord.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dataGridViewChord.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            }
-                
             if (args.Length>0)
             {
                 if(args[0]=="<create>")
@@ -193,6 +181,78 @@ namespace MIREditor
         #endregion
 
         #region chordlabel input
+        private void ChordLabels_Paint(object sender,PaintEventArgs e)
+        {
+            Label owner = sender as Label;
+            e.Graphics.Clear(Color.White);
+            using (Brush mainBrush = new SolidBrush(owner.BackColor))
+            {
+                if (owner.ForeColor != owner.BackColor)
+                {
+                    using (Brush alterBrush = new LinearGradientBrush(new Point(0, owner.Height / 2 - 1), new Point(0, owner.Height), owner.BackColor, owner.ForeColor))
+                    {
+                        e.Graphics.FillRectangle(alterBrush, new Rectangle(0, owner.Height / 2, owner.Width, owner.Height / 2));
+                        e.Graphics.FillRectangle(mainBrush, new Rectangle(0, 0, owner.Width, owner.Height / 2));
+                    }
+                }
+                else
+                {
+                    e.Graphics.FillRectangle(mainBrush, new Rectangle(0, 0, owner.Width, owner.Height));
+                }
+            }
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+            e.Graphics.DrawString(owner.Text, owner.Font, Brushes.Black,
+                new Rectangle(0, 0, owner.Width, owner.Height), stringFormat);
+
+        }
+        private void InitChordLabels()
+        {
+            ChordLabels = new Label[] { ChordLabel1,ChordLabel2,ChordLabel3,ChordLabel4,ChordLabel5,ChordLabel6,
+                ChordLabel7,ChordLabel8,ChordLabel9,ChordLabel10,ChordLabel11,ChordLabel12,ChordLabelN,ChordLabelX,ChordLabelQ
+            };
+            for (int id = 0; id < 15; ++id)
+            {
+                ChordLabels[id].Font = FontManager.Instance.ChordFont;
+                ChordLabels[id].Paint += new PaintEventHandler(ChordLabels_Paint);
+                ChordLabels[id].BackColor = Color.White;
+                ChordLabels[id].ForeColor = Color.White;
+                ChordLabels[id].Text = "";
+            }
+        }
+        private void UpdateChordLabels()
+        {
+            Tonalty currentTonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
+            if (Triggers.ChordLabelChangeTrigger || RelativeLabelTonalty.ToString() != currentTonalty.ToString())
+            {
+                Triggers.ChordLabelChangeTrigger = false;
+                RelativeLabelTonalty = currentTonalty;
+                for (int id = 0; id < 15; ++id)
+                {
+                    Chord inputChord = Program.TL.ChordShortcuts.GetChordInput(
+                        id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonalty, Program.TL.RelativeLabel);
+                    if (inputChord != null)
+                    {
+                        KeyValuePair<Color,Color> colors = ColorSchema.GetGradientTransparentColorByChordName(inputChord.ToString(RelativeLabelTonalty),50);
+                        ChordLabels[id].BackColor = colors.Key;
+                        ChordLabels[id].ForeColor = colors.Value;
+                        if (Program.TL.RelativeLabel)
+                            ChordLabels[id].Text = inputChord.ToString(RelativeLabelTonalty);
+                        else
+                            ChordLabels[id].Text = inputChord.ToString();
+                    }
+                    else
+                    {
+                        ChordLabels[id].Text = "";
+                        ChordLabels[id].BackColor = Color.White;
+                        ChordLabels[id].ForeColor = Color.White;
+                    }
+                }
+                if (checkBoxChordKeyboard.Checked)
+                    InitChordKeyboard();
+            }
+        }
         private int GetChordLabelIndex(object sender)
         {
             for (int i = 0; i < ChordLabels.Length; ++i)
@@ -224,13 +284,18 @@ namespace MIREditor
             if (Program.TL != null)
             {
                 int id = GetChordLabelIndex(sender);
-                if (e.Button == listenMouseButton && id < 12)
+                Chord inputChord = Program.TL.ChordShortcuts.GetChordInput(
+                    id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonalty, Program.TL.RelativeLabel);
+                if (inputChord != null)
                 {
-                    Program.MidiManager.PlayChordNotes(Program.TL.ChordEditor.GetChordFromInputUnderTonalty(id, RelativeLabelTonalty));
-                }
-                else if (e.Button == inputMouseButton)
-                {
-                    Program.TL.ChordEditor.PerformInputChordIDUnderTonalty(id, RelativeLabelTonalty);
+                    if (e.Button == listenMouseButton)
+                    {
+                        Program.MidiManager.PlayChordNotes(inputChord);
+                    }
+                    else if (e.Button == inputMouseButton)
+                    {
+                        Program.TL.ChordEditor.PerformInputChord(inputChord);
+                    }
                 }
             }
         }
@@ -535,7 +600,7 @@ namespace MIREditor
         }
         #endregion
 
-        #region chord keyboard functions
+        #region chord keyboard datagridview functions
         private void checkBoxChordKeyboard_CheckedChanged(object sender, EventArgs e)
         {
             groupBoxChordKeyboard.Visible = checkBoxChordKeyboard.Checked;
@@ -578,6 +643,14 @@ namespace MIREditor
         }
         private void InitChordKeyboardRows()
         {
+            dataGridViewChord.RowHeadersDefaultCellStyle.Padding = new Padding(dataGridViewChord.RowHeadersWidth);
+            dataGridViewChord.RowPostPaint += new DataGridViewRowPostPaintEventHandler(dataGridView_RowPostPaint);
+            dataGridViewChord.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView_CellPainting);
+            for (int i = 0; i < 12; ++i)
+            {
+                dataGridViewChord.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewChord.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
             dataGridViewChord.Rows.Clear();
             relativeChordRows = new DataGridViewRow[Chord.GetChordTemplatesCount()];
             absoluteChordRows = new DataGridViewRow[Chord.GetChordTemplatesCount()];
@@ -760,28 +833,13 @@ namespace MIREditor
 
         }
         #endregion
-
+        
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (Program.TL != null)
             {
                 Program.TL.Draw();
-                //if (Triggers.ChordLabelChangeTrigger)
-                //{
-                Tonalty currentTonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
-                if (Triggers.ChordLabelChangeTrigger || RelativeLabelTonalty.ToString() != currentTonalty.ToString())
-                {
-                    Triggers.ChordLabelChangeTrigger = false;
-                    RelativeLabelTonalty = currentTonalty;
-                    for (int i = 0; i < 15; ++i)
-                    {
-                        ChordLabels[i].Text =
-                            Program.TL.ChordEditor.GetChordLabelTextUnderTonalty(i, RelativeLabelTonalty);
-                    }
-                    if (checkBoxChordKeyboard.Checked)
-                        InitChordKeyboard();
-                }
-                //}
+                UpdateChordLabels();
             }
 
         }

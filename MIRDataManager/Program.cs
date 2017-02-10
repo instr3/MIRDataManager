@@ -22,11 +22,11 @@ namespace MIRDataManager
         static void Main(string[] args)
         {
             INIReader INIReader = new INIReader("settings.ini");
-            ArchiveFolder = INIReader.Data["ArchiveFolder"];
-            ExportFolder = INIReader.Data["ExportFolder"];
-            DatasetMusicFolder = INIReader.Data["DatasetMusicFolder"];
-            OsuMapLink = INIReader.Data["OsuMapLink"];
-            OsuMirrorDownloadLink = INIReader.Data["OsuMirrorDownloadLink"];
+            ArchiveFolder = INIReader["ArchiveFolder"];
+            ExportFolder = INIReader["ExportFolder"];
+            DatasetMusicFolder = INIReader["DatasetMusicFolder"];
+            OsuMapLink = INIReader["OsuMapLink"];
+            OsuMirrorDownloadLink = INIReader["OsuMirrorDownloadLink"];
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

@@ -18,8 +18,8 @@ namespace Common
         {
             INIReader iniReader = new INIReader("Font.ini");
             Instance = new FontManager();
-            Instance.ChordFont = new Font(iniReader.Data["ChordFontFamily"], float.Parse(iniReader.Data["ChordFontSize"]));
-            Instance.NoteFont = new Font(iniReader.Data["NoteFontFamily"], float.Parse(iniReader.Data["NoteFontSize"]));
+            Instance.ChordFont = new Font(iniReader["ChordFontFamily"], float.Parse(iniReader["ChordFontSize"]));
+            Instance.NoteFont = new Font(iniReader["NoteFontFamily"], float.Parse(iniReader["NoteFontSize"]));
             // Instance.DefaultFont = new Font(iniReader.Data["DefaultFontFamily"], float.Parse(iniReader.Data["DefaultFontSize"]));
         }
     }

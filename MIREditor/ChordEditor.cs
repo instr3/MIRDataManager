@@ -12,7 +12,7 @@ namespace MIREditor
 {
     class ChordEditor
     {
-        public readonly Keys[] InputKeys = new Keys[]{ Keys.D1, Keys.F1, Keys.D2, Keys.F2, Keys.D3, Keys.D4, Keys.F4, Keys.D5, Keys.F5, Keys.D6, Keys.F6, Keys.D7, Keys.D9, Keys.D0, Keys.OemMinus };
+        // public readonly Keys[] InputKeys = new Keys[]{ Keys.D1, Keys.F1, Keys.D2, Keys.F2, Keys.D3, Keys.D4, Keys.F4, Keys.D5, Keys.F5, Keys.D6, Keys.F6, Keys.D7, Keys.D9, Keys.D0, Keys.OemMinus };
         public const double NEXT_CHORD_START_PERCENT = 0.5;
         public const double NEXT_CHORD_START_TIME = 0.3;
         public readonly bool[] DefaultRelativeMajMin = new bool[] { true, false, false, true, false, true, false, true, false, false, true,false };
@@ -84,17 +84,17 @@ namespace MIREditor
 
         public ChordClipboard[] ChordClipboards;
 
-        public string GetChordLabelTextUnderTonalty(int id, Tonalty tonalty)
+        public ChordEditor(Timeline tl)
         {
-            return TL.RelativeLabel && tonalty.Root != -1 ? 
-                GetChordFromInputUnderTonalty(id, tonalty).ToString(tonalty) : 
-                GetChordFromInputUnderTonalty(id, tonalty).ToString();
+            TL = tl;
+            Info = TL.Info;
+            ChordClipboards = new ChordClipboard[4];
+            ChordClipboards[0] = new ChordClipboard(Program.Form.pictureBox1, "1");
+            ChordClipboards[1] = new ChordClipboard(Program.Form.pictureBox2, "2");
+            ChordClipboards[2] = new ChordClipboard(Program.Form.pictureBox3, "3");
+            ChordClipboards[3] = new ChordClipboard(Program.Form.pictureBox4, "4");
         }
 
-        public void PerformInputChordIDUnderTonalty(int id, Tonalty tonalty)
-        {
-            PerformInputChord(GetChordFromInputUnderTonalty(id, tonalty));
-        }
         public void PerformInputChord(Chord chord)
         {
             if (ValidPointer)
@@ -107,43 +107,6 @@ namespace MIREditor
             }
 
         }
-        public Chord GetChordFromInputUnderTonalty(int id,Tonalty tonalty)
-        {
-            if (id >= 12)
-            {
-                switch((Chord.MutedChordTypeEnum)(id - 12))
-                {
-                    case Chord.MutedChordTypeEnum.NMark:
-                        return Chord.NoChord;
-                    case Chord.MutedChordTypeEnum.QMark:
-                        return Chord.UnknownChord;
-                    case Chord.MutedChordTypeEnum.XMark:
-                        return Chord.UnrepresentableChord;
-                    default:
-                        throw new Exception("Out of index");
-                }
-            }
-            else if (TL.RelativeLabel && tonalty.Root != -1)
-            {
-                int scale = tonalty.Root + id >= 12 ? tonalty.Root + id - 12 : tonalty.Root + id;
-                return Chord.SimpleTraid(scale, DefaultRelativeMajMin[id] ^ TL.IsShiftDown);
-            }
-            else
-            {
-                return Chord.SimpleTraid(id, !TL.IsShiftDown);
-            }
-        }
-        public ChordEditor(Timeline tl)
-        {
-            TL = tl;
-            Info = TL.Info;
-            ChordClipboards = new ChordClipboard[4];
-            ChordClipboards[0] = new ChordClipboard(Program.Form.pictureBox1, "1");
-            ChordClipboards[1] = new ChordClipboard(Program.Form.pictureBox2, "2");
-            ChordClipboards[2] = new ChordClipboard(Program.Form.pictureBox3, "3");
-            ChordClipboards[3] = new ChordClipboard(Program.Form.pictureBox4, "4");
-        }
-
         private int RightExpandBound(int beatID,int align)
         {
             if (align == 1) return beatID;

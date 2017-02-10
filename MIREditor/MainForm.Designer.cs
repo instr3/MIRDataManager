@@ -82,6 +82,11 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.button_BERemoveRight = new System.Windows.Forms.Button();
+            this.button_BERemoveLeft = new System.Windows.Forms.Button();
+            this.button_BEExtendBeat = new System.Windows.Forms.Button();
+            this.buttonCutInsertChord = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.button_TESwitchMajMin = new System.Windows.Forms.Button();
             this.comboBox_TETonalty = new System.Windows.Forms.ComboBox();
@@ -133,9 +138,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonRawChord = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.comboBoxAlignBeats = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ChordLabelQ = new System.Windows.Forms.Label();
@@ -159,11 +162,8 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.buttonCutInsertChord = new System.Windows.Forms.Button();
-            this.button_BEExtendBeat = new System.Windows.Forms.Button();
-            this.button_BERemoveLeft = new System.Windows.Forms.Button();
-            this.button_BERemoveRight = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -174,6 +174,7 @@
             this.groupBox10.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -186,13 +187,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox12.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // TimelinePictureBox
@@ -647,19 +647,21 @@
             // 
             // comboBoxConfigConfidence
             // 
-            this.comboBoxConfigConfidence.Font = new System.Drawing.Font("宋体", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBoxConfigConfidence.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxConfigConfidence.FormattingEnabled = true;
-            this.comboBoxConfigConfidence.ItemHeight = 17;
+            this.comboBoxConfigConfidence.ItemHeight = 12;
             this.comboBoxConfigConfidence.Items.AddRange(new object[] {
             "0（不适合标注）",
             "1（未标注）",
             "2（不完整标注）",
-            "3（不确定正确）",
-            "4（基本正确）",
-            "5（已审核正确）"});
+            "3（未确定正确）",
+            "4（三和弦基本正确）",
+            "5（三和弦核验正确）",
+            "6（七和弦基本正确）",
+            "7（七和弦核验正确）"});
             this.comboBoxConfigConfidence.Location = new System.Drawing.Point(54, 17);
             this.comboBoxConfigConfidence.Name = "comboBoxConfigConfidence";
-            this.comboBoxConfigConfidence.Size = new System.Drawing.Size(133, 106);
+            this.comboBoxConfigConfidence.Size = new System.Drawing.Size(133, 100);
             this.comboBoxConfigConfidence.TabIndex = 4;
             this.comboBoxConfigConfidence.SelectedIndexChanged += new System.EventHandler(this.comboBoxConfigConfidence_SelectedIndexChanged);
             // 
@@ -704,6 +706,60 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "节拍与调性";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox12
+            // 
+            this.groupBox12.BackColor = System.Drawing.Color.White;
+            this.groupBox12.Controls.Add(this.button_BERemoveRight);
+            this.groupBox12.Controls.Add(this.button_BERemoveLeft);
+            this.groupBox12.Controls.Add(this.button_BEExtendBeat);
+            this.groupBox12.Controls.Add(this.buttonCutInsertChord);
+            this.groupBox12.Location = new System.Drawing.Point(203, 287);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(214, 84);
+            this.groupBox12.TabIndex = 16;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "杂项操作";
+            // 
+            // button_BERemoveRight
+            // 
+            this.button_BERemoveRight.Location = new System.Drawing.Point(110, 49);
+            this.button_BERemoveRight.Name = "button_BERemoveRight";
+            this.button_BERemoveRight.Size = new System.Drawing.Size(95, 23);
+            this.button_BERemoveRight.TabIndex = 4;
+            this.button_BERemoveRight.Text = "删除之后节拍";
+            this.button_BERemoveRight.UseVisualStyleBackColor = true;
+            this.button_BERemoveRight.Click += new System.EventHandler(this.button_BERemoveRight_Click);
+            // 
+            // button_BERemoveLeft
+            // 
+            this.button_BERemoveLeft.Location = new System.Drawing.Point(9, 49);
+            this.button_BERemoveLeft.Name = "button_BERemoveLeft";
+            this.button_BERemoveLeft.Size = new System.Drawing.Size(95, 23);
+            this.button_BERemoveLeft.TabIndex = 3;
+            this.button_BERemoveLeft.Text = "删除之前节拍";
+            this.button_BERemoveLeft.UseVisualStyleBackColor = true;
+            this.button_BERemoveLeft.Click += new System.EventHandler(this.button_BERemoveLeft_Click);
+            // 
+            // button_BEExtendBeat
+            // 
+            this.button_BEExtendBeat.Location = new System.Drawing.Point(110, 20);
+            this.button_BEExtendBeat.Name = "button_BEExtendBeat";
+            this.button_BEExtendBeat.Size = new System.Drawing.Size(95, 23);
+            this.button_BEExtendBeat.TabIndex = 2;
+            this.button_BEExtendBeat.Text = "延拓节拍至此";
+            this.button_BEExtendBeat.UseVisualStyleBackColor = true;
+            this.button_BEExtendBeat.Click += new System.EventHandler(this.button_BEExtendBeat_Click);
+            // 
+            // buttonCutInsertChord
+            // 
+            this.buttonCutInsertChord.Location = new System.Drawing.Point(9, 20);
+            this.buttonCutInsertChord.Name = "buttonCutInsertChord";
+            this.buttonCutInsertChord.Size = new System.Drawing.Size(95, 23);
+            this.buttonCutInsertChord.TabIndex = 0;
+            this.buttonCutInsertChord.Text = "和弦切分(Ins)";
+            this.buttonCutInsertChord.UseVisualStyleBackColor = true;
+            this.buttonCutInsertChord.Click += new System.EventHandler(this.buttonCutInsertChord_Click);
             // 
             // groupBox9
             // 
@@ -1156,9 +1212,9 @@
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.pictureBox1);
-            this.groupBox3.Location = new System.Drawing.Point(7, 351);
+            this.groupBox3.Location = new System.Drawing.Point(7, 366);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(611, 146);
+            this.groupBox3.Size = new System.Drawing.Size(611, 135);
             this.groupBox3.TabIndex = 16;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "剪切板";
@@ -1166,7 +1222,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(529, 115);
+            this.label8.Location = new System.Drawing.Point(529, 109);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(23, 12);
             this.label8.TabIndex = 11;
@@ -1175,7 +1231,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 115);
+            this.label9.Location = new System.Drawing.Point(6, 109);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(59, 12);
             this.label9.TabIndex = 10;
@@ -1184,7 +1240,7 @@
             // pictureBox4
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox4.Location = new System.Drawing.Point(68, 110);
+            this.pictureBox4.Location = new System.Drawing.Point(68, 104);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(455, 24);
             this.pictureBox4.TabIndex = 9;
@@ -1193,7 +1249,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(529, 85);
+            this.label6.Location = new System.Drawing.Point(529, 79);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(23, 12);
             this.label6.TabIndex = 8;
@@ -1202,7 +1258,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 85);
+            this.label7.Location = new System.Drawing.Point(6, 79);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(59, 12);
             this.label7.TabIndex = 7;
@@ -1211,7 +1267,7 @@
             // pictureBox3
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Location = new System.Drawing.Point(68, 80);
+            this.pictureBox3.Location = new System.Drawing.Point(68, 74);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(455, 24);
             this.pictureBox3.TabIndex = 6;
@@ -1220,7 +1276,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(529, 55);
+            this.label4.Location = new System.Drawing.Point(529, 49);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(17, 12);
             this.label4.TabIndex = 5;
@@ -1229,7 +1285,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 55);
+            this.label5.Location = new System.Drawing.Point(6, 49);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 4;
@@ -1238,7 +1294,7 @@
             // pictureBox2
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(68, 50);
+            this.pictureBox2.Location = new System.Drawing.Point(68, 44);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(455, 24);
             this.pictureBox2.TabIndex = 3;
@@ -1247,7 +1303,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(529, 25);
+            this.label3.Location = new System.Drawing.Point(529, 19);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 2;
@@ -1256,7 +1312,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 25);
+            this.label2.Location = new System.Drawing.Point(8, 19);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 1;
@@ -1265,50 +1321,29 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(68, 20);
+            this.pictureBox1.Location = new System.Drawing.Point(68, 14);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(455, 24);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.buttonRawChord);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.comboBoxAlignBeats);
-            this.groupBox2.Location = new System.Drawing.Point(332, 282);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(221, 63);
-            this.groupBox2.TabIndex = 15;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "对齐";
-            // 
             // buttonRawChord
             // 
-            this.buttonRawChord.Location = new System.Drawing.Point(123, 14);
+            this.buttonRawChord.Location = new System.Drawing.Point(5, 15);
             this.buttonRawChord.Name = "buttonRawChord";
-            this.buttonRawChord.Size = new System.Drawing.Size(92, 25);
+            this.buttonRawChord.Size = new System.Drawing.Size(81, 21);
             this.buttonRawChord.TabIndex = 10;
             this.buttonRawChord.Text = "原始和弦(O)";
             this.buttonRawChord.UseVisualStyleBackColor = true;
             this.buttonRawChord.Click += new System.EventHandler(this.buttonRawChord_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 42);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(197, 12);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "节奏有误请在“节拍”选项卡中修改";
-            // 
             // comboBoxAlignBeats
             // 
             this.comboBoxAlignBeats.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAlignBeats.FormattingEnabled = true;
-            this.comboBoxAlignBeats.Location = new System.Drawing.Point(16, 16);
+            this.comboBoxAlignBeats.Location = new System.Drawing.Point(7, 55);
             this.comboBoxAlignBeats.Name = "comboBoxAlignBeats";
-            this.comboBoxAlignBeats.Size = new System.Drawing.Size(81, 20);
+            this.comboBoxAlignBeats.Size = new System.Drawing.Size(79, 20);
             this.comboBoxAlignBeats.TabIndex = 0;
             this.comboBoxAlignBeats.SelectedIndexChanged += new System.EventHandler(this.comboBoxAlignBeats_SelectedIndexChanged);
             // 
@@ -1331,7 +1366,7 @@
             this.groupBox1.Controls.Add(this.ChordLabel1);
             this.groupBox1.Location = new System.Drawing.Point(6, 281);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(319, 64);
+            this.groupBox1.Size = new System.Drawing.Size(455, 83);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "主要三和弦(Shift大小三切换)";
@@ -1340,9 +1375,9 @@
             // 
             this.ChordLabelQ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabelQ.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabelQ.Location = new System.Drawing.Point(280, 35);
+            this.ChordLabelQ.Location = new System.Drawing.Point(391, 45);
             this.ChordLabelQ.Name = "ChordLabelQ";
-            this.ChordLabelQ.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabelQ.Size = new System.Drawing.Size(40, 30);
             this.ChordLabelQ.TabIndex = 21;
             this.ChordLabelQ.Text = "?";
             this.ChordLabelQ.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1352,9 +1387,9 @@
             // 
             this.ChordLabelX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabelX.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabelX.Location = new System.Drawing.Point(250, 35);
+            this.ChordLabelX.Location = new System.Drawing.Point(351, 45);
             this.ChordLabelX.Name = "ChordLabelX";
-            this.ChordLabelX.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabelX.Size = new System.Drawing.Size(40, 30);
             this.ChordLabelX.TabIndex = 20;
             this.ChordLabelX.Text = "X";
             this.ChordLabelX.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1364,9 +1399,9 @@
             // 
             this.ChordLabelN.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabelN.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabelN.Location = new System.Drawing.Point(220, 35);
+            this.ChordLabelN.Location = new System.Drawing.Point(311, 45);
             this.ChordLabelN.Name = "ChordLabelN";
-            this.ChordLabelN.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabelN.Size = new System.Drawing.Size(40, 30);
             this.ChordLabelN.TabIndex = 19;
             this.ChordLabelN.Text = "N";
             this.ChordLabelN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1376,9 +1411,9 @@
             // 
             this.ChordLabel12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel12.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel12.Location = new System.Drawing.Point(185, 35);
+            this.ChordLabel12.Location = new System.Drawing.Point(245, 45);
             this.ChordLabel12.Name = "ChordLabel12";
-            this.ChordLabel12.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel12.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel12.TabIndex = 18;
             this.ChordLabel12.Text = "vii";
             this.ChordLabel12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1388,9 +1423,9 @@
             // 
             this.ChordLabel11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel11.Location = new System.Drawing.Point(170, 15);
+            this.ChordLabel11.Location = new System.Drawing.Point(225, 15);
             this.ChordLabel11.Name = "ChordLabel11";
-            this.ChordLabel11.Size = new System.Drawing.Size(31, 20);
+            this.ChordLabel11.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel11.TabIndex = 17;
             this.ChordLabel11.Text = "VIIb";
             this.ChordLabel11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1400,9 +1435,9 @@
             // 
             this.ChordLabel9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel9.Location = new System.Drawing.Point(140, 15);
+            this.ChordLabel9.Location = new System.Drawing.Point(185, 15);
             this.ChordLabel9.Name = "ChordLabel9";
-            this.ChordLabel9.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel9.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel9.TabIndex = 16;
             this.ChordLabel9.Text = "v#";
             this.ChordLabel9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1412,9 +1447,9 @@
             // 
             this.ChordLabel10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel10.Location = new System.Drawing.Point(155, 35);
+            this.ChordLabel10.Location = new System.Drawing.Point(205, 45);
             this.ChordLabel10.Name = "ChordLabel10";
-            this.ChordLabel10.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel10.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel10.TabIndex = 15;
             this.ChordLabel10.Text = "vi";
             this.ChordLabel10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1424,9 +1459,9 @@
             // 
             this.ChordLabel8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel8.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel8.Location = new System.Drawing.Point(125, 35);
+            this.ChordLabel8.Location = new System.Drawing.Point(165, 45);
             this.ChordLabel8.Name = "ChordLabel8";
-            this.ChordLabel8.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel8.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel8.TabIndex = 14;
             this.ChordLabel8.Text = "V";
             this.ChordLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1436,9 +1471,9 @@
             // 
             this.ChordLabel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel7.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel7.Location = new System.Drawing.Point(110, 15);
+            this.ChordLabel7.Location = new System.Drawing.Point(145, 15);
             this.ChordLabel7.Name = "ChordLabel7";
-            this.ChordLabel7.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel7.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel7.TabIndex = 13;
             this.ChordLabel7.Text = "iv#";
             this.ChordLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1448,9 +1483,9 @@
             // 
             this.ChordLabel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel6.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel6.Location = new System.Drawing.Point(95, 35);
+            this.ChordLabel6.Location = new System.Drawing.Point(125, 45);
             this.ChordLabel6.Name = "ChordLabel6";
-            this.ChordLabel6.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel6.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel6.TabIndex = 12;
             this.ChordLabel6.Text = "IV";
             this.ChordLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1460,9 +1495,9 @@
             // 
             this.ChordLabel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel5.Location = new System.Drawing.Point(65, 35);
+            this.ChordLabel5.Location = new System.Drawing.Point(85, 45);
             this.ChordLabel5.Name = "ChordLabel5";
-            this.ChordLabel5.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel5.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel5.TabIndex = 11;
             this.ChordLabel5.Text = "iii";
             this.ChordLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1472,9 +1507,9 @@
             // 
             this.ChordLabel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel4.Location = new System.Drawing.Point(50, 15);
+            this.ChordLabel4.Location = new System.Drawing.Point(65, 15);
             this.ChordLabel4.Name = "ChordLabel4";
-            this.ChordLabel4.Size = new System.Drawing.Size(31, 20);
+            this.ChordLabel4.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel4.TabIndex = 10;
             this.ChordLabel4.Text = "IIIb";
             this.ChordLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1484,9 +1519,9 @@
             // 
             this.ChordLabel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel3.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel3.Location = new System.Drawing.Point(35, 35);
+            this.ChordLabel3.Location = new System.Drawing.Point(45, 45);
             this.ChordLabel3.Name = "ChordLabel3";
-            this.ChordLabel3.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel3.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel3.TabIndex = 9;
             this.ChordLabel3.Text = "ii";
             this.ChordLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1496,9 +1531,9 @@
             // 
             this.ChordLabel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel2.Location = new System.Drawing.Point(20, 15);
+            this.ChordLabel2.Location = new System.Drawing.Point(25, 15);
             this.ChordLabel2.Name = "ChordLabel2";
-            this.ChordLabel2.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel2.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel2.TabIndex = 8;
             this.ChordLabel2.Text = "i#";
             this.ChordLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1508,9 +1543,9 @@
             // 
             this.ChordLabel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChordLabel1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ChordLabel1.Location = new System.Drawing.Point(5, 35);
+            this.ChordLabel1.Location = new System.Drawing.Point(5, 45);
             this.ChordLabel1.Name = "ChordLabel1";
-            this.ChordLabel1.Size = new System.Drawing.Size(30, 20);
+            this.ChordLabel1.Size = new System.Drawing.Size(40, 30);
             this.ChordLabel1.TabIndex = 7;
             this.ChordLabel1.Text = "I";
             this.ChordLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1580,59 +1615,26 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
-            // groupBox12
+            // groupBox2
             // 
-            this.groupBox12.BackColor = System.Drawing.Color.White;
-            this.groupBox12.Controls.Add(this.button_BERemoveRight);
-            this.groupBox12.Controls.Add(this.button_BERemoveLeft);
-            this.groupBox12.Controls.Add(this.button_BEExtendBeat);
-            this.groupBox12.Controls.Add(this.buttonCutInsertChord);
-            this.groupBox12.Location = new System.Drawing.Point(203, 287);
-            this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(214, 84);
-            this.groupBox12.TabIndex = 16;
-            this.groupBox12.TabStop = false;
-            this.groupBox12.Text = "杂项操作";
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.buttonRawChord);
+            this.groupBox2.Controls.Add(this.comboBoxAlignBeats);
+            this.groupBox2.Location = new System.Drawing.Point(467, 281);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(91, 83);
+            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "杂项";
             // 
-            // buttonCutInsertChord
+            // label1
             // 
-            this.buttonCutInsertChord.Location = new System.Drawing.Point(9, 20);
-            this.buttonCutInsertChord.Name = "buttonCutInsertChord";
-            this.buttonCutInsertChord.Size = new System.Drawing.Size(95, 23);
-            this.buttonCutInsertChord.TabIndex = 0;
-            this.buttonCutInsertChord.Text = "和弦切分(Ins)";
-            this.buttonCutInsertChord.UseVisualStyleBackColor = true;
-            this.buttonCutInsertChord.Click += new System.EventHandler(this.buttonCutInsertChord_Click);
-            // 
-            // button_BEExtendBeat
-            // 
-            this.button_BEExtendBeat.Location = new System.Drawing.Point(110, 20);
-            this.button_BEExtendBeat.Name = "button_BEExtendBeat";
-            this.button_BEExtendBeat.Size = new System.Drawing.Size(95, 23);
-            this.button_BEExtendBeat.TabIndex = 2;
-            this.button_BEExtendBeat.Text = "延拓节拍至此";
-            this.button_BEExtendBeat.UseVisualStyleBackColor = true;
-            this.button_BEExtendBeat.Click += new System.EventHandler(this.button_BEExtendBeat_Click);
-            // 
-            // button_BERemoveLeft
-            // 
-            this.button_BERemoveLeft.Location = new System.Drawing.Point(9, 49);
-            this.button_BERemoveLeft.Name = "button_BERemoveLeft";
-            this.button_BERemoveLeft.Size = new System.Drawing.Size(95, 23);
-            this.button_BERemoveLeft.TabIndex = 3;
-            this.button_BERemoveLeft.Text = "删除之前节拍";
-            this.button_BERemoveLeft.UseVisualStyleBackColor = true;
-            this.button_BERemoveLeft.Click += new System.EventHandler(this.button_BERemoveLeft_Click);
-            // 
-            // button_BERemoveRight
-            // 
-            this.button_BERemoveRight.Location = new System.Drawing.Point(110, 49);
-            this.button_BERemoveRight.Name = "button_BERemoveRight";
-            this.button_BERemoveRight.Size = new System.Drawing.Size(95, 23);
-            this.button_BERemoveRight.TabIndex = 4;
-            this.button_BERemoveRight.Text = "删除之后节拍";
-            this.button_BERemoveRight.UseVisualStyleBackColor = true;
-            this.button_BERemoveRight.Click += new System.EventHandler(this.button_BERemoveRight_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 39);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 12);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "填充节拍";
             // 
             // MainForm
             // 
@@ -1666,6 +1668,7 @@
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.groupBox12.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -1681,14 +1684,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.groupBox12.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1743,8 +1745,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBoxAlignBeats;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label ChordLabelQ;
@@ -1829,5 +1829,7 @@
         private System.Windows.Forms.Button buttonCutInsertChord;
         private System.Windows.Forms.Button button_BERemoveRight;
         private System.Windows.Forms.Button button_BERemoveLeft;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label1;
     }
 }

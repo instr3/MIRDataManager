@@ -40,7 +40,7 @@ namespace Common
                 patternStringsBig[i] = "{I+" + i + "}";
                 patternStringsSmall[i] = "{i+" + i + "}";
             }
-            foreach (KeyValuePair<string,string> kv in iniReader.Data)
+            foreach (KeyValuePair<string,string> kv in iniReader)
             {
                 if (kv.Key == "Name")
                 {
