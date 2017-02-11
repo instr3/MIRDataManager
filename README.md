@@ -1,6 +1,8 @@
 # MIRDataManager
 可视化的和弦标注软件，主要针对[osu数据集](https://github.com/instr3/osu-dataset)
 
+![Picture](https://raw.githubusercontent.com/instr3/MIRDataManager/master/Screenshot/editor1.png)
+
 # 特色功能
 没啥功能，随便玩吧
 
@@ -25,3 +27,13 @@
 2. ~~改善和弦种类、配色方案、调性分析的硬编码问题~~已更新
 3. 窗体大小改变，ui改进（考虑非winForm）
 4. 其他各种bug 
+
+# 指南
+[阅读指南](https://github.com/instr3/MIRDataManager/blob/master/Tutorial/Tutorial.md)
+
+指南内容包括：
+
+1. 和弦听辨练习方法
+2. 标注规范和注意事项
+3. 标注工具简明教程
+

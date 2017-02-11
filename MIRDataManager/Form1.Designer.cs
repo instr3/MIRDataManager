@@ -126,12 +126,16 @@
             "至少2",
             "至少3",
             "至少4",
+            "至少5",
+            "至少6",
             "0",
             "1",
             "2",
             "3",
             "4",
-            "5"});
+            "5",
+            "6",
+            "7"});
             this.comboBoxScoreFilter.Location = new System.Drawing.Point(54, 45);
             this.comboBoxScoreFilter.Name = "comboBoxScoreFilter";
             this.comboBoxScoreFilter.Size = new System.Drawing.Size(101, 20);
