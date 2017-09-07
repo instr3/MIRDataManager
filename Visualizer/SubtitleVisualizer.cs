@@ -24,6 +24,7 @@ namespace Visualizer
         public int BeatsPerSegment;
         public const int GRAPHIC_WIDTH = 1024;
         public const int GRAPHIC_HEIGHT = 768;
+        public const int ROW_BASE_HEIGHT = 745;
         public const int SUBTITLE_WIDTH = 768;
         public const double RELATIVE_NOTES_SPEED_4 = 0.5;
         public const double RELATIVE_NOTES_SPEED_3 = 1.0;
@@ -49,6 +50,7 @@ namespace Visualizer
             set
             {
                 if (value < 0) value = 0;
+                currentSegID = 0; // Prevent drawing errors
                 CurrentPosition = Bass.BASS_ChannelSeconds2Bytes(MP3stream, value);
             }
         }
@@ -138,6 +140,9 @@ namespace Visualizer
         protected Font scriptFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 12f);
         protected Font suffixFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 24f);
 
+        protected Font titleFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 28f);
+        protected Font metadataFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 18f);
+
         protected int DrawSimpleText(string text,int font_id,int left, int top, int alpha=255)
         {
             Brush alphaWhiteBrush = new SolidBrush(Color.FromArgb(alpha, Color.White));
@@ -185,8 +190,15 @@ namespace Visualizer
                     result += (int)(G.MeasureString(text, suffixFont).Width);
                     return result - 8;
                 case 4:
-                    G.DrawString(text, smallSuffixFont, alphaWhiteBrush, new Point(left, top));
-                    result = (int)(G.MeasureString(text, smallSuffixFont).Width);
+                    result = 0;
+                    if (text != "" && (text[0] == '#' || text[0] == 'b'))
+                    {
+                        G.DrawString(text.Substring(0, 1), scriptFont, alphaWhiteBrush, new Point(left, top));
+                        result += (int)(G.MeasureString(text, scriptFont).Width) - 14;
+                        text = text.Substring(1);
+                    }
+                    G.DrawString(text, smallSuffixFont, alphaWhiteBrush, new Point(left + result, top));
+                    result += (int)(G.MeasureString(text, smallSuffixFont).Width);
                     return result - 8;
                 default:
                     throw new NotImplementedException();
@@ -263,7 +275,7 @@ namespace Visualizer
                 throw new NotImplementedException();
             if (timespan < 0)
                 return;
-            int top = (int)Math.Round(GRAPHIC_HEIGHT - (row + 1) * 50);
+            int top = (int)Math.Round(ROW_BASE_HEIGHT - (row + 1) * 50);
             int left = (int)Math.Round((GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + left_percent * SUBTITLE_WIDTH);
             int width = (int)Math.Round(width_percent * SUBTITLE_WIDTH);
             double keep_timespan = width_percent * BeatsPerSegment;
@@ -311,7 +323,7 @@ namespace Visualizer
         }
         protected void DrawPivot(double percent,int row)
         {
-            int top = GRAPHIC_HEIGHT - (row + 1) * 50;
+            int top = ROW_BASE_HEIGHT - (row + 1) * 50;
             int left = (int)Math.Round((GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + percent * SUBTITLE_WIDTH);
             int right = (GRAPHIC_WIDTH + SUBTITLE_WIDTH) / 2;
             int outer = 2;
@@ -321,8 +333,8 @@ namespace Visualizer
         }
         protected void DrawScale(double percent, int row)
         {
-            int top = GRAPHIC_HEIGHT - (row + 1) * 50;
-            int bottom = GRAPHIC_HEIGHT - row * 50 - 10;
+            int top = ROW_BASE_HEIGHT - (row + 1) * 50;
+            int bottom = ROW_BASE_HEIGHT - row * 50 - 10;
             int ymid = (top + bottom) / 2;
             int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2;
             int right = (GRAPHIC_WIDTH + SUBTITLE_WIDTH) / 2;
@@ -342,8 +354,8 @@ namespace Visualizer
         {
             int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 - 5;
             int right = (GRAPHIC_WIDTH + SUBTITLE_WIDTH) / 2 + 5;
-            int top = GRAPHIC_HEIGHT - (endRow + 1) * 50;
-            int bottom = GRAPHIC_HEIGHT - startRow * 50;
+            int top = ROW_BASE_HEIGHT - (endRow + 1) * 50;
+            int bottom = ROW_BASE_HEIGHT - startRow * 50;
             Brush gredientBrush = new LinearGradientBrush(new Point(left, top), new Point(left, bottom), Color.FromArgb(255, Color.Black), Color.FromArgb(0, Color.Black));
             G.FillRectangle(gredientBrush, new Rectangle(left, top, right - left, bottom - top));
             G.FillRectangle(Brushes.Black, new Rectangle(left, top - 55, right - left, 55));
@@ -404,9 +416,10 @@ namespace Visualizer
                     else
                         row += TONALTY_INDICATION_HEIGHT_IN_ROW;
                     int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + 10;
-                    int top= (int)Math.Round(GRAPHIC_HEIGHT - row * 50 - 10);
+                    int top= (int)Math.Round(ROW_BASE_HEIGHT - row * 50 - 10);
                     int alpha = (int)(255 * ClampedLerp(0, 1, row / (1 + TONALTY_INDICATION_HEIGHT_IN_ROW)));
-                    DrawSimpleText("^ 1 = " + new string(Chord.Num2Char[oldTonalty.Root].Reverse().ToArray()), 4, left, top, alpha);
+                    left += DrawSimpleText("^ 1 = ", 4, left, top, alpha) + 6;
+                    left+=DrawSimpleText(new string(Chord.Num2Char[oldTonalty.Root].Reverse().ToArray()), 4, left, top, alpha);
                     tonalty = oldTonalty;
                 }
                 if (row >= MAX_HISTORY_DISPLAY + 1)
@@ -443,26 +456,29 @@ namespace Visualizer
         private int DrawTonaltyText(int root,int left, int top)
         {
             string scaleText = new string(Chord.Num2Char[root].Reverse().ToArray());
-            left += DrawSimpleText(scaleText, 3, left, top);
-            return left;
+            return DrawSimpleText(scaleText, 3, left, top);
         }
         private Tonalty DrawTonalty(Tonalty tonalty, Tonalty oldTonalty, double timespan)
         {
-            double TONALTY_TRANSITION_TIME = 1.0;
-            int TONALTY_TOP = 100;
-            int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + 50;
+            double TONALTY_TRANSITION_TIME = 1.5;
+            int TONALTY_TOP = 170;
+            int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + 5;
             left += DrawSimpleText("1 = ", 3, left, TONALTY_TOP) + 8;
             if (oldTonalty!=null && tonalty!=oldTonalty && timespan>=0 && timespan<TONALTY_TRANSITION_TIME)
             {
                 int scale_old = oldTonalty.Root;
                 int scale_new = tonalty.Root;
                 int delta_scale = (scale_new - scale_old + 12) % 12;
-                if (delta_scale < 6)
+                if (delta_scale < 3)
                     delta_scale += 12;
-                double progress = Math.Sin(Math.PI/2*timespan / TONALTY_TRANSITION_TIME) * delta_scale;
+                double progress = Math.Sin(Math.PI/2*Math.Sqrt(timespan / TONALTY_TRANSITION_TIME)) * delta_scale;
                 int progress_lower = (int)Math.Floor(progress);
-                DrawTonaltyText((oldTonalty.Root + progress_lower) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower)));
-                DrawTonaltyText((oldTonalty.Root + progress_lower + 1) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower - 1)));
+                int width1=DrawTonaltyText((oldTonalty.Root + progress_lower) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower)));
+                int width2=DrawTonaltyText((oldTonalty.Root + progress_lower + 1) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower - 1)));
+
+                G.FillRectangle(Brushes.Black, new Rectangle(left, TONALTY_TOP - 50, width1 + 16, 50));
+                G.FillRectangle(Brushes.Black, new Rectangle(left, TONALTY_TOP + 40, width2 + 16, 35));
+
                 return Tonalty.MajMinTonalty((oldTonalty.Root + (int)Math.Round(progress)) % 12, tonalty.MajMin);
             }
             else
@@ -470,15 +486,22 @@ namespace Visualizer
                 DrawTonaltyText(tonalty.Root, left, TONALTY_TOP);
                 return tonalty;
             }
-            /*if (scaleText.Length == 2)
-            {
-                left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, TONALTY_TOP);
-                left += DrawSimpleText(scaleText.Substring(0, 1), 2, left, TONALTY_TOP);
-            }
-            else
-            {
-                left += DrawSimpleText(scaleText, 0, left, TONALTY_TOP);
-            }*/
+
+        }
+        public void DrawMetadata()
+        {
+            int TITLE_TOP = 55;
+            int METADATA_RIGHT = 130;
+            string title = "I AM A SUPER LONG TITLE PLACEHOLDER";
+            int width = (int)(G.MeasureString(title, titleFont).Width);
+            int left = (GRAPHIC_WIDTH - width) / 2;
+            G.DrawString(title, titleFont, Brushes.White, new Point(left, TITLE_TOP));
+            string line1 = "Music by Mr.Unknown";
+            string line2 = "Words by Mr.Unknown";
+            int width1 = (int)(G.MeasureString(line1, metadataFont).Width);
+            int width2 = (int)(G.MeasureString(line2, metadataFont).Width);
+            G.DrawString(line1, metadataFont, Brushes.White, new Point(GRAPHIC_WIDTH - METADATA_RIGHT - width1, TITLE_TOP + 45));
+            G.DrawString(line2, metadataFont, Brushes.White, new Point(GRAPHIC_WIDTH - METADATA_RIGHT - width2, TITLE_TOP + 80));
 
         }
         public void DrawFrame()
@@ -489,23 +512,29 @@ namespace Visualizer
                 SwitchToNextSegment();
             }
             G.Clear(Color.Black);
-            Tonalty gredientTonalty = null;
             if (currentSegID < segments.Count)
             {
                 double startTime = Info.Beats[segments[currentSegID].StartBeat].Time;
                 double endTime = Info.Beats[segments[currentSegID].EndBeat].Time;
                 double duration = (endTime - startTime) / (segments[currentSegID].EndBeat - segments[currentSegID].StartBeat) * BeatsPerSegment;
                 double percent = (currentTime - startTime) / duration;
-                if (currentSegID == 0)
-                    gredientTonalty=DrawTonalty(Info.Beats[segments[currentSegID].StartBeat].Tonalty, null, 0);
-                else
-                    gredientTonalty=DrawTonalty(Info.Beats[segments[currentSegID].StartBeat].Tonalty, Info.Beats[segments[currentSegID - 1].StartBeat].Tonalty, currentTime - startTime);
                 DrawSeg(currentTime, currentSegID, 0, null);
                 if (percent>=0)
                     DrawPivot(percent, 0);
                 DrawScale(percent, 0);
             }
             DrawHistoricalSegments(currentTime, null);
+            if (currentSegID == 0)
+            {
+                DrawTonalty(Info.Beats[segments[currentSegID].StartBeat].Tonalty, null, 0);
+            }
+            else
+            {
+                int segID = Math.Min(currentSegID, segments.Count - 1);
+                double startTime = Info.Beats[segments[segID].StartBeat].Time;
+                DrawTonalty(Info.Beats[segments[segID].StartBeat].Tonalty, Info.Beats[segments[segID - 1].StartBeat].Tonalty, currentTime - startTime);
+            }
+            DrawMetadata();
             myBuffer.Render(Target);
         }
     }

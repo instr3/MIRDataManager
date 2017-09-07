@@ -34,7 +34,8 @@ namespace Visualizer
             //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\527431 Brad Breeck - Gravity Falls Theme Song.arc";
             //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\90935 IOSYS - Endless Tewi-ma Park.arc";
             //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\39804 xi - FREEDOM DiVE.arc";
-            string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\183656 Mutsuhiko Izumi - Tengoku to Jigoku.arc";
+            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\183656 Mutsuhiko Izumi - Tengoku to Jigoku.arc";
+            string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\92 Portal - Still Alive.arc";
 
             SongInfo testSongInfo = ArchiveManager.ReadFromArchive(filename);
             SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo);
@@ -54,12 +55,12 @@ namespace Visualizer
 
         private void button3_Click(object sender, EventArgs e)
         {
-            SubtitleVisualizer.CurrentTime -= 10;
+            SubtitleVisualizer.CurrentTime -= 5;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SubtitleVisualizer.CurrentTime += 10;
+            SubtitleVisualizer.CurrentTime += 5;
         }
     }
 }
