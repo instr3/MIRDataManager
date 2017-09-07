@@ -9,7 +9,7 @@ using Un4seen.Bass;
 
 namespace MIREditor
 {
-    class MiscWrapper
+    public class MiscWrapper
     {
         public static double GetMP3Length(int stream)
         {

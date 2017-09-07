@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common;
 
-namespace MIRDataManager
+namespace OsuMapAnalyzer
 {
     static class Program
     {
@@ -13,12 +13,11 @@ namespace MIRDataManager
         /// 应用程序的主入口点。
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-            
         }
     }
 }

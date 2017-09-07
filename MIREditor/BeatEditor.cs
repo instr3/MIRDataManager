@@ -116,7 +116,7 @@ namespace MIREditor
                 if (beat.Time >= tempLeftMostTime && beat.Time <= tempRightMostTime)
                 {
                     int pos = TL.Time2Pos(beat.Time);
-                    TL.G.DrawLine(whitePen, new Point(pos, TL.HorizonHeight), new Point(pos, TL.HorizonHeight - (beat.BarAttribute == 1 ? 10 : beat.BarAttribute == 0 ? 7 : 0)));
+                    TL.G.DrawLine(whitePen, new Point(pos, TL.HorizonHeight), new Point(pos, TL.HorizonHeight - (beat.BarAttribute >= 1 ? 10 : beat.BarAttribute == 0 ? 7 : 0)));
                 }
             }
         }
@@ -256,7 +256,7 @@ namespace MIREditor
             if (ValidPointer)
             {
                 Program.EditManager.BeforePreformEdit(Info, "修改起始属性");
-                if (Info.Beats[pointBeatID].BarAttribute == 1)
+                if (Info.Beats[pointBeatID].BarAttribute >= 1)
                     Info.Beats[pointBeatID].BarAttribute = 0;
                 else if (Info.Beats[pointBeatID].BarAttribute == 0)
                     Info.Beats[pointBeatID].BarAttribute = 1;

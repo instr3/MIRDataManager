@@ -30,8 +30,8 @@ namespace MIREditor
         {
             InitializeComponent();
             InitChordLabels();
-            openOSUFileDialog.InitialDirectory = Program.DatasetMusicFolder;
-            openInfoFileDialog.InitialDirectory = Program.ArchiveFolder;
+            openOSUFileDialog.InitialDirectory = Settings.DatasetMusicFolder;
+            openInfoFileDialog.InitialDirectory = Settings.ArchiveFolder;
             if (args.Length>0)
             {
                 if(args[0]=="<create>")
@@ -53,25 +53,24 @@ namespace MIREditor
         
         private void MainForm_Load(object sender, EventArgs e)
         {
-            MaximizeBox = false;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             Program.EditManager = new EditManager();
             Program.MidiManager = new MidiManager();
             Program.MidiManager.Init();
             TimelinePictureBox.MouseWheel += TimelinePictureBox_MouseWheel;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             timer1.Enabled = true;
             Logger.Register(logText);
             RefreshInterface();
             if(!string.IsNullOrEmpty(preloadFile))
             {
-                string fullFileName = Program.ArchiveFolder + "\\" + preloadFile;
+                string fullFileName = Settings.ArchiveFolder + "\\" + preloadFile;
                 ArchiveManager.SwitchSongInfo(ArchiveManager.ReadFromArchive(fullFileName), fullFileName);
             }
             else if(!string.IsNullOrEmpty(preCreateFile))
             {
-                openOSUFileDialog.InitialDirectory = Program.DatasetMusicFolder+"\\"+preCreateFile;
+                openOSUFileDialog.InitialDirectory = Settings.DatasetMusicFolder+"\\"+preCreateFile;
                 新建ToolStripMenuItem_Click(sender, e);
-                openOSUFileDialog.InitialDirectory = Program.DatasetMusicFolder;
+                openOSUFileDialog.InitialDirectory = Settings.DatasetMusicFolder;
             }
         }
         public void RefreshInterface()
@@ -331,9 +330,9 @@ namespace MIREditor
         {
             if (Program.TL != null)
             {
-                saveInfoFileDialog.InitialDirectory = Program.ArchiveFolder;
-                if (OsuAnalyzer.TempOSUFolderName != null)
-                    saveInfoFileDialog.FileName = OsuAnalyzer.TempOSUFolderName;
+                saveInfoFileDialog.InitialDirectory = Settings.ArchiveFolder;
+                if (OsuAnalyzer.directoryName != null)
+                    saveInfoFileDialog.FileName = OsuAnalyzer.directoryName;
                 if (saveInfoFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
                     return;
@@ -349,7 +348,7 @@ namespace MIREditor
             {
                 return;
             }
-            SongInfo info = OsuAnalyzer.ExtractFromOSUFile(openOSUFileDialog.FileName);
+            SongInfo info = OsuAnalyzer.ExtractFromOSUFile(openOSUFileDialog.FileName, Settings.DatasetMusicFolder);
             if (info != null)
             {
                 ArchiveManager.SwitchSongInfo(info);
@@ -818,10 +817,10 @@ namespace MIREditor
                 Exporter exporter = new Exporter(Program.TL.Info, Program.TL.MP3Length);
                 try
                 {
-                    exporter.ExportToFolder(Program.ExportFolder,
+                    exporter.ExportToFolder(Settings.ExportFolder,
                         Path.GetFileNameWithoutExtension(Program.FullArchiveFilePath),
                         checkBoxExportMusic.Checked,
-                        Program.DatasetMusicFolder + "\\" + Program.TL.Info.MusicConfigure.Location);
+                        Settings.DatasetMusicFolder + "\\" + Program.TL.Info.MusicConfigure.Location);
                     Logger.Log("Exported successfully.");
                 }
                 catch (Exception ex)

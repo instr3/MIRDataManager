@@ -68,6 +68,8 @@
             this.groupBoxDownloadManager = new System.Windows.Forms.GroupBox();
             this.buttonDeleteOsuMap = new System.Windows.Forms.Button();
             this.progressBarDownload = new System.Windows.Forms.ProgressBar();
+            this.buttonOMAExport = new System.Windows.Forms.Button();
+            this.buttonExportMusic = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -485,11 +487,33 @@
             this.progressBarDownload.Size = new System.Drawing.Size(145, 23);
             this.progressBarDownload.TabIndex = 20;
             // 
+            // buttonOMAExport
+            // 
+            this.buttonOMAExport.Location = new System.Drawing.Point(17, 369);
+            this.buttonOMAExport.Name = "buttonOMAExport";
+            this.buttonOMAExport.Size = new System.Drawing.Size(64, 23);
+            this.buttonOMAExport.TabIndex = 22;
+            this.buttonOMAExport.Text = "OMA";
+            this.buttonOMAExport.UseVisualStyleBackColor = true;
+            this.buttonOMAExport.Click += new System.EventHandler(this.buttonOMAExport_Click);
+            // 
+            // buttonExportMusic
+            // 
+            this.buttonExportMusic.Location = new System.Drawing.Point(98, 369);
+            this.buttonExportMusic.Name = "buttonExportMusic";
+            this.buttonExportMusic.Size = new System.Drawing.Size(64, 23);
+            this.buttonExportMusic.TabIndex = 23;
+            this.buttonExportMusic.Text = "导出音乐";
+            this.buttonExportMusic.UseVisualStyleBackColor = true;
+            this.buttonExportMusic.Click += new System.EventHandler(this.buttonExportMusic_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1100, 527);
+            this.Controls.Add(this.buttonExportMusic);
+            this.Controls.Add(this.buttonOMAExport);
             this.Controls.Add(this.groupBoxDownloadManager);
             this.Controls.Add(this.checkBoxAutoScan);
             this.Controls.Add(this.labelHint);
@@ -559,6 +583,8 @@
         private System.Windows.Forms.GroupBox groupBoxDownloadManager;
         public System.Windows.Forms.ProgressBar progressBarDownload;
         private System.Windows.Forms.Button buttonDeleteOsuMap;
+        private System.Windows.Forms.Button buttonOMAExport;
+        private System.Windows.Forms.Button buttonExportMusic;
     }
 }
 

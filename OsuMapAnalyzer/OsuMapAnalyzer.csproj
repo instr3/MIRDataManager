@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1E0B9B14-8AD9-439E-8D0F-08E21E40E0C0}</ProjectGuid>
+    <ProjectGuid>{CF2DD700-8D86-4F00-8BA9-BB7E0F1040B8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MIRDataManager</RootNamespace>
-    <AssemblyName>MIRDataManager</AssemblyName>
+    <RootNamespace>OsuMapAnalyzer</RootNamespace>
+    <AssemblyName>OsuMapAnalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,18 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>icon_64X64.ico</ApplicationIcon>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net, Version=2.4.12.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MIREditor\Bass.Net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,24 +45,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataFile.cs" />
-    <Compile Include="Dataset.cs" />
-    <Compile Include="DataDownloader.cs" />
+    <Compile Include="EncodeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EncodeForm.Designer.cs">
+      <DependentUpon>EncodeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListViewColumnComparer.cs" />
+    <Compile Include="HitObject.cs" />
+    <Compile Include="OsuMap.cs" />
+    <Compile Include="OsuMapAnalyzer.cs" />
+    <Compile Include="OsuMapEncoder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextInputForm.cs">
+    <Compile Include="ViewTextForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TextInputForm.Designer.cs">
-      <DependentUpon>TextInputForm.cs</DependentUpon>
+    <Compile Include="ViewTextForm.Designer.cs">
+      <DependentUpon>ViewTextForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="EncodeForm.resx">
+      <DependentUpon>EncodeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -85,8 +84,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="TextInputForm.resx">
-      <DependentUpon>TextInputForm.cs</DependentUpon>
+    <EmbeddedResource Include="ViewTextForm.resx">
+      <DependentUpon>ViewTextForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -98,7 +97,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="settings.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -106,12 +105,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{A32A9F03-5788-45C9-9645-E3C0E1861B62}</Project>
+      <Project>{a32a9f03-5788-45c9-9645-e3c0e1861b62}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OsuMapAnalyzer\OsuMapAnalyzer.csproj">
-      <Project>{cf2dd700-8d86-4f00-8ba9-bb7e0f1040b8}</Project>
-      <Name>OsuMapAnalyzer</Name>
+    <ProjectReference Include="..\MIREditor\MIREditor.csproj">
+      <Project>{bc1efa1d-1ec3-40e2-bca3-935e019bc884}</Project>
+      <Name>MIREditor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -124,42 +123,6 @@
     <Content Include="bass_fx.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="icon_64X64.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="AxWMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>aximp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-    <COMReference Include="stdole">
-      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

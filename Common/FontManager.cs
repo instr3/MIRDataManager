@@ -13,6 +13,8 @@ namespace Common
         public Font ChordFont { get; private set; }
         public Font NoteFont { get; private set; }
         public Font DefaultFont { get; private set; }
+        public string VisualizerScaleFontName { get; private set; }
+        public string VisualizerSuffixFontName { get; private set; }
         public static FontManager Instance;
         static FontManager()
         {
@@ -20,6 +22,8 @@ namespace Common
             Instance = new FontManager();
             Instance.ChordFont = new Font(iniReader["ChordFontFamily"], float.Parse(iniReader["ChordFontSize"]));
             Instance.NoteFont = new Font(iniReader["NoteFontFamily"], float.Parse(iniReader["NoteFontSize"]));
+            Instance.VisualizerScaleFontName = iniReader["VisualizerScaleFontFamily"];
+            Instance.VisualizerSuffixFontName = iniReader["VisualizerSuffixFontFamily"];
             // Instance.DefaultFont = new Font(iniReader.Data["DefaultFontFamily"], float.Parse(iniReader.Data["DefaultFontSize"]));
         }
     }

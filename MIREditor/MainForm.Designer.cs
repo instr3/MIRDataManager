@@ -1649,6 +1649,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Chord Editor";
             this.Load += new System.EventHandler(this.MainForm_Load);

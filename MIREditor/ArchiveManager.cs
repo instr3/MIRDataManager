@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MIREditor
 {
-    class ArchiveManager
+    public class ArchiveManager
     {
         public static SongInfo ReadFromArchive(string archiveFilePath)
         {

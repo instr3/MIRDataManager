@@ -116,7 +116,7 @@ namespace MIREditor
             int counter = 0;
             while (beatID + counter <Info.Beats.Count)
             {
-                if (Info.Beats[beatID + counter].BarAttribute==1)
+                if (Info.Beats[beatID + counter].BarAttribute>=1)
                 {
                     if (--passCount < 0) break;
                 }
@@ -136,7 +136,7 @@ namespace MIREditor
             int counter = 0;
             while (beatID - counter>=0)//Can not pass leftmost beat
             {
-                if(Info.Beats[beatID - counter].BarAttribute == 1)
+                if(Info.Beats[beatID - counter].BarAttribute >= 1)
                 {
                     if (--passCount < 0) break;
                 }

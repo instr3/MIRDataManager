@@ -48,6 +48,7 @@
     <Compile Include="FontManager.cs" />
     <Compile Include="INIReader.cs" />
     <Compile Include="RawChord.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextProcessor.cs" />

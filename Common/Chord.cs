@@ -23,6 +23,14 @@ namespace Common
         private static RawChordTemplate[] templates;
         private static int majorTraidID, minorTraidID;
         private readonly int scale;// Absolute
+        public int Scale
+        {
+            get { return scale; }
+        }
+        public int TemplateID
+        {
+            get { return templateID; }
+        }
         private readonly int templateID;
         private readonly MutedChordTypeEnum MutedChordType;
         public enum MutedChordTypeEnum
@@ -147,6 +155,17 @@ namespace Common
                 .Replace("{i}", Num2RomeSmall[delta]);
 
         }
+        public string ToRelativeSuffix()
+        {
+            return templates[templateID].RelativeLabel
+                .Replace("{I}", "")
+                .Replace("{i}", "");
+        }
+        public string ToAbosluteSuffix()
+        {
+            return templates[templateID].Label
+                .Replace("{X}", "");
+        }
         public static Chord SimpleTraid(int scale, bool majmin)
         {
             return chordFlyweights[majmin ? majorTraidID : minorTraidID, scale];
@@ -173,6 +192,12 @@ namespace Common
         {
             if (scale == -1) return new int[0];
             return templates[templateID].Notes.Select(x => (x + scale) % 12).ToArray();
+        }
+        public int [] ToRelativeScales(int do_pos)
+        {
+            if (scale == -1)
+                return new int[] { };
+            return templates[templateID].Notes.Select(x => (x + scale + 12 - do_pos) % 12).ToArray();
         }
         public int[] ToNotesUnclamped()
         {

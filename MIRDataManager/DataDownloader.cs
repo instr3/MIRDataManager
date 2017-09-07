@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Compression;
+using Common;
 
 namespace MIRDataManager
 {
@@ -22,7 +23,7 @@ namespace MIRDataManager
         {
             DataFile = dataFile;
             Form = form;
-            DownloadLink = string.Format(Program.OsuMirrorDownloadLink, dataFile.SongInfo.MiscConfigure.osuMapID);
+            DownloadLink = string.Format(Settings.OsuMirrorDownloadLink, dataFile.SongInfo.MiscConfigure.osuMapID);
         }
         public void StartDownload()
         {
@@ -50,7 +51,7 @@ namespace MIRDataManager
             }
             string folderName =Path.GetFileNameWithoutExtension(new ContentDisposition(client.ResponseHeaders["Content-Disposition"]).FileName).Replace(".","");
             
-            string extractPath = Path.Combine(Program.DatasetMusicFolder, folderName);
+            string extractPath = Path.Combine(Settings.DatasetMusicFolder, folderName);
             if(!Directory.Exists(extractPath))
             {
                 Directory.CreateDirectory(extractPath);

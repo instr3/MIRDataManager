@@ -39,6 +39,15 @@ namespace Common
         {
 
         }
+        public string ExportBeatsToLab()
+        {
+            string res = "";
+            foreach(BeatInfo beat in Beats)
+            {
+                res += beat.Time.ToString() + '\t' + beat.BarAttribute.ToString() + Environment.NewLine;
+            }
+            return res;
+        }
         public SongInfo(string dataString,bool configInfoOnly=false)
         {
             List<string> lines = TextProcessor.LinesToList(dataString);

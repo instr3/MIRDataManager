@@ -157,7 +157,7 @@ namespace MIREditor
 
         public Timeline(PictureBox bindingPictureBox,SongInfo info)
         {
-            string mp3Path = Program.DatasetMusicFolder + "\\" + info.MusicConfigure.Location;
+            string mp3Path = Settings.DatasetMusicFolder + "\\" + info.MusicConfigure.Location;
             if(File.Exists(mp3Path))
             {
                 string md5 = MiscWrapper.GetFileMD5(mp3Path);
@@ -301,7 +301,7 @@ namespace MIREditor
             //throw new NotImplementedException();
             //string result = VampInterface.GetVampCSV("test", Program.FileFolder + @"\" + Program.SoundFileName);
 
-            Chroma newChroma = VampInterface.GetChroma(Program.DatasetMusicFolder + "\\" + Info.MusicConfigure.Location);
+            Chroma newChroma = VampInterface.GetChroma(Settings.DatasetMusicFolder + "\\" + Info.MusicConfigure.Location);
             if (newChroma == null)
             {
                 Logger.Log("[Warning]No data received, operation cancelled by user.");
@@ -311,7 +311,7 @@ namespace MIREditor
             ChromaVisualizer.PrepareChromaFrameImage();
             Logger.Log("Loaded chroma.");
             Program.Form.RefreshInterface();
-            List<RawChord> rawChords = VampInterface.GetRawChord(Program.DatasetMusicFolder + "\\" + Info.MusicConfigure.Location);
+            List<RawChord> rawChords = VampInterface.GetRawChord(Settings.DatasetMusicFolder + "\\" + Info.MusicConfigure.Location);
             if (rawChords == null)
             {
                 Logger.Log("[Warning]No data received, operation cancelled by user.");
