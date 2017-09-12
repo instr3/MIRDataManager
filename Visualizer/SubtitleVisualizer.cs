@@ -436,7 +436,7 @@ namespace Visualizer
         {
             currentSegID++;
         }*/
-        private void DrawHistoricalSegments(int currentSegID, double currentTime, Tonality gradientTonality)
+        private void DrawHistoricalSegments(int currentSegID, double currentTime)
         {
             double SHIFT_TIME = 0.25;
             int MAX_HISTORY_DISPLAY = 9;
@@ -474,12 +474,12 @@ namespace Visualizer
                 if (row >= MAX_HISTORY_DISPLAY + 1)
                     break;
                 // DrawSeg(currentTime, i, currentSegID - i - (1 - shiftValue), gradientTonality);
-                DrawSeg(currentTime, i, row, gradientTonality);
+                DrawSeg(currentTime, i, row);
                 row += 1.0;
             }
             DrawFadingCover(HISTORY_FADING_START_ROW, MAX_HISTORY_DISPLAY);
         }
-        private void DrawSeg(double currentTime, int segID, double row, Tonality gradientTonality)
+        private void DrawSeg(double currentTime, int segID, double row)
         {
             double startTime = Info.Beats[segments[segID].StartBeat].Time;
             double endTime = Info.Beats[segments[segID].EndBeat].Time;
@@ -581,14 +581,14 @@ namespace Visualizer
                 double endTime = Info.Beats[segments[currentSegID].EndBeat].Time;
                 double duration = (endTime - startTime) / (segments[currentSegID].EndBeat - segments[currentSegID].StartBeat) * BeatsPerSegment;
                 double percent = (currentTime - startTime) / duration;
-                DrawSeg(currentTime, currentSegID, 0, null);
+                DrawSeg(currentTime, currentSegID, 0);
                 if (percent>=0)
                     DrawPivot(percent, 0);
                 DrawScale(percent, 0);
             }
             else
                 DrawScale(0, 0);
-            DrawHistoricalSegments(currentSegID, currentTime, null);
+            DrawHistoricalSegments(currentSegID, currentTime);
             if (currentSegID == 0)
             {
                 DrawTonality(Info.Beats[segments[currentSegID].StartBeat].Tonality, null, 0);
