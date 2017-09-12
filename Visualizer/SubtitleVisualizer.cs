@@ -142,7 +142,7 @@ namespace Visualizer
                     beat_begin_id++;
                     continue;
                 }
-                if (beat.BarAttribute==2 || (i-beat_begin_id)>=BeatsPerSegment || i==Info.Beats.Count-1 || (i>0 && Info.Beats[i].Tonalty!=Info.Beats[i-1].Tonalty))
+                if (beat.BarAttribute==2 || (i-beat_begin_id)>=BeatsPerSegment || i==Info.Beats.Count-1 || (i>0 && Info.Beats[i].Tonality!=Info.Beats[i-1].Tonality))
                 {
                     if(i == Info.Beats.Count - 1 && i - beat_begin_id<BeatsPerSegment) // Test if the last segment is unnecessary
                     {
@@ -226,13 +226,13 @@ namespace Visualizer
             }
         }
 
-        protected int DrawChordText(Chord chord, int left, int top, int alpha, Tonalty tonalty=null)
+        protected int DrawChordText(Chord chord, int left, int top, int alpha, Tonality tonality=null)
         {
-            if (tonalty == null)
-                tonalty = Tonalty.NoTonalty;
+            if (tonality == null)
+                tonality = Tonality.NoTonality;
             if(chord.Scale!=-1)
             {
-                string scaleText = tonalty.NoteNameUnderTonalty(chord.Scale);
+                string scaleText = tonality.NoteNameUnderTonality(chord.Scale);
                 if (scaleText.Length == 2)
                 {
                     if (scaleText[1] == 'b' || scaleText[1] == '#')
@@ -258,7 +258,7 @@ namespace Visualizer
                 if(suffixStruct.inversion!=-1)
                 {
                     left += DrawSimpleText("/", 2, left, top, alpha) - 4;
-                    scaleText = tonalty.NoteNameUnderTonalty(suffixStruct.inversion);
+                    scaleText = tonality.NoteNameUnderTonality(suffixStruct.inversion);
                     if (scaleText.Length == 2)
                     {
                         left += 4;
@@ -317,9 +317,9 @@ namespace Visualizer
         {
             return t < 0 ? from : t > 1 ? to : from * (1 - t) + to * t;
         }
-        protected void DrawChord(Chord chord, double left_percent, double width_percent, double row, double timespan, Tonalty tonalty = null, bool dark=false)
+        protected void DrawChord(Chord chord, double left_percent, double width_percent, double row, double timespan, Tonality tonality = null)
         {
-            if (tonalty == null)
+            if (tonality == null)
                 throw new NotImplementedException();
             if (timespan < 0)
                 return;
@@ -327,7 +327,7 @@ namespace Visualizer
             int left = (int)Math.Round((GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + left_percent * SUBTITLE_WIDTH);
             int width = (int)Math.Round(width_percent * SUBTITLE_WIDTH);
             double keep_timespan = width_percent * BeatsPerSegment;
-            int[] scales = chord.ToRelativeScales(tonalty.Root);
+            int[] scales = chord.ToRelativeScales(tonality.Root);
             int chord_alpha = 0;
             int notes_alpha = 0;
             if(keep_timespan+1e-6<(scales.Length)* RELATIVE_NOTES_SPEED) // To short to show notes data
@@ -366,7 +366,7 @@ namespace Visualizer
             using (GraphicsPath path = RoundedRect(new Rectangle(left, top, width, 40), 8))
             {
                 G.DrawPath(rectPen, path);
-                DrawChordText(chord, left + 5, top + 5, chord_alpha, tonalty);
+                DrawChordText(chord, left + 5, top + 5, chord_alpha, tonality);
             }
         }
         protected void DrawPivot(double percent,int row)
@@ -404,8 +404,8 @@ namespace Visualizer
             int right = (GRAPHIC_WIDTH + SUBTITLE_WIDTH) / 2 + 5;
             int top = ROW_BASE_HEIGHT - (endRow + 1) * 50;
             int bottom = ROW_BASE_HEIGHT - startRow * 50;
-            Brush gredientBrush = new LinearGradientBrush(new Point(left, top), new Point(left, bottom), Color.FromArgb(255, Color.Black), Color.FromArgb(0, Color.Black));
-            G.FillRectangle(gredientBrush, new Rectangle(left, top, right - left, bottom - top));
+            Brush gradientBrush = new LinearGradientBrush(new Point(left, top), new Point(left, bottom), Color.FromArgb(255, Color.Black), Color.FromArgb(0, Color.Black));
+            G.FillRectangle(gradientBrush, new Rectangle(left, top, right - left, bottom - top));
             G.FillRectangle(Brushes.Black, new Rectangle(left, top - 55, right - left, 55));
         }
         public void DrawTest()
@@ -422,7 +422,7 @@ namespace Visualizer
                         if (ran == 3) ran = 1;
                         int width = ran * 80;
                         
-                        DrawChord(Chord.SimpleTraid(i, b > 0), left, (t+1)*50, width, 100, Tonalty.MajMinTonalty(t, true));
+                        DrawChord(Chord.SimpleTraid(i, b > 0), left, (t+1)*50, width, 100, Tonality.MajMinTonality(t, true));
                         left += width;
                     }
                 }
@@ -436,7 +436,7 @@ namespace Visualizer
         {
             currentSegID++;
         }*/
-        private void DrawHistoricalSegments(int currentSegID, double currentTime, Tonalty gredientTonalty)
+        private void DrawHistoricalSegments(int currentSegID, double currentTime, Tonality gradientTonality)
         {
             double SHIFT_TIME = 0.25;
             int MAX_HISTORY_DISPLAY = 9;
@@ -450,14 +450,14 @@ namespace Visualizer
             //shiftValue = shiftValue * shiftValue * (2 - shiftValue) * (2 - shiftValue);
             shiftValue = (1 - Math.Cos(Math.PI * shiftValue)) / 2;
             int start_i = Math.Max(0, currentSegID - MAX_HISTORY_DISPLAY - 1);
-            Tonalty tonalty = currentSegID < segments.Count ? Info.Beats[segments[currentSegID].StartBeat].Tonalty : Info.Beats[segments[segments.Count-1].StartBeat].Tonalty;
+            Tonality tonality = currentSegID < segments.Count ? Info.Beats[segments[currentSegID].StartBeat].Tonality : Info.Beats[segments[segments.Count-1].StartBeat].Tonality;
             double row = shiftValue;
             for (int i = currentSegID - 1; i >= start_i; --i)
             {
                 if (row >= MAX_HISTORY_DISPLAY + 1)
                     break;
-                Tonalty oldTonalty = Info.Beats[segments[i].StartBeat].Tonalty;
-                if (oldTonalty.Root != tonalty.Root)
+                Tonality oldTonality = Info.Beats[segments[i].StartBeat].Tonality;
+                if (oldTonality.Root != tonality.Root)
                 {
                     double TONALTY_INDICATION_HEIGHT_IN_ROW = 0.5;
                     if(currentSegID - 1==i) // Shift need to be faster
@@ -468,18 +468,18 @@ namespace Visualizer
                     int top= (int)Math.Round(ROW_BASE_HEIGHT - row * 50 - 10);
                     int alpha = (int)(255 * ClampedLerp(0, 1, row / (1 + TONALTY_INDICATION_HEIGHT_IN_ROW)));
                     left += DrawSimpleText("^ 1 = ", 4, left, top, alpha) + 6;
-                    left+=DrawSimpleText(new string(Chord.Num2Char[oldTonalty.Root].Reverse().ToArray()), 4, left, top, alpha);
-                    tonalty = oldTonalty;
+                    left+=DrawSimpleText(new string(Chord.Num2Char[oldTonality.Root].Reverse().ToArray()), 4, left, top, alpha);
+                    tonality = oldTonality;
                 }
                 if (row >= MAX_HISTORY_DISPLAY + 1)
                     break;
-                // DrawSeg(currentTime, i, currentSegID - i - (1 - shiftValue), gredientTonalty);
-                DrawSeg(currentTime, i, row, gredientTonalty);
+                // DrawSeg(currentTime, i, currentSegID - i - (1 - shiftValue), gradientTonality);
+                DrawSeg(currentTime, i, row, gradientTonality);
                 row += 1.0;
             }
             DrawFadingCover(HISTORY_FADING_START_ROW, MAX_HISTORY_DISPLAY);
         }
-        private void DrawSeg(double currentTime, int segID, double row, Tonalty gredientTonalty)
+        private void DrawSeg(double currentTime, int segID, double row, Tonality gradientTonality)
         {
             double startTime = Info.Beats[segments[segID].StartBeat].Time;
             double endTime = Info.Beats[segments[segID].EndBeat].Time;
@@ -490,50 +490,50 @@ namespace Visualizer
             for (int i = segments[segID].StartBeat + 1; i <= segments[segID].EndBeat; ++i)
             {
                 BeatInfo beat = Info.Beats[i];
-                if (i == segments[segID].EndBeat || beat.Chord != lastBeat.Chord || beat.Tonalty != lastBeat.Tonalty)
+                if (i == segments[segID].EndBeat || beat.Chord != lastBeat.Chord || beat.Tonality != lastBeat.Tonality)
                 {
                     double newTime = beat.Time - startTime;
                     double lastBeatDuration = Info.Beats[lastBeatID + 1].Time - Info.Beats[lastBeatID].Time;
-                    bool gredientTonaltyEnabled = gredientTonalty != null && gredientTonalty != lastBeat.Tonalty;
-                    DrawChord(lastBeat.Chord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, gredientTonaltyEnabled ? gredientTonalty : lastBeat.Tonalty, gredientTonaltyEnabled);
+                    // bool gradientTonalityEnabled = gradientTonality != null && gradientTonality != lastBeat.Tonality;
+                    DrawChord(lastBeat.Chord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, lastBeat.Tonality);
                     lastTime = newTime;
                     lastBeat = beat;
                     lastBeatID = i;
                 }
             }
         }
-        private int DrawTonaltyText(int root,int left, int top)
+        private int DrawTonalityText(int root,int left, int top)
         {
             string scaleText = new string(Chord.Num2Char[root].Reverse().ToArray());
             return DrawSimpleText(scaleText, 3, left, top);
         }
-        private Tonalty DrawTonalty(Tonalty tonalty, Tonalty oldTonalty, double timespan)
+        private Tonality DrawTonality(Tonality tonality, Tonality oldTonality, double timespan)
         {
             double TONALTY_TRANSITION_TIME = 1.5;
             int TONALTY_TOP = 170;
             int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + 5;
             left += DrawSimpleText("1 = ", 3, left, TONALTY_TOP) + 8;
-            if (oldTonalty!=null && tonalty!=oldTonalty && timespan>=0 && timespan<TONALTY_TRANSITION_TIME)
+            if (oldTonality!=null && tonality!=oldTonality && timespan>=0 && timespan<TONALTY_TRANSITION_TIME)
             {
-                int scale_old = oldTonalty.Root;
-                int scale_new = tonalty.Root;
+                int scale_old = oldTonality.Root;
+                int scale_new = tonality.Root;
                 int delta_scale = (scale_new - scale_old + 12) % 12;
                 if (delta_scale < 3)
                     delta_scale += 12;
                 double progress = Math.Sin(Math.PI/2*Math.Sqrt(timespan / TONALTY_TRANSITION_TIME)) * delta_scale;
                 int progress_lower = (int)Math.Floor(progress);
-                int width1=DrawTonaltyText((oldTonalty.Root + progress_lower) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower)));
-                int width2=DrawTonaltyText((oldTonalty.Root + progress_lower + 1) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower - 1)));
+                int width1=DrawTonalityText((oldTonality.Root + progress_lower) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower)));
+                int width2=DrawTonalityText((oldTonality.Root + progress_lower + 1) % 12, left, (int)(TONALTY_TOP + 50 * (progress - progress_lower - 1)));
 
                 G.FillRectangle(Brushes.Black, new Rectangle(left, TONALTY_TOP - 50, width1 + 16, 50));
                 G.FillRectangle(Brushes.Black, new Rectangle(left, TONALTY_TOP + 40, width2 + 16, 35));
 
-                return Tonalty.MajMinTonalty((oldTonalty.Root + (int)Math.Round(progress)) % 12, tonalty.MajMin);
+                return Tonality.MajMinTonality((oldTonality.Root + (int)Math.Round(progress)) % 12, tonality.MajMin);
             }
             else
             {
-                DrawTonaltyText(tonalty.Root, left, TONALTY_TOP);
-                return tonalty;
+                DrawTonalityText(tonality.Root, left, TONALTY_TOP);
+                return tonality;
             }
 
         }
@@ -591,13 +591,13 @@ namespace Visualizer
             DrawHistoricalSegments(currentSegID, currentTime, null);
             if (currentSegID == 0)
             {
-                DrawTonalty(Info.Beats[segments[currentSegID].StartBeat].Tonalty, null, 0);
+                DrawTonality(Info.Beats[segments[currentSegID].StartBeat].Tonality, null, 0);
             }
             else
             {
                 int segID = Math.Min(currentSegID, segments.Count - 1);
                 double startTime = Info.Beats[segments[segID].StartBeat].Time;
-                DrawTonalty(Info.Beats[segments[segID].StartBeat].Tonalty, Info.Beats[segments[segID - 1].StartBeat].Tonalty, currentTime - startTime);
+                DrawTonality(Info.Beats[segments[segID].StartBeat].Tonality, Info.Beats[segments[segID - 1].StartBeat].Tonality, currentTime - startTime);
             }
             DrawIntroCover(currentTime);
             if (currentSegID >= segments.Count)
@@ -633,7 +633,7 @@ namespace Visualizer
             string countString = data.count.ToString() + "×";
             G.DrawString(countString, suffixFont, Brushes.White, new Point(left, top));
             // right -= chordWidth[data.chord.TemplateID, data.chord.Scale];
-            DrawChordText(data.chord, right, top, 255, Tonalty.MajMinTonalty(0, true));
+            DrawChordText(data.chord, right, top, 255, Tonality.MajMinTonality(0, true));
          }
         public bool DrawStatistics()
         {
@@ -661,9 +661,9 @@ namespace Visualizer
                 for (int i = 0; i < Info.Beats.Count; ++i)
                 {
                     BeatInfo beat = Info.Beats[i];
-                    if (beat.Chord.Scale != -1 && i != Info.Beats.Count - 1 && beat.Tonalty.Root != -1)
+                    if (beat.Chord.Scale != -1 && i != Info.Beats.Count - 1 && beat.Tonality.Root != -1)
                     {
-                        Chord relativeChord = Chord.EnumerateChord(beat.Chord.TemplateID, (beat.Chord.Scale + 12 - beat.Tonalty.Root) % 12);
+                        Chord relativeChord = Chord.EnumerateChord(beat.Chord.TemplateID, (beat.Chord.Scale + 12 - beat.Tonality.Root) % 12);
                         do
                         {
                             if (!chordDict.ContainsKey(relativeChord))
@@ -702,7 +702,7 @@ namespace Visualizer
                 {
                     for(int j=0;j<12;++j)
                     {
-                        chordWidth[i, j] = (int)DrawChordText(Chord.EnumerateChord(i, j), 0, 0, 0);
+                        chordWidth[i, j] = DrawChordText(Chord.EnumerateChord(i, j), 0, 0, 0);
                     }
                 }
             }

@@ -290,28 +290,28 @@ namespace MIREditor
             selectionRightBeatID = Info.Beats.Count - 1;
         }
 
-        internal void TonaltyModify(string newTonalty)
+        internal void TonalityModify(string newTonality)
         {
             if (ValidSelection)
             {
-                Tonalty tonalty = new Tonalty(newTonalty);
-                Program.EditManager.BeforePreformEdit(Info, "修改调性为" + newTonalty);
+                Tonality tonality = new Tonality(newTonality);
+                Program.EditManager.BeforePreformEdit(Info, "修改调性为" + newTonality);
                 for (int i = selectionLeftBeatID; i < selectionRightBeatID; ++i)
                 {
-                    Info.Beats[i].Tonalty = tonalty;
+                    Info.Beats[i].Tonality = tonality;
                 }
             }
 
         }
 
-        internal void TonaltySwitchMajMin()
+        internal void TonalitySwitchMajMin()
         {
             if(ValidSelection)
             {
                 Program.EditManager.BeforePreformEdit(Info, "修改关系大小调");
                 for (int i=selectionLeftBeatID;i<selectionRightBeatID;++i)
                 {
-                    Info.Beats[i].Tonalty = Tonalty.RelativeTonalty(Info.Beats[i].Tonalty);
+                    Info.Beats[i].Tonality = Tonality.RelativeTonality(Info.Beats[i].Tonality);
                 }
             }
         }

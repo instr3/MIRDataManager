@@ -9,6 +9,6 @@ namespace MIREditor
     class Triggers
     {
         public static bool ChordLabelChangeTrigger { get; set; }
-        public static bool TonaltyChangeTrigger { get; set; }
+        public static bool TonalityChangeTrigger { get; set; }
     }
 }

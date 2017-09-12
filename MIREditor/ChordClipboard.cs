@@ -74,7 +74,7 @@ namespace MIREditor
                 {
                     if (line[leftSameIndex].Chord != null)
                     {
-                        string chordName = line[leftSameIndex].Chord.ToString(line[leftSameIndex].Tonalty);
+                        string chordName = line[leftSameIndex].Chord.ToString(line[leftSameIndex].Tonality);
                         SolidBrush brush = new SolidBrush(ColorSchema.GetTransparentColorByChordName(chordName));
                         Color chordTextColor = ColorSchema.GetColorByChordName(chordName);
 

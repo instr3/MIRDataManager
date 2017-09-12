@@ -89,7 +89,7 @@
             this.buttonCutInsertChord = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.button_TESwitchMajMin = new System.Windows.Forms.Button();
-            this.comboBox_TETonalty = new System.Windows.Forms.ComboBox();
+            this.comboBox_TETonality = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
             this.button_TESelectAll = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -766,7 +766,7 @@
             // 
             this.groupBox9.BackColor = System.Drawing.Color.White;
             this.groupBox9.Controls.Add(this.button_TESwitchMajMin);
-            this.groupBox9.Controls.Add(this.comboBox_TETonalty);
+            this.groupBox9.Controls.Add(this.comboBox_TETonality);
             this.groupBox9.Controls.Add(this.label15);
             this.groupBox9.Controls.Add(this.button_TESelectAll);
             this.groupBox9.Location = new System.Drawing.Point(7, 406);
@@ -786,11 +786,11 @@
             this.button_TESwitchMajMin.UseVisualStyleBackColor = true;
             this.button_TESwitchMajMin.Click += new System.EventHandler(this.button_TESwitchMajMin_Click);
             // 
-            // comboBox_TETonalty
+            // comboBox_TETonality
             // 
-            this.comboBox_TETonalty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_TETonalty.FormattingEnabled = true;
-            this.comboBox_TETonalty.Items.AddRange(new object[] {
+            this.comboBox_TETonality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_TETonality.FormattingEnabled = true;
+            this.comboBox_TETonality.Items.AddRange(new object[] {
             "C Maj",
             "C# Maj",
             "D Maj",
@@ -816,11 +816,11 @@
             "Bb min",
             "B min",
             "?"});
-            this.comboBox_TETonalty.Location = new System.Drawing.Point(90, 48);
-            this.comboBox_TETonalty.Name = "comboBox_TETonalty";
-            this.comboBox_TETonalty.Size = new System.Drawing.Size(75, 20);
-            this.comboBox_TETonalty.TabIndex = 7;
-            this.comboBox_TETonalty.SelectedIndexChanged += new System.EventHandler(this.comboBox_TETonalty_SelectedIndexChanged);
+            this.comboBox_TETonality.Location = new System.Drawing.Point(90, 48);
+            this.comboBox_TETonality.Name = "comboBox_TETonality";
+            this.comboBox_TETonality.Size = new System.Drawing.Size(75, 20);
+            this.comboBox_TETonality.TabIndex = 7;
+            this.comboBox_TETonality.SelectedIndexChanged += new System.EventHandler(this.comboBox_TETonality_SelectedIndexChanged);
             // 
             // label15
             // 
@@ -1791,7 +1791,7 @@
         private System.Windows.Forms.RadioButton radioButtonAbsolute;
         private System.Windows.Forms.GroupBox groupBox9;
         private System.Windows.Forms.Button button_TESelectAll;
-        private System.Windows.Forms.ComboBox comboBox_TETonalty;
+        private System.Windows.Forms.ComboBox comboBox_TETonality;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button button_TESwitchMajMin;
         private System.Windows.Forms.Panel panel1;

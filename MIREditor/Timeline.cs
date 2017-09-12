@@ -285,7 +285,7 @@ namespace MIREditor
                     BeatEditor.SwitchCutSecondChord();
                     break;
                 default:
-                    Chord inputChord = ChordShortcuts.GetChordInput(ChordShortcuts.GetKeyID(keyCode), control, alt, shift, Program.Form.RelativeLabelTonalty, RelativeLabel);
+                    Chord inputChord = ChordShortcuts.GetChordInput(ChordShortcuts.GetKeyID(keyCode), control, alt, shift, Program.Form.RelativeLabelTonality, RelativeLabel);
                     if(inputChord!=null)
                     {
                         ChordEditor.PerformInputChord(inputChord);
@@ -318,9 +318,9 @@ namespace MIREditor
                 return;
             }
             Info.RawChords = rawChords;
-            if (Info.Beats.Count>0&&Info.Beats.All(b=>b.Chord.IsMutedChord()&&b.Tonalty.Root==-1))
+            if (Info.Beats.Count>0&&Info.Beats.All(b=>b.Chord.IsMutedChord()&&b.Tonality.Root==-1))
             {
-                Info.EstimateGlobalTonalty();
+                Info.EstimateGlobalTonality();
                 Info.CalcBeatChord();
             }
             Logger.Log("Loaded raw chords.");
@@ -384,7 +384,7 @@ namespace MIREditor
             ChordEditor.DrawChords();
             if(ChordEditor.Enabled)ChordEditor.EditModeUpdate();
             if (BeatEditor.Enabled) BeatEditor.EditModeUpdate();
-            ChromaVisualizer.DrawTonalty();
+            ChromaVisualizer.DrawTonality();
             G.DrawLine(redPen, new Point(TargetRightPos / 2, 0), new Point(TargetRightPos / 2, AllHeight));
             myBuffer.Render(Target);
         }

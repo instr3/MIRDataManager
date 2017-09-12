@@ -20,8 +20,8 @@ namespace MIREditor
         public int ChromaTextHeight = 15;
 
         public bool Prepared;
-        Font tonaltyFont = FontManager.Instance.NoteFont;
-        Brush tonaltyBrush = Brushes.LightGreen;
+        Font tonalityFont = FontManager.Instance.NoteFont;
+        Brush tonalityBrush = Brushes.LightGreen;
         Font noteFont = FontManager.Instance.NoteFont;
         Brush noteFrontBrush = Brushes.White;
         Brush noteBackBrush = Brushes.Black;
@@ -47,12 +47,12 @@ namespace MIREditor
             BeatEditor = TL.BeatEditor;
         }
 
-        public Tonalty GetCurrentTonalty()
+        public Tonality GetCurrentTonality()
         {
-            if (Info.Beats.Count < 2) return Tonalty.NoTonalty;
+            if (Info.Beats.Count < 2) return Tonality.NoTonality;
             int id = BeatEditor.GetPreviousBeatID(Program.TL.CurrentTime);
             if (id == -1) id = 0;
-            return Info.Beats[id].Tonalty;
+            return Info.Beats[id].Tonality;
         }
 
         public void ChangeChromaMode()
@@ -78,46 +78,46 @@ namespace MIREditor
             }
             Prepared = true;
         }
-        public void DrawTonalty()
+        public void DrawTonality()
         {
             if (Info.Beats.Count < 2) return;
             double tempLeftMostTime = TL.LeftMostTime, tempRightMostTime = TL.RightMostTime;
             int left = BeatEditor.GetPreviousBeatID(tempLeftMostTime) - 1, right = BeatEditor.GetNextBeatID(tempRightMostTime);
             // Get the previous of previous beat of the left bound and the next beat of the right bound.
             if (left < 0) left = 0;
-            // Tonalty of the last beat is wrong and useless
+            // Tonality of the last beat is wrong and useless
             if (right >= Info.Beats.Count - 1) right = Info.Beats.Count - 2;
-            Tonalty lastTonalty = null;
+            Tonality lastTonality = null;
             int rightPos = TL.TargetRightPos;
             for (int i=right;i>=left;--i)
             {
                 int pos = TL.Time2Pos(Info.Beats[i].Time);
                 if (pos <= 0)
                 {
-                    lastTonalty = Info.Beats[i].Tonalty;
+                    lastTonality = Info.Beats[i].Tonality;
                     break;
                 }
-                if(i==0||Info.Beats[i-1].Tonalty.ToString()!=Info.Beats[i].Tonalty.ToString())
+                if(i==0||Info.Beats[i-1].Tonality.ToString()!=Info.Beats[i].Tonality.ToString())
                 {
-                    DrawTonaltyAt(Info.Beats[i].Tonalty, pos, rightPos - pos);
+                    DrawTonalityAt(Info.Beats[i].Tonality, pos, rightPos - pos);
                     rightPos = pos;
                 }
             }
-            if (lastTonalty != null)
-                DrawTonaltyAt(lastTonalty, 0, rightPos);
+            if (lastTonality != null)
+                DrawTonalityAt(lastTonality, 0, rightPos);
         }
-        public void DrawTonaltyAt(Tonalty tonalty,int graphicPosition,int restrictedLength)
+        public void DrawTonalityAt(Tonality tonality,int graphicPosition,int restrictedLength)
         {
-            TL.G.DrawString(tonalty.ToString(), tonaltyFont, tonaltyBrush,
+            TL.G.DrawString(tonality.ToString(), tonalityFont, tonalityBrush,
                 new Rectangle(graphicPosition, 0, restrictedLength, ChromaTextHeight));
-            if (tonalty == null) return;
+            if (tonality == null) return;
             for (int j = 0; j < 12; ++j)
             {
-                if (ChromaMode != TimelineChromaMode.FrameScale || tonalty.IsOnNaturalScale(j))
+                if (ChromaMode != TimelineChromaMode.FrameScale || tonality.IsOnNaturalScale(j))
                 {
-                    TL.G.DrawString(tonalty.NoteNameUnderTonalty(j), noteFont, noteBackBrush,
+                    TL.G.DrawString(tonality.NoteNameUnderTonality(j), noteFont, noteBackBrush,
                         new Rectangle(graphicPosition + fontShadowDX, chromaTextStart + (11 - j) * ChromaHeight + fontShadowDY, restrictedLength, ChromaTextHeight));
-                    TL.G.DrawString(tonalty.NoteNameUnderTonalty(j), noteFont, noteFrontBrush,
+                    TL.G.DrawString(tonality.NoteNameUnderTonality(j), noteFont, noteFrontBrush,
                         new Rectangle(graphicPosition, chromaTextStart + (11 - j) * ChromaHeight, restrictedLength, ChromaTextHeight));
                 }
             }
@@ -128,7 +128,7 @@ namespace MIREditor
             if (Info.Beats.Count < 2) return;
             int lpos = TL.Time2Pos(0);
             if (lpos < 0) lpos = 0;
-            Tonalty tonalty = GetCurrentTonalty();
+            Tonality tonality = GetCurrentTonality();
             if (ChromaMode !=TimelineChromaMode.None)
             {
                 if(Prepared)
@@ -137,7 +137,7 @@ namespace MIREditor
                     int pos2 = TL.Time2Pos(TL.MP3Length);
                     for (int j = 0; j < 12; ++j)
                     {
-                        if (ChromaMode!=TimelineChromaMode.FrameScale || tonalty.IsOnNaturalScale(j))
+                        if (ChromaMode!=TimelineChromaMode.FrameScale || tonality.IsOnNaturalScale(j))
                         {
                             if (ChromaMode == TimelineChromaMode.Global)
                             {
@@ -172,7 +172,7 @@ namespace MIREditor
             if(TL.IsMouseInControl&&TL.CurrentMouseMode==Timeline.MouseMode.Chroma&& ChromaMode != TimelineChromaMode.None)
             {
                 int id = GetChromaID(TL.MousePosY);
-                if (ChromaMode != TimelineChromaMode.FrameScale || tonalty.IsOnNaturalScale(id))
+                if (ChromaMode != TimelineChromaMode.FrameScale || tonality.IsOnNaturalScale(id))
                 {
                     int pos1 = Math.Max(0, TL.Time2Pos(0));
                     int pos2 = Math.Max(TL.TargetRightPos - 1, TL.Time2Pos(TL.MP3Length));
@@ -186,11 +186,11 @@ namespace MIREditor
         }
         public void ClickOnChromas(int x, int y)
         {
-            Tonalty tonalty = GetCurrentTonalty();
+            Tonality tonality = GetCurrentTonality();
             if (ChromaMode != TimelineChromaMode.None)
             {
                 int id = GetChromaID(y);
-                if (ChromaMode != TimelineChromaMode.FrameScale || tonalty.IsOnNaturalScale(id))
+                if (ChromaMode != TimelineChromaMode.FrameScale || tonality.IsOnNaturalScale(id))
                     Program.MidiManager.PlaySingleNote(id);
             }
         }

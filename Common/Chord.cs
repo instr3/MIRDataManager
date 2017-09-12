@@ -215,9 +215,9 @@ namespace Common
             return chordFlyweightLabels[templateID, scale];
             //return templates[templateID].Label.Replace("{X}", Num2Char[scale]);
         }
-        public string ToString(Tonalty tonalty)
+        public string ToString(Tonality tonality)
         {
-            if (tonalty.Root == -1)
+            if (tonality.Root == -1)
             {
                 return ToString();
             }
@@ -233,7 +233,7 @@ namespace Common
                         return "?";
                 }
             }
-            int delta = scale - tonalty.Root;
+            int delta = scale - tonality.Root;
             if (delta < 0) delta += 12;
             return templates[templateID].RelativeLabel
                 .Replace("{I}", Num2RomeBig[delta])

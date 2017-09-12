@@ -220,24 +220,24 @@ namespace MIREditor
             if (left < 0) left = 0;
             if (right >= Info.Beats.Count) right = Info.Beats.Count - 1;
             Chord lastChord = null;
-            Tonalty lastTonalty = null;
+            Tonality lastTonality = null;
             ClearChordSwitchPoint();
             for (int i = left; i < right; ++i)
             {
                 BeatInfo beat = Info.Beats[i];
-                if (lastChord!=beat.Chord||lastTonalty!=beat.Tonalty)
+                if (lastChord!=beat.Chord||lastTonality!=beat.Tonality)
                 {
-                    SetChordSwitchPoint(beat.Time, beat.Chord, beat.Tonalty);
+                    SetChordSwitchPoint(beat.Time, beat.Chord, beat.Tonality);
                     lastChord = beat.Chord;
-                    lastTonalty = beat.Tonalty;
+                    lastTonality = beat.Tonality;
                 }
                 if (beat.SecondChordPercent>0)
                 {
                     BeatInfo nextBeat = Info.Beats[i + 1];
                     double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent;
-                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonalty);
+                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonality);
                     lastChord = beat.SecondChord;
-                    lastTonalty = beat.Tonalty;
+                    lastTonality = beat.Tonality;
                 }
             }
             SetChordSwitchPoint(Info.Beats[right].Time, null, null);
@@ -257,19 +257,19 @@ namespace MIREditor
         }
         double tempLastSwitchTime;
         Chord tempLastSwitchChord = null;
-        Tonalty tempLastSwitchTonalty = null;
+        Tonality tempLastSwitchTonality = null;
         Chord tempPointingChord = null;
         private void ClearChordSwitchPoint()
         {
             tempLastSwitchChord = null;
-            tempLastSwitchTonalty = null;
+            tempLastSwitchTonality = null;
             tempPointingChord = null;
         }
-        private void SetChordSwitchPoint(double time,Chord chord,Tonalty tonalty)
+        private void SetChordSwitchPoint(double time,Chord chord,Tonality tonality)
         {
             if(tempLastSwitchChord!=null)
             {
-                DrawChordBetween(tempLastSwitchTime, time, tempLastSwitchChord, tempLastSwitchTonalty);
+                DrawChordBetween(tempLastSwitchTime, time, tempLastSwitchChord, tempLastSwitchTonality);
                 if(tempLastSwitchTime<TL.CurrentTime&&time>=TL.CurrentTime)
                 {
                     tempPointingChord = tempLastSwitchChord;
@@ -277,9 +277,9 @@ namespace MIREditor
             }
             tempLastSwitchTime = time;
             tempLastSwitchChord = chord;
-            tempLastSwitchTonalty = tonalty;
+            tempLastSwitchTonality = tonality;
         }
-        private void DrawChordBetween(double leftTime, double rightTime,Chord chord,Tonalty tonalty)
+        private void DrawChordBetween(double leftTime, double rightTime,Chord chord,Tonality tonality)
         {
             int leftPos = TL.Time2Pos(leftTime);
             int rightPos = TL.Time2Pos(rightTime);
@@ -287,7 +287,7 @@ namespace MIREditor
                 return;
             if (rightPos > TL.TargetRightPos)
                 rightPos = TL.TargetRightPos;
-            string chordName = chord.ToString(tonalty);
+            string chordName = chord.ToString(tonality);
             KeyValuePair<Color, Color> solidColors = ColorSchema.GetGradientColorByChordName(chordName);
             KeyValuePair<Color, Color> transparentColors = ColorSchema.GetGradientTransparentColorByChordName(chordName);
             if (TL.RelativeLabel)

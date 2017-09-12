@@ -16,7 +16,7 @@ namespace MIREditor
 {
     public partial class MainForm : Form
     {
-        public Tonalty RelativeLabelTonalty = Tonalty.NoTonalty;
+        public Tonality RelativeLabelTonality = Tonality.NoTonality;
         public Label[] ChordLabels;
         DataGridViewRow[] relativeChordRows;
         DataGridViewRow[] absoluteChordRows;
@@ -77,7 +77,7 @@ namespace MIREditor
         {
             tabControl1_SelectedIndexChanged(null, null);
             Triggers.ChordLabelChangeTrigger = true;
-            RelativeLabelTonalty = Tonalty.NoTonalty;
+            RelativeLabelTonality = Tonality.NoTonality;
             if (Program.TL != null)
             {
                 trackBarVolumeMain.DataBindings.Clear();
@@ -89,8 +89,8 @@ namespace MIREditor
                 checkBoxAutoPlayChord.DataBindings.Clear();
                 checkBoxAutoPlayChord.DataBindings.Add("Checked", Program.TL.ChordEditor, "AutoPlayMidi", true, DataSourceUpdateMode.OnPropertyChanged);
                 comboBox_Metre.Text = Program.TL.Info.MusicConfigure.MetreNumber.ToString();
-                //if (Program.TL.Info.Tonalty != -1)
-                //    comboBox_GLTonalty.SelectedIndex = Program.TL.Info.Tonalty;
+                //if (Program.TL.Info.Tonality != -1)
+                //    comboBox_GLTonality.SelectedIndex = Program.TL.Info.Tonality;
                 comboBoxAlignBeats.Items.Clear();
                 Program.TL.ChordEditor.AlignBeats = new List<int>();
                 int bd = Program.TL.Info.MusicConfigure.MetreNumber;
@@ -222,22 +222,22 @@ namespace MIREditor
         }
         private void UpdateChordLabels()
         {
-            Tonalty currentTonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
-            if (Triggers.ChordLabelChangeTrigger || RelativeLabelTonalty.ToString() != currentTonalty.ToString())
+            Tonality currentTonality = Program.TL.ChromaVisualizer.GetCurrentTonality();
+            if (Triggers.ChordLabelChangeTrigger || RelativeLabelTonality.ToString() != currentTonality.ToString())
             {
                 Triggers.ChordLabelChangeTrigger = false;
-                RelativeLabelTonalty = currentTonalty;
+                RelativeLabelTonality = currentTonality;
                 for (int id = 0; id < 15; ++id)
                 {
                     Chord inputChord = Program.TL.ChordShortcuts.GetChordInput(
-                        id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonalty, Program.TL.RelativeLabel);
+                        id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonality, Program.TL.RelativeLabel);
                     if (inputChord != null)
                     {
-                        KeyValuePair<Color,Color> colors = ColorSchema.GetGradientTransparentColorByChordName(inputChord.ToString(RelativeLabelTonalty),50);
+                        KeyValuePair<Color,Color> colors = ColorSchema.GetGradientTransparentColorByChordName(inputChord.ToString(RelativeLabelTonality),50);
                         ChordLabels[id].BackColor = colors.Key;
                         ChordLabels[id].ForeColor = colors.Value;
                         if (Program.TL.RelativeLabel)
-                            ChordLabels[id].Text = inputChord.ToString(RelativeLabelTonalty);
+                            ChordLabels[id].Text = inputChord.ToString(RelativeLabelTonality);
                         else
                             ChordLabels[id].Text = inputChord.ToString();
                     }
@@ -284,7 +284,7 @@ namespace MIREditor
             {
                 int id = GetChordLabelIndex(sender);
                 Chord inputChord = Program.TL.ChordShortcuts.GetChordInput(
-                    id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonalty, Program.TL.RelativeLabel);
+                    id, Program.TL.IsCtrlDown, Program.TL.IsAltDown, Program.TL.IsShiftDown, RelativeLabelTonality, Program.TL.RelativeLabel);
                 if (inputChord != null)
                 {
                     if (e.Button == listenMouseButton)
@@ -492,24 +492,24 @@ namespace MIREditor
                 Program.TL.BeatEditor.SelectAllBeat();
         }
 
-        private void comboBox_GLTonalty_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox_GLTonality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //if (Program.TL != null && comboBox_GLTonalty.SelectedIndex != -1)
-            //    Program.TL.Info.Tonalty = comboBox_GLTonalty.SelectedIndex;
+            //if (Program.TL != null && comboBox_GLTonality.SelectedIndex != -1)
+            //    Program.TL.Info.Tonality = comboBox_GLTonality.SelectedIndex;
 
         }
 
-        private void comboBox_TETonalty_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox_TETonality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Program.TL != null && comboBox_TETonalty.SelectedIndex != -1)
-                Program.TL.BeatEditor.TonaltyModify(comboBox_TETonalty.SelectedItem as string);
-            comboBox_TETonalty.SelectedIndex = -1;
+            if (Program.TL != null && comboBox_TETonality.SelectedIndex != -1)
+                Program.TL.BeatEditor.TonalityModify(comboBox_TETonality.SelectedItem as string);
+            comboBox_TETonality.SelectedIndex = -1;
         }
 
         private void button_TESwitchMajMin_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
-                Program.TL.BeatEditor.TonaltySwitchMajMin();
+                Program.TL.BeatEditor.TonalitySwitchMajMin();
 
         }
         private void button_BEExtendBeat_Click(object sender, EventArgs e)
@@ -624,13 +624,13 @@ namespace MIREditor
             float tp = 1.0f - t;
             return (int)(tp * a + t * b);
         }
-        private void SetGridCellChord(DataGridViewCell cell,Chord chord,Tonalty tonalty)
+        private void SetGridCellChord(DataGridViewCell cell,Chord chord,Tonality tonality)
         {
-            int color = 255 - 40 * chord.ToNotes().Count(x => !tonalty.IsOnNaturalScale(x));
+            int color = 255 - 40 * chord.ToNotes().Count(x => !tonality.IsOnNaturalScale(x));
             cell.Tag = chord;
-            cell.Value = chord.ToString(tonalty);
+            cell.Value = chord.ToString(tonality);
             //cell.Style.BackColor = Color.FromArgb(color, color, color);
-            KeyValuePair<Color,Color> colors = ColorSchema.GetGradientColorByChordName(chord.ToString(tonalty));
+            KeyValuePair<Color,Color> colors = ColorSchema.GetGradientColorByChordName(chord.ToString(tonality));
             cell.Style.BackColor =
                 Lerp(
                 colors.Key,
@@ -671,7 +671,7 @@ namespace MIREditor
             {
                 for (int j = 0; j < 12; ++j)
                 {
-                    SetGridCellChord(relativeChordRows[i].Cells[j], Chord.EnumerateChord(i,j), Tonalty.MajMinTonalty(0, true));
+                    SetGridCellChord(relativeChordRows[i].Cells[j], Chord.EnumerateChord(i,j), Tonality.MajMinTonality(0, true));
                 }
             }
             dataGridViewChord.Rows.Clear();
@@ -687,7 +687,7 @@ namespace MIREditor
             {
                 for (int j = 0; j < 12; ++j)
                 {
-                    SetGridCellChord(absoluteChordRows[i].Cells[j], Chord.EnumerateChord(i, j), Tonalty.NoTonalty);
+                    SetGridCellChord(absoluteChordRows[i].Cells[j], Chord.EnumerateChord(i, j), Tonality.NoTonality);
                 }
             }
             dataGridViewChord.Rows.Clear();
@@ -696,8 +696,8 @@ namespace MIREditor
         {
             if (relativeChordRows == null)
                 InitChordKeyboardRows();
-            Tonalty tonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
-            bool relativeMode = Program.TL.RelativeLabel && tonalty.Root != -1;
+            Tonality tonality = Program.TL.ChromaVisualizer.GetCurrentTonality();
+            bool relativeMode = Program.TL.RelativeLabel && tonality.Root != -1;
             if (relativeMode.Equals(dataGridViewChord.Tag)) return;
             dataGridViewChord.Rows.Clear();
             if (relativeMode)
@@ -734,9 +734,9 @@ namespace MIREditor
             {
                 if (e.ColumnIndex != -1)
                 {
-                    Tonalty tonalty = Program.TL.ChromaVisualizer.GetCurrentTonalty();
-                    bool relativeMode = Program.TL.RelativeLabel && tonalty.Root != -1;
-                    int delta = relativeMode ? tonalty.Root : 0;
+                    Tonality tonality = Program.TL.ChromaVisualizer.GetCurrentTonality();
+                    bool relativeMode = Program.TL.RelativeLabel && tonality.Root != -1;
+                    int delta = relativeMode ? tonality.Root : 0;
                     if (e.RowIndex == -1)
                     {
                         Program.MidiManager.PlaySingleNote(delta + e.ColumnIndex);

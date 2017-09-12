@@ -69,7 +69,7 @@ namespace MIREditor
             }
             return -1;
         }
-        public Chord GetChordInput(int id, bool control,bool alt,bool shift,Tonalty currentTonalty,bool isRelativeLabel)
+        public Chord GetChordInput(int id, bool control,bool alt,bool shift,Tonality currentTonality,bool isRelativeLabel)
         {
             if (id == -1)
                 return null;
@@ -94,8 +94,8 @@ namespace MIREditor
                 if (control) row |= 2;
                 if (alt) row |= 4;
                 Chord chord = (isRelativeLabel ? relativeChords : absoluteChords)[row, id];
-                if (chord!=null&&isRelativeLabel && currentTonalty.Root != -1)
-                    return chord.ShiftPitch(currentTonalty.Root);
+                if (chord!=null&&isRelativeLabel && currentTonality.Root != -1)
+                    return chord.ShiftPitch(currentTonality.Root);
                 else
                     return chord;
             }

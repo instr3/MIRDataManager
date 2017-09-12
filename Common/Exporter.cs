@@ -12,7 +12,7 @@ namespace Common
     {
         public string BeatTags;
         public string ChordTags;
-        public string TonaltyTags;
+        public string TonalityTags;
         private readonly string musicExtension;
         static void AppendLine(ref string str,params object[] args)
         {
@@ -23,57 +23,57 @@ namespace Common
             if (info.Beats.Count < 2) return;
             int left = 0, right = info.Beats.Count - 1;
             Chord lastChord = null;
-            Tonalty lastTonalty = null;
+            Tonality lastTonality = null;
             ClearChordSwitchPoint();
             for (int i = left; i < right; ++i)
             {
                 BeatInfo beat = info.Beats[i];
                 if (lastChord != beat.Chord)
                 {
-                    SetChordSwitchPoint(beat.Time, beat.Chord, beat.Tonalty);
+                    SetChordSwitchPoint(beat.Time, beat.Chord, beat.Tonality);
                     lastChord = beat.Chord;
-                    lastTonalty = beat.Tonalty;
+                    lastTonality = beat.Tonality;
                 }
                 if (beat.SecondChordPercent > 0)
                 {
                     BeatInfo nextBeat = info.Beats[i + 1];
                     double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent;
-                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonalty);
+                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonality);
                     lastChord = beat.SecondChord;
-                    lastTonalty = beat.Tonalty;
+                    lastTonality = beat.Tonality;
                 }
             }
             SetChordSwitchPoint(info.Beats[right].Time, null, null);
         }
         double tempLastSwitchTime;
         Chord tempLastSwitchChord = null;
-        Tonalty tempLastSwitchTonalty = null;
+        Tonality tempLastSwitchTonality = null;
         private void ClearChordSwitchPoint()
         {
             tempLastSwitchChord = null;
-            tempLastSwitchTonalty = null;
+            tempLastSwitchTonality = null;
         }
-        private void SetChordSwitchPoint(double time, Chord chord, Tonalty tonalty)
+        private void SetChordSwitchPoint(double time, Chord chord, Tonality tonality)
         {
             if (tempLastSwitchChord != null)
             {
-                DrawChordBetween(tempLastSwitchTime, time, tempLastSwitchChord, tempLastSwitchTonalty);
+                DrawChordBetween(tempLastSwitchTime, time, tempLastSwitchChord, tempLastSwitchTonality);
             }
             tempLastSwitchTime = time;
             tempLastSwitchChord = chord;
-            tempLastSwitchTonalty = tonalty;
+            tempLastSwitchTonality = tonality;
         }
-        private void DrawChordBetween(double leftTime, double rightTime, Chord chord, Tonalty tonalty)
+        private void DrawChordBetween(double leftTime, double rightTime, Chord chord, Tonality tonality)
         {
             AppendLine(ref ChordTags, leftTime.ToString("F7"), rightTime.ToString("F7"), chord.ToString());
         }
         public Exporter(SongInfo songInfo,double MP3Length)
         {
             // Todo: Every single part is wrong.
-            // Todo: Export issues, like the last chord and last tonalty.
+            // Todo: Export issues, like the last chord and last tonality.
             BeatTags = "";
             ChordTags = "";
-            TonaltyTags = "";
+            TonalityTags = "";
             musicExtension = songInfo.MusicConfigure.Extension;
             List<BeatInfo> beats = songInfo.Beats;
             
@@ -95,13 +95,13 @@ namespace Common
             for (int i = 0; i < beats.Count-1; ++i)
             {
                 BeatInfo beat = beats[i];
-                Tonalty curTonalty = beat.Tonalty;
+                Tonality curTonality = beat.Tonality;
                 for (; i < beats.Count-1; ++i)
-                    if (beats[i].Tonalty.ToString() != curTonalty.ToString())
+                    if (beats[i].Tonality.ToString() != curTonality.ToString())
                         break;
                 BeatInfo nextBeat = beats[i];
 
-                AppendLine(ref TonaltyTags, beat.Time.ToString("F7"), nextBeat.Time.ToString("F7"), curTonalty.ToString());
+                AppendLine(ref TonalityTags, beat.Time.ToString("F7"), nextBeat.Time.ToString("F7"), curTonality.ToString());
                 --i;
             }
         }
@@ -127,7 +127,7 @@ namespace Common
             using (StreamWriter sw = new StreamWriter(folder + "\\chordlab\\" + filename + ".lab"))
                 sw.Write(ChordTags);
             using (StreamWriter sw = new StreamWriter(folder + "\\keylab\\" + filename + ".lab"))
-                sw.Write(TonaltyTags);
+                sw.Write(TonalityTags);
             if(exportMusic)
             {
                 string targetPath = folder + "\\music\\" + filename + "." + musicExtension;

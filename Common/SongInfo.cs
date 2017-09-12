@@ -103,7 +103,7 @@ namespace Common
                     partString = string.Format(@"{{{0},{1},{2},{3},{4},{5}}}",
                         beatInfo.Time.ToString("R"),
                         beatInfo.BarAttribute,
-                        beatInfo.Tonalty,
+                        beatInfo.Tonality,
                         beatInfo.Chord,
                         beatInfo.SecondChordPercent,
                         beatInfo.SecondChord);
@@ -113,7 +113,7 @@ namespace Common
                     partString = string.Format(@"{{{0},{1},{2},{3}}}",
                         beatInfo.Time.ToString("R"),
                         beatInfo.BarAttribute,
-                        beatInfo.Tonalty,
+                        beatInfo.Tonality,
                         beatInfo.Chord);
                 }
                 res += TextProcessor.AddAttribute("Beat_" + i, partString);
@@ -161,7 +161,7 @@ namespace Common
             }
 
         }
-        public void EstimateGlobalTonalty()
+        public void EstimateGlobalTonality()
         {
             if (Chroma.GlobalChroma == null) return;
             int[] Adder = new int[] { 0, 2, 4, 5, 7, 9, 11 };
@@ -181,10 +181,10 @@ namespace Common
                 }
             }
             int laPos = maxAt - 3 < 0 ? maxAt + 9 : maxAt - 3;
-            Tonalty sampleTonalty = Tonalty.MajMinTonalty(maxAt, Chroma.GlobalChroma[laPos] > Chroma.GlobalChroma[maxAt] ? false : true);
+            Tonality sampleTonality = Tonality.MajMinTonality(maxAt, Chroma.GlobalChroma[laPos] > Chroma.GlobalChroma[maxAt] ? false : true);
             foreach (BeatInfo beat in Beats)
             {
-                beat.Tonalty = sampleTonalty;
+                beat.Tonality = sampleTonality;
             }
         }
     }

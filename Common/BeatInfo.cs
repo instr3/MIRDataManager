@@ -11,12 +11,12 @@ namespace Common
         public double Time { get; set; }
         public Chord Chord { get; private set; }
         public int BarAttribute { get; set; }
-        public Tonalty Tonalty { get; set; }
+        public Tonality Tonality { get; set; }
         public double SecondChordPercent { get; private set; }
         public Chord SecondChord { get; private set; }
         public BeatInfo()
         {
-            Tonalty = Tonalty.NoTonalty;
+            Tonality = Tonality.NoTonality;
             SetChord(Chord.NoChord);
         }
         public BeatInfo(string dataString)
@@ -28,7 +28,7 @@ namespace Common
                 throw new FormatException("Bad BeatInfo DataString");
             Time = double.Parse(groups[0]);
             BarAttribute = int.Parse(groups[1]);
-            Tonalty = new Tonalty(groups[2]);
+            Tonality = new Tonality(groups[2]);
             Chord = Chord.GetChordByAbsoluteChordName(groups[3]);
             if (groups.Length>=6)
             {
