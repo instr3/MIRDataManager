@@ -11,9 +11,10 @@
 
 :transform a vamp:Transform ;
     vamp:plugin :transform_plugin ;
-    vamp:step_size "2048"^^xsd:int ; 
-    vamp:block_size "16384"^^xsd:int ; 
+    vamp:step_size "[__WIN_SHIFT__]"^^xsd:int ;
+    vamp:block_size "[__WIN_SIZE__]"^^xsd:int ;
     vamp:plugin_version """3""" ; 
+    vamp:sample_rate "[__SR__]"^^xsd:int ;
     vamp:parameter_binding [
         vamp:parameter [ vamp:identifier "chromanormalize" ] ;
         vamp:value "0"^^xsd:float ;
