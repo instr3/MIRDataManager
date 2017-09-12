@@ -52,7 +52,7 @@
     <Compile Include="SongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextProcessor.cs" />
-    <Compile Include="Tonalty.cs" />
+    <Compile Include="Tonality.cs" />
     <Compile Include="Exporter.cs" />
     <Compile Include="VampInterface.cs" />
   </ItemGroup>
