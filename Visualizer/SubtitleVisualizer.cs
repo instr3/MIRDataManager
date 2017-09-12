@@ -1,26 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common;
-using System.Windows.Forms;
-using System.IO;
-using System.Drawing;
+﻿using Common;
 using MIREditor;
-using Un4seen.Bass;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using Un4seen.Bass;
 
 namespace Visualizer
 {
     class SubtitleVisualizer
-    {
+    {   
 
         public Graphics Target { get; private set; }
         public SongInfo Info { get; private set; }
         public int MP3stream { get; private set; }
         public double MP3Length { get; private set; }
         public Graphics G { get; private set; }
+        public Dictionary<string, string> MetaData { get; private set; }
         public int BeatsPerSegment;
         public const int GRAPHIC_WIDTH = 1024;
         public const int GRAPHIC_HEIGHT = 768;
@@ -29,6 +28,7 @@ namespace Visualizer
         public const double RELATIVE_NOTES_SPEED_4 = 0.5;
         public const double RELATIVE_NOTES_SPEED_3 = 1.0;
         public double RELATIVE_NOTES_SPEED;
+        public Bitmap Image { get; private set; }
         public long CurrentPosition
         {
             get
@@ -50,22 +50,29 @@ namespace Visualizer
             set
             {
                 if (value < 0) value = 0;
-                currentSegID = 0; // Prevent drawing errors
+                // currentSegID = 0; // Prevent drawing errors
                 CurrentPosition = Bass.BASS_ChannelSeconds2Bytes(MP3stream, value);
             }
         }
-
         private PictureBox pictureBox;
         private BufferedGraphics myBuffer;
 
-        public SubtitleVisualizer(PictureBox bindingPictureBox, SongInfo info)
+        public SubtitleVisualizer(PictureBox bindingPictureBox, SongInfo info, bool renderToFile,Dictionary<string,string> metaData)
         {
             // 1. Preparing graph buffers
-            pictureBox = bindingPictureBox;
-            bindingPictureBox.BackColor = Color.Black;
-            Target = bindingPictureBox.CreateGraphics();
-            myBuffer = BufferedGraphicsManager.Current.Allocate(Target, new Rectangle(0, 0, pictureBox.Width, pictureBox.Height));
-            G = myBuffer.Graphics;
+            if (renderToFile)
+            {
+                Image = new Bitmap(GRAPHIC_WIDTH, GRAPHIC_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                G = Graphics.FromImage(Image);
+            }
+            else
+            {
+                pictureBox = bindingPictureBox;
+                bindingPictureBox.BackColor = Color.Black;
+                Target = bindingPictureBox.CreateGraphics();
+                myBuffer = BufferedGraphicsManager.Current.Allocate(Target, new Rectangle(0, 0, pictureBox.Width, pictureBox.Height));
+                G = myBuffer.Graphics;
+            }
             G.SmoothingMode = SmoothingMode.HighQuality;
             G.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
@@ -89,12 +96,17 @@ namespace Visualizer
             //Bass.BASS_ChannelPlay(MP3stream, true);
 
             // 3. Preparing song annotations
+            MetaData = metaData;
             Info = info;
             PreprocessSongInfo();
         }
         public void Play()
         {
             Bass.BASS_ChannelPlay(MP3stream, true);
+        }
+        public bool Ended()
+        {
+            return Bass.BASS_ChannelIsActive(MP3stream) == BASSActive.BASS_ACTIVE_STOPPED;
         }
         class SegmentInfoStruct
         {
@@ -116,16 +128,36 @@ namespace Visualizer
             }
             else
             {
-                BeatsPerSegment = 8;
-                RELATIVE_NOTES_SPEED = RELATIVE_NOTES_SPEED_4;
+                BeatsPerSegment = int.Parse(MetaData["BeatsPerSegment"]);
+                RELATIVE_NOTES_SPEED = double.Parse(MetaData["RelativeMovingSpeed"]);
             }
             int beat_begin_id = 0;
             segments = new List<SegmentInfoStruct>();
             for (int i=0;i<Info.Beats.Count;++i)
             {
                 BeatInfo beat = Info.Beats[i];
-                if(beat.BarAttribute==2 || (i-beat_begin_id)>=BeatsPerSegment || i==Info.Beats.Count-1 || (i>0 && Info.Beats[i].Tonalty!=Info.Beats[i-1].Tonalty))
+                // Ignore leading non downbeats
+                if (segments.Count==0 && beat_begin_id == i && beat.BarAttribute < 1)
                 {
+                    beat_begin_id++;
+                    continue;
+                }
+                if (beat.BarAttribute==2 || (i-beat_begin_id)>=BeatsPerSegment || i==Info.Beats.Count-1 || (i>0 && Info.Beats[i].Tonalty!=Info.Beats[i-1].Tonalty))
+                {
+                    if(i == Info.Beats.Count - 1 && i - beat_begin_id<BeatsPerSegment) // Test if the last segment is unnecessary
+                    {
+                        bool valid = false;
+                        for(int j=beat_begin_id;j<i;++j)
+                        {
+                            if(Info.Beats[j].Chord.Scale!=-1)
+                            {
+                                valid = true;
+                                break;
+                            }
+                        }
+                        if (!valid)
+                            break;
+                    }
                     segments.Add(new SegmentInfoStruct(beat_begin_id, i));
                     beat_begin_id = i;
                 }
@@ -142,9 +174,11 @@ namespace Visualizer
 
         protected Font titleFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 28f);
         protected Font metadataFont = new Font(FontManager.Instance.VisualizerSuffixFontName, 18f);
-
+        private int[,] chordWidth;
         protected int DrawSimpleText(string text,int font_id,int left, int top, int alpha=255)
         {
+            if (text == "")
+                return 0;
             Brush alphaWhiteBrush = new SolidBrush(Color.FromArgb(alpha, Color.White));
             int result;
             switch(font_id)
@@ -158,25 +192,8 @@ namespace Visualizer
                     result=(int)(G.MeasureString(text, scriptFont).Width);
                     return result - 8;
                 case 2:
-                    result = 0;
-                    int length = text.Length;
-                    if (length>0 && (text[length-1] == '6' || text[length-1] == '7'))
-                    {
-                        string text1 = text.Substring(0, length - 1);
-                        string text2 = text.Substring(length - 1);
-                        if(text1!="")
-                        {
-                            G.DrawString(text1, suffixFont, alphaWhiteBrush, new Point(left, top));
-                            result += (int)(G.MeasureString(text1, suffixFont).Width) - 8;
-                        }
-                        G.DrawString(text2, scriptFont, alphaWhiteBrush, new Point(left + result, top));
-                        result += (int)(G.MeasureString(text2, suffixFont).Width) - 8;
-                    }
-                    else
-                    {
-                        G.DrawString(text, suffixFont, alphaWhiteBrush, new Point(left, top));
-                        result = (int)(G.MeasureString(text, suffixFont).Width);
-                    }
+                    G.DrawString(text, suffixFont, alphaWhiteBrush, new Point(left, top));
+                    result = (int)(G.MeasureString(text, suffixFont).Width);
                     return result - 8;
                 case 3:
                     result = 0;
@@ -200,12 +217,16 @@ namespace Visualizer
                     G.DrawString(text, smallSuffixFont, alphaWhiteBrush, new Point(left + result, top));
                     result += (int)(G.MeasureString(text, smallSuffixFont).Width);
                     return result - 8;
+                case 15:
+                    G.DrawString(text, scriptFont, alphaWhiteBrush, new Point(left, top + 15));
+                    result = (int)(G.MeasureString(text, scriptFont).Width);
+                    return result - 8;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        protected void DrawChordText(Chord chord, int left, int top, int alpha, Tonalty tonalty=null)
+        protected int DrawChordText(Chord chord, int left, int top, int alpha, Tonalty tonalty=null)
         {
             if (tonalty == null)
                 tonalty = Tonalty.NoTonalty;
@@ -229,9 +250,36 @@ namespace Visualizer
                 {
                     left += DrawSimpleText(scaleText, 0, left, top, alpha);
                 }
-                string suffix = chord.ToAbosluteSuffix();
-                left += DrawSimpleText(suffix, 2, left, top, alpha);
+                Chord.ScriptAnnotationStruct suffixStruct = chord.ToScriptAnnotation();
+                left += DrawSimpleText(suffixStruct.suffix, 2, left, top, alpha);
+                int width1 = DrawSimpleText(suffixStruct.superscript, 1, left, top, alpha);
+                int width2 = DrawSimpleText(suffixStruct.subscript, 15, left, top, alpha);
+                left += Math.Max(width1, width2);
+                if(suffixStruct.inversion!=-1)
+                {
+                    left += DrawSimpleText("/", 2, left, top, alpha) - 4;
+                    scaleText = tonalty.NoteNameUnderTonalty(suffixStruct.inversion);
+                    if (scaleText.Length == 2)
+                    {
+                        left += 4;
+                        if (scaleText[1] == 'b' || scaleText[1] == '#')
+                        {
+                            left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, top, alpha);
+                            left += DrawSimpleText(scaleText.Substring(0, 1), 0, left, top, alpha);
+                        }
+                        else
+                        {
+                            left += DrawSimpleText(scaleText.Substring(0, 1), 1, left, top, alpha);
+                            left += DrawSimpleText(scaleText.Substring(1, 1), 0, left, top, alpha);
+                        }
+                    }
+                    else
+                    {
+                        left += DrawSimpleText(scaleText, 0, left, top, alpha);
+                    }
+                }
             }
+            return left;
         }
 
         protected static GraphicsPath RoundedRect(Rectangle bounds, int radius)
@@ -379,15 +427,16 @@ namespace Visualizer
                     }
                 }
             }
-            myBuffer.Render(Target);
+            if(myBuffer!=null)
+                myBuffer.Render(Target);
         }
 
-        protected int currentSegID;
+        /*protected int currentSegID;
         private void SwitchToNextSegment()
         {
             currentSegID++;
-        }
-        private void DrawHistoricalSegments(double currentTime, Tonalty gredientTonalty)
+        }*/
+        private void DrawHistoricalSegments(int currentSegID, double currentTime, Tonalty gredientTonalty)
         {
             double SHIFT_TIME = 0.25;
             int MAX_HISTORY_DISPLAY = 9;
@@ -488,28 +537,42 @@ namespace Visualizer
             }
 
         }
+        static int TITLE_TOP = 55;
         public void DrawMetadata()
         {
-            int TITLE_TOP = 55;
             int METADATA_RIGHT = 130;
-            string title = "I AM A SUPER LONG TITLE PLACEHOLDER";
+            string title = MetaData["Title"];//"I AM A SUPER LONG TITLE PLACEHOLDER";
             int width = (int)(G.MeasureString(title, titleFont).Width);
             int left = (GRAPHIC_WIDTH - width) / 2;
             G.DrawString(title, titleFont, Brushes.White, new Point(left, TITLE_TOP));
-            string line1 = "Music by Mr.Unknown";
-            string line2 = "Words by Mr.Unknown";
+            string line1 = MetaData["Line1"];//"Music by Mr.Unknown";
+            string line2 = MetaData["Line2"];//"Words by Mr.Unknown";
             int width1 = (int)(G.MeasureString(line1, metadataFont).Width);
             int width2 = (int)(G.MeasureString(line2, metadataFont).Width);
             G.DrawString(line1, metadataFont, Brushes.White, new Point(GRAPHIC_WIDTH - METADATA_RIGHT - width1, TITLE_TOP + 45));
             G.DrawString(line2, metadataFont, Brushes.White, new Point(GRAPHIC_WIDTH - METADATA_RIGHT - width2, TITLE_TOP + 80));
-
         }
-        public void DrawFrame()
+        private void DrawIntroCover(double currentTime)
         {
-            double currentTime = CurrentTime + 0.1;
+            double INTRO_TIME = 2.5;
+            int COVER_TOP = 0; // TITLE_TOP + 115;
+            if(currentTime<=INTRO_TIME)
+            {
+                int alphaValue = (int)ClampedLerp(255, 0, currentTime / INTRO_TIME);
+                G.FillRectangle(new SolidBrush(Color.FromArgb(alphaValue, Color.Black)), new Rectangle(0, COVER_TOP, GRAPHIC_WIDTH, GRAPHIC_HEIGHT - COVER_TOP));
+
+            }
+        }
+        public bool DrawFrame()
+        {
+            return DrawFrame(CurrentTime + 0.1);
+        }
+        public bool DrawFrame(double currentTime)
+        {
+            int currentSegID = 0;
             while (currentSegID < segments.Count && currentTime > Info.Beats[segments[currentSegID].EndBeat].Time)
             {
-                SwitchToNextSegment();
+                ++currentSegID;
             }
             G.Clear(Color.Black);
             if (currentSegID < segments.Count)
@@ -523,7 +586,9 @@ namespace Visualizer
                     DrawPivot(percent, 0);
                 DrawScale(percent, 0);
             }
-            DrawHistoricalSegments(currentTime, null);
+            else
+                DrawScale(0, 0);
+            DrawHistoricalSegments(currentSegID, currentTime, null);
             if (currentSegID == 0)
             {
                 DrawTonalty(Info.Beats[segments[currentSegID].StartBeat].Tonalty, null, 0);
@@ -534,8 +599,137 @@ namespace Visualizer
                 double startTime = Info.Beats[segments[segID].StartBeat].Time;
                 DrawTonalty(Info.Beats[segments[segID].StartBeat].Tonalty, Info.Beats[segments[segID - 1].StartBeat].Tonalty, currentTime - startTime);
             }
+            DrawIntroCover(currentTime);
+            if (currentSegID >= segments.Count)
+            {
+                DrawIntroCover(Info.Beats[segments[segments.Count - 1].EndBeat].Time + 5 - currentTime);
+                
+            }
             DrawMetadata();
-            myBuffer.Render(Target);
+            if(myBuffer!=null)
+                myBuffer.Render(Target);
+            if (currentTime > Info.Beats[segments[segments.Count - 1].EndBeat].Time + 5)
+                return false;
+            return true;
+        }
+        struct ChordStatisticsStruct
+        {
+            public Chord chord;
+            public int depth;
+            public int count;
+        }
+        List<ChordStatisticsStruct> chordStatistics;
+        const int CHORD_STATISTICS_COLUMN_WIDTH = 330;
+        const int CHORD_STATISTICS_ROW_HEIGHT = 40;
+        private void DrawStatisticsEntry(ChordStatisticsStruct data,int left, int chord_width, int top)
+        {
+            int right = left + CHORD_STATISTICS_COLUMN_WIDTH;
+            left += 20;
+            right -= 20;
+            // G.DrawLine(rectPen, new Point(left, top + 33 - CHORD_STATISTICS_ROW_HEIGHT), new Point(right, top + 33 - CHORD_STATISTICS_ROW_HEIGHT));
+            G.DrawLine(rectPen, new Point(left, top + 33), new Point(right, top + 33));
+            right -= chord_width;
+            left += data.depth * 30 + 5;
+            string countString = data.count.ToString() + "×";
+            G.DrawString(countString, suffixFont, Brushes.White, new Point(left, top));
+            // right -= chordWidth[data.chord.TemplateID, data.chord.Scale];
+            DrawChordText(data.chord, right, top, 255, Tonalty.MajMinTonalty(0, true));
+         }
+        public bool DrawStatistics()
+        {
+            return DrawStatistics(CurrentTime);
+        }
+        public bool DrawStatistics(double currentTime)
+        {
+            if (chordStatistics == null)
+            {
+                Dictionary<Chord, int> chordDict = new Dictionary<Chord, int>();
+                Dictionary<Chord, List<Chord>> childList = new Dictionary<Chord, List<Chord>>();
+                void CreateRelativeChord(Chord relativeChord)
+                {
+                    Chord parentChord = relativeChord.GetParentChord();
+                    if (parentChord == null)
+                        parentChord = Chord.NoChord;
+                    if (!childList.ContainsKey(parentChord))
+                    {
+                        childList[parentChord] = new List<Chord>();
+                    }
+                    childList[parentChord].Add(relativeChord);
+                    chordDict[relativeChord] = 0;
+                }
+                // Create a tree
+                for (int i = 0; i < Info.Beats.Count; ++i)
+                {
+                    BeatInfo beat = Info.Beats[i];
+                    if (beat.Chord.Scale != -1 && i != Info.Beats.Count - 1 && beat.Tonalty.Root != -1)
+                    {
+                        Chord relativeChord = Chord.EnumerateChord(beat.Chord.TemplateID, (beat.Chord.Scale + 12 - beat.Tonalty.Root) % 12);
+                        do
+                        {
+                            if (!chordDict.ContainsKey(relativeChord))
+                                CreateRelativeChord(relativeChord);
+                            chordDict[relativeChord]++;
+                            relativeChord = relativeChord.GetParentChord();
+                        } while (relativeChord != null);
+                    }
+                }
+                chordStatistics = new List<ChordStatisticsStruct>();
+                void DFS(Chord relativeChord, int depth)
+                {
+                    bool visible = true;
+                    List<Chord> unsortedChildList = childList.ContainsKey(relativeChord) ? childList[relativeChord] : new List<Chord>();
+                    if (unsortedChildList.Count == 1 && chordDict[unsortedChildList[0]] == chordDict[relativeChord]) // Omit a node with exactly one child chord type
+                        visible = false;
+                    if (relativeChord == Chord.NoChord) // Virtual root
+                        visible = false;
+                    if (visible)
+                    {
+                        ChordStatisticsStruct s = new ChordStatisticsStruct();
+                        s.chord = relativeChord;
+                        s.depth = depth;
+                        s.count = chordDict[relativeChord];
+                        chordStatistics.Add(s);
+                    }
+                    unsortedChildList.Sort((x,y)=>(chordDict[y]).CompareTo(chordDict[x])); // Large to small
+                    foreach (Chord child in unsortedChildList)
+                    {
+                        DFS(child, depth + (visible ? 1 : 0));
+                    }
+                }
+                DFS(Chord.NoChord, 0);
+                chordWidth = new int[Chord.GetChordTemplatesCount(), 12];
+                for(int i=0;i< Chord.GetChordTemplatesCount();++i)
+                {
+                    for(int j=0;j<12;++j)
+                    {
+                        chordWidth[i, j] = (int)DrawChordText(Chord.EnumerateChord(i, j), 0, 0, 0);
+                    }
+                }
+            }
+            G.Clear(Color.Black);
+            int MAX_ROWS_PER_COLUMN = 13;
+            int columns = (chordStatistics.Count - 1) / MAX_ROWS_PER_COLUMN + 1;
+            int left = (GRAPHIC_WIDTH - CHORD_STATISTICS_COLUMN_WIDTH * columns) / 2;
+            for (int c=0;c<columns;++c)
+            {
+                int clipStart = c * MAX_ROWS_PER_COLUMN;
+                List <ChordStatisticsStruct> clip = chordStatistics.GetRange(clipStart, Math.Min(MAX_ROWS_PER_COLUMN, chordStatistics.Count - clipStart));
+                int width = 0;
+                foreach (ChordStatisticsStruct cs in clip)
+                    width = Math.Max(width, chordWidth[cs.chord.TemplateID, cs.chord.Scale]);
+                for (int i = 0; i < clip.Count; ++i)
+                {
+                    DrawStatisticsEntry(clip[i], left, width, 200 + i * CHORD_STATISTICS_ROW_HEIGHT);
+                }
+                left += CHORD_STATISTICS_COLUMN_WIDTH;
+
+            }
+            DrawIntroCover(currentTime);
+            DrawMetadata();
+            DrawIntroCover(10 - currentTime);// Actually, it's blackscreen cover
+            if(myBuffer!=null)
+                myBuffer.Render(Target);
+            return currentTime < 10;
         }
     }
 }
