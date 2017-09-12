@@ -19,14 +19,21 @@ namespace Visualizer
         [STAThread]
         static void Main()
         {
-#if DEBUG==false
-            Bass.BASS_Init(-1, 190000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new VisualizeForm());
-#else
-            ToImages();
-#endif
+            Console.WriteLine("Chord Subtitle by instr3");
+            Console.WriteLine("[*] Press space to record");
+            Console.WriteLine("[*] Press anything else to preview");
+            ConsoleKeyInfo key = Console.ReadKey();
+            if(key.Key==ConsoleKey.Spacebar)
+            {
+                ToImages();
+            }
+            else
+            {
+                Bass.BASS_Init(-1, 190000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new VisualizeForm());
+            }
         }
 
         static void ToImages()

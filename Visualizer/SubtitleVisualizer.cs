@@ -485,20 +485,35 @@ namespace Visualizer
             double endTime = Info.Beats[segments[segID].EndBeat].Time;
             double duration = (endTime - startTime) / (segments[segID].EndBeat - segments[segID].StartBeat) * BeatsPerSegment;
             double lastTime = 0.0;
-            BeatInfo lastBeat = Info.Beats[segments[segID].StartBeat];
-            int lastBeatID = segments[segID].StartBeat;
-            for (int i = segments[segID].StartBeat + 1; i <= segments[segID].EndBeat; ++i)
+            //BeatInfo lastBeat = Info.Beats[segments[segID].StartBeat];
+            //int lastBeatID = segments[segID].StartBeat;
+            Chord lastChord = Info.Beats[segments[segID].StartBeat].Chord;
+            Tonality lastTonality= Info.Beats[segments[segID].StartBeat].Tonality;
+            double lastBeatDuration = Info.Beats[segments[segID].StartBeat + 1].Time - Info.Beats[segments[segID].StartBeat].Time;
+            for (int i = segments[segID].StartBeat; i <= segments[segID].EndBeat; ++i)
             {
+                void SetChordSwitchPoint(double newTime, Chord nextChord, Tonality nextTonality, int beatID)
+                {
+                    DrawChord(lastChord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, lastTonality);
+                    lastChord = nextChord;
+                    lastTonality = nextTonality;
+                    lastTime = newTime;
+                    if (beatID < segments[segID].EndBeat)
+                        lastBeatDuration = Info.Beats[beatID + 1].Time - Info.Beats[beatID].Time;
+                    else
+                        lastBeatDuration = double.NaN;
+                }
                 BeatInfo beat = Info.Beats[i];
-                if (i == segments[segID].EndBeat || beat.Chord != lastBeat.Chord || beat.Tonality != lastBeat.Tonality)
+                if (i == segments[segID].EndBeat || beat.Chord != lastChord || beat.Tonality != lastTonality)
                 {
                     double newTime = beat.Time - startTime;
-                    double lastBeatDuration = Info.Beats[lastBeatID + 1].Time - Info.Beats[lastBeatID].Time;
-                    // bool gradientTonalityEnabled = gradientTonality != null && gradientTonality != lastBeat.Tonality;
-                    DrawChord(lastBeat.Chord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, lastBeat.Tonality);
-                    lastTime = newTime;
-                    lastBeat = beat;
-                    lastBeatID = i;
+                    SetChordSwitchPoint(newTime, beat.Chord, beat.Tonality, i);
+                }
+                if (i < segments[segID].EndBeat && beat.SecondChordPercent > 0)
+                {
+                    BeatInfo nextBeat = Info.Beats[i + 1];
+                    double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent - startTime;
+                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonality, i);
                 }
             }
         }
@@ -616,7 +631,7 @@ namespace Visualizer
         {
             public Chord chord;
             public int depth;
-            public int count;
+            public double count; // Insertion chord count as decimals
         }
         List<ChordStatisticsStruct> chordStatistics;
         const int CHORD_STATISTICS_COLUMN_WIDTH = 330;
@@ -630,7 +645,17 @@ namespace Visualizer
             G.DrawLine(rectPen, new Point(left, top + 33), new Point(right, top + 33));
             right -= chord_width;
             left += data.depth * 30 + 5;
-            string countString = data.count.ToString() + "×";
+            string countString;
+            int round2Value = (int)Math.Round(data.count * 2);
+            if (Math.Abs(round2Value - 2 * data.count) < 1e-6)
+            {
+                if (round2Value % 2 == 0)
+                    countString = (round2Value / 2).ToString() + "×";
+                else // Exactly half-beat aligned
+                    countString = (round2Value / 2).ToString() + "½×";
+            }
+            else // Will not appear normally
+                countString = data.count.ToString("0.0") + "×";
             G.DrawString(countString, suffixFont, Brushes.White, new Point(left, top));
             // right -= chordWidth[data.chord.TemplateID, data.chord.Scale];
             DrawChordText(data.chord, right, top, 255, Tonality.MajMinTonality(0, true));
@@ -643,7 +668,7 @@ namespace Visualizer
         {
             if (chordStatistics == null)
             {
-                Dictionary<Chord, int> chordDict = new Dictionary<Chord, int>();
+                Dictionary<Chord, double> chordDict = new Dictionary<Chord, double>();
                 Dictionary<Chord, List<Chord>> childList = new Dictionary<Chord, List<Chord>>();
                 void CreateRelativeChord(Chord relativeChord)
                 {
@@ -668,7 +693,16 @@ namespace Visualizer
                         {
                             if (!chordDict.ContainsKey(relativeChord))
                                 CreateRelativeChord(relativeChord);
-                            chordDict[relativeChord]++;
+                            if (beat.SecondChordPercent > 0)
+                            {
+                                chordDict[relativeChord] += (1.0 - beat.SecondChordPercent);
+                                Chord relativeChordInsertion = Chord.EnumerateChord(beat.SecondChord.TemplateID, (beat.SecondChord.Scale + 12 - beat.Tonality.Root) % 12);
+                                chordDict[relativeChordInsertion] += beat.SecondChordPercent;
+                            }
+                            else
+                            {
+                                chordDict[relativeChord] += 1.0;
+                            }
                             relativeChord = relativeChord.GetParentChord();
                         } while (relativeChord != null);
                     }

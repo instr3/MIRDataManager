@@ -27,37 +27,18 @@ namespace Visualizer
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
-
-        private void VisualizeForm_Shown(object sender, EventArgs e)
-        {
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\429316 Tonon - Shirayuki -sirayuki-.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\219763 Drop - Granat.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\92107 Ken Nakagawa - Try.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\166239 Nishiura Tomohito - Shop.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\527431 Brad Breeck - Gravity Falls Theme Song.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\90935 IOSYS - Endless Tewi-ma Park.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\183656 Mutsuhiko Izumi - Tengoku to Jigoku.arc";
-            //string filename = @"C:\Users\jjy\Documents\2jjy\Programming\AudioProject\Datasets\osu\raw\92 Portal - Still Alive.arc";
-            
-        }
         SongInfo testSongInfo;
         private void button1_Click(object sender, EventArgs e)
         {
             string filename = iniReader["File"];
             testSongInfo = ArchiveManager.ReadFromArchive(filename);
             
-            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, checkBox1.Checked,iniReader.Data);
-            if(checkBox1.Checked)
-            {
-                ToImages();
-            }
-            else
-            {
-                button1.Visible = false;
-                SubtitleVisualizer.Play();
-                playerState = 0;
-                timer.Enabled = true;
-            }
+            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, false, iniReader.Data);
+            
+            button1.Visible = false;
+            SubtitleVisualizer.Play();
+            playerState = 0;
+            timer.Enabled = true;
         }
         int playerState;
         DateTime manualTimer;
@@ -81,10 +62,6 @@ namespace Visualizer
                     playerState = 1;
                 }
             }
-        }
-        private void ToImages()
-        {
-            Hide();
         }
         private void button3_Click(object sender, EventArgs e)
         {
