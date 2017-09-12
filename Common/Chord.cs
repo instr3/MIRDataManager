@@ -15,10 +15,22 @@ namespace Common
             public string Label { get; set; }
             public string RelativeLabel { get; set; }
             public string SoundNotes { get; set; }
+            public string ScriptAnnotation { get; set; }
+            public string Parent { get; set; }
             public string Abbr { get; set; }
             public int[] Notes;
         }
         private static Chord[,] chordFlyweights;
+        private static string[,] chordFlyweightLabels;
+        public struct ScriptAnnotationStruct
+        {
+            public string suffix;
+            public string superscript;
+            public string subscript;
+            public int inversion;
+        }
+        private static ScriptAnnotationStruct[,] chordFlyweightScriptAnnotations;
+        private static Chord[,] parentChord;
         private static Dictionary<string, Chord> lookupPool;
         private static RawChordTemplate[] templates;
         private static int majorTraidID, minorTraidID;
@@ -52,6 +64,7 @@ namespace Common
         static Chord()
         {
             List<RawChordTemplate> rawList = new List<RawChordTemplate>();
+            Dictionary<string, int> descriptionDict = new Dictionary<string, int>();
             List<string> lines;
             using (StreamReader sr = new StreamReader("ChordTemplate.ini"))
             {
@@ -67,11 +80,32 @@ namespace Common
                     .Split(',')
                     .Select(s => int.Parse(s))
                     .ToArray();
+                descriptionDict[template.Description] = rawList.Count;
                 rawList.Add(template);
                 if (template.Label == "{X}")
                     majorTraidID = rawList.Count - 1;
                 if (template.Label == "{X}m")
                     minorTraidID = rawList.Count - 1;
+                if (true)
+                {
+                    for (int i = 1; i < template.Notes.Length; ++i) // Inversions
+                    {
+                        int new_root_delta = template.Notes[i];
+                        string suffix = "/{X+" + new_root_delta.ToString() + "}";
+                        RawChordTemplate template_inversion = new RawChordTemplate();
+                        template_inversion.Description = template.Description + " Slash " + Num2NoteString[new_root_delta];
+                        template_inversion.Label = template.Label + suffix;
+                        template_inversion.Abbr = template.Abbr;
+                        template_inversion.RelativeLabel = template.RelativeLabel + "/" + Num2NoteString[new_root_delta];
+                        template_inversion.ScriptAnnotation = template.ScriptAnnotation + suffix;
+                        template_inversion.Parent = template.Description;
+                        template_inversion.Notes = new int[template.Notes.Length];
+                        for (int j = 0; j < template_inversion.Notes.Length; ++j)
+                            template_inversion.Notes[j] = template.Notes[(j + i) % template.Notes.Length];
+                        descriptionDict[template_inversion.Description] = rawList.Count;
+                        rawList.Add(template_inversion);
+                    }
+                }
             }
             if (majorTraidID == -1 || minorTraidID == -1)
             {
@@ -79,6 +113,9 @@ namespace Common
             }
             templates = rawList.ToArray();
             chordFlyweights = new Chord[templates.Length, 12];
+            chordFlyweightLabels = new string[templates.Length, 12];
+            chordFlyweightScriptAnnotations = new ScriptAnnotationStruct[templates.Length, 12];
+            parentChord = new Chord[templates.Length, 12];
             lookupPool = new Dictionary<string, Chord>();
             for (int i = 0; i < templates.Length; ++i)
             {
@@ -86,7 +123,48 @@ namespace Common
                 {
                     Chord chord = new Chord(j, i, MutedChordTypeEnum.NotMuted);
                     chordFlyweights[i, j] = chord;
+                    string label = templates[i].Label.Replace("{X}", Num2Char[j]);
+                    string scriptAnnotation = templates[i].ScriptAnnotation.Replace("{X}", "");
+                    for (int k = 0; k < 12; ++k)
+                    {
+                        label = label.Replace("{X+" + k.ToString() + "}", Num2Char[(j + k) % 12]);
+                        scriptAnnotation = scriptAnnotation.Replace("{X+" + k.ToString() + "}", ((j + k) % 12).ToString());
+                    }
+                    chordFlyweightLabels[i, j] = label;
                     lookupPool[chord.ToString()] = chord;
+                    string ClipSuffixPart(string src,char delimiter, out string result)
+                    {
+                        if (src.Contains(delimiter))
+                        {
+                            int index = src.IndexOf(delimiter);
+                            result = src.Substring(index + 1);
+                            string clip_src = src.Substring(0, index);
+                            return clip_src;
+                        }
+                        else
+                        {
+                            result = "";
+                            return src;
+                        }
+                    }
+                    chordFlyweightScriptAnnotations[i, j] = new ScriptAnnotationStruct();
+                    string tmp;
+                    scriptAnnotation = ClipSuffixPart(scriptAnnotation, '/', out tmp);
+                    chordFlyweightScriptAnnotations[i, j].inversion = tmp == "" ? -1 : int.Parse(tmp);
+                    scriptAnnotation = ClipSuffixPart(scriptAnnotation, '_', out chordFlyweightScriptAnnotations[i, j].subscript);
+                    scriptAnnotation = ClipSuffixPart(scriptAnnotation, '^', out chordFlyweightScriptAnnotations[i, j].superscript);
+                    chordFlyweightScriptAnnotations[i, j].suffix = scriptAnnotation;
+
+                }
+            }
+            for (int i = 0; i < templates.Length; ++i)
+            {
+                for (int j = 0; j < 12; ++j)
+                {
+                    if (templates[i].Parent != "")
+                        parentChord[i, j] = chordFlyweights[descriptionDict[templates[i].Parent], j];
+                    else
+                        parentChord[i, j] = null;
                 }
             }
             NoChord = new Chord(-1, -1, MutedChordTypeEnum.NMark);
@@ -114,6 +192,12 @@ namespace Common
         {
             return templates[templateID].Abbr;
         }
+        public Chord GetParentChord()
+        {
+            if (scale == -1)
+                return null;
+            return parentChord[templateID, scale];
+        }
         public override string ToString()
         {
             if (scale == -1)
@@ -128,7 +212,8 @@ namespace Common
                         return "?";
                 }
             }
-            return templates[templateID].Label.Replace("{X}", Num2Char[scale]);
+            return chordFlyweightLabels[templateID, scale];
+            //return templates[templateID].Label.Replace("{X}", Num2Char[scale]);
         }
         public string ToString(Tonalty tonalty)
         {
@@ -161,10 +246,9 @@ namespace Common
                 .Replace("{I}", "")
                 .Replace("{i}", "");
         }
-        public string ToAbosluteSuffix()
+        public ScriptAnnotationStruct ToScriptAnnotation()
         {
-            return templates[templateID].Label
-                .Replace("{X}", "");
+            return chordFlyweightScriptAnnotations[templateID, scale];
         }
         public static Chord SimpleTraid(int scale, bool majmin)
         {
@@ -172,7 +256,7 @@ namespace Common
         }
         public static Chord GetChordByAbsoluteChordName(string absoluteChordName)
         {
-            absoluteChordName = absoluteChordName.Replace("maj", "M");
+            absoluteChordName = absoluteChordName.Replace("maj", "M").Replace("m7b5", "m7(b5)");
             Chord result;
             if (lookupPool.TryGetValue(absoluteChordName, out result))
             {
@@ -182,7 +266,7 @@ namespace Common
             {
                 return GetChordByAbsoluteChordName(absoluteChordName.Substring(0, absoluteChordName.IndexOf("/")));
             }
-            throw new NotImplementedException();
+            throw new NotImplementedException(absoluteChordName+" is not recognized");
         }
         public Chord ShiftPitch(int pitch)
         {
@@ -218,8 +302,7 @@ namespace Common
         }
         public override int GetHashCode()
         {
-            // Todo: can be better
-            return ToString().GetHashCode();
+            return (scale == -1 ? -1 : templateID * 12 + scale).GetHashCode();
         }
 
         public bool IsMutedChord()

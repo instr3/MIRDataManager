@@ -22,7 +22,7 @@ namespace Common
             {"III","#008B00"},
             {"N","#1C1C1C"}
         };*/
-        
+
         static string name;
         static Dictionary<string, Color> colorDict;
         static Dictionary<string, KeyValuePair<Color, Color>> gradientColorDict;
@@ -85,8 +85,17 @@ namespace Common
                 throw new Exception("ColorSchema.ini文件格式错误：缺少缺省项(N)");
             }
         }
+        private static string RemoveInversion(string chordname)
+        {
+            int index = chordname.IndexOf('/');
+            if (index >= 0)
+                return chordname.Substring(0, index);
+            else
+                return chordname;
+        }
         public static Color GetColorByChordName(string chordName)
         {
+            chordName = RemoveInversion(chordName);
             Color result;
             if(!colorDict.TryGetValue(chordName,out result))
             {
@@ -96,6 +105,7 @@ namespace Common
         }
         public static KeyValuePair<Color,Color> GetGradientColorByChordName(string chordName)
         {
+            chordName = RemoveInversion(chordName);
             KeyValuePair<Color,Color> result;
             if (!gradientColorDict.TryGetValue(chordName, out result))
             {

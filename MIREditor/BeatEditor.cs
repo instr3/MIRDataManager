@@ -116,7 +116,7 @@ namespace MIREditor
                 if (beat.Time >= tempLeftMostTime && beat.Time <= tempRightMostTime)
                 {
                     int pos = TL.Time2Pos(beat.Time);
-                    TL.G.DrawLine(whitePen, new Point(pos, TL.HorizonHeight), new Point(pos, TL.HorizonHeight - (beat.BarAttribute >= 1 ? 10 : beat.BarAttribute == 0 ? 7 : 0)));
+                    TL.G.DrawLine(whitePen, new Point(pos, TL.HorizonHeight), new Point(pos, TL.HorizonHeight - (beat.BarAttribute == 2 ? 15 : beat.BarAttribute == 1 ? 10 : beat.BarAttribute == 0 ? 7 : 0)));
                 }
             }
         }
@@ -251,16 +251,27 @@ namespace MIREditor
             }
         }
 
-        internal void ModifyBarStartOfSingleBeat()
+        internal void ModifyBarStartOfSingleBeat(bool enhancedDownbeat)
         {
             if (ValidPointer)
             {
                 Program.EditManager.BeforePreformEdit(Info, "修改起始属性");
-                if (Info.Beats[pointBeatID].BarAttribute >= 1)
-                    Info.Beats[pointBeatID].BarAttribute = 0;
-                else if (Info.Beats[pointBeatID].BarAttribute == 0)
-                    Info.Beats[pointBeatID].BarAttribute = 1;
-                else throw new Exception("Pointer illegal");
+                if(!enhancedDownbeat)
+                {
+                    if (Info.Beats[pointBeatID].BarAttribute >= 1)
+                        Info.Beats[pointBeatID].BarAttribute = 0;
+                    else if (Info.Beats[pointBeatID].BarAttribute == 0)
+                        Info.Beats[pointBeatID].BarAttribute = 1;
+                    else throw new Exception("Pointer illegal");
+                }
+                else
+                {
+                    if (Info.Beats[pointBeatID].BarAttribute <= 1)
+                        Info.Beats[pointBeatID].BarAttribute = 2;
+                    else if (Info.Beats[pointBeatID].BarAttribute == 2)
+                        Info.Beats[pointBeatID].BarAttribute = 1;
+                    else throw new Exception("Pointer illegal");
+                }
             }
         }
 

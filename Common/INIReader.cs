@@ -11,6 +11,10 @@ namespace Common
     public class INIReader
     {
         private string filename;
+        public Dictionary<string, string> Data
+        {
+            get { return data; }
+        }
         private Dictionary<string, string> data;
         public IEnumerator GetEnumerator()
         {

@@ -96,6 +96,7 @@
             this.comboBox_Metre = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button_BEEnhanceDownbeat = new System.Windows.Forms.Button();
             this.button_BEBarStart = new System.Windows.Forms.Button();
             this.button_BENew = new System.Windows.Forms.Button();
             this.button_BEDelete = new System.Windows.Forms.Button();
@@ -884,15 +885,26 @@
             // groupBox6
             // 
             this.groupBox6.BackColor = System.Drawing.Color.White;
+            this.groupBox6.Controls.Add(this.button_BEEnhanceDownbeat);
             this.groupBox6.Controls.Add(this.button_BEBarStart);
             this.groupBox6.Controls.Add(this.button_BENew);
             this.groupBox6.Controls.Add(this.button_BEDelete);
             this.groupBox6.Location = new System.Drawing.Point(203, 377);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(119, 116);
+            this.groupBox6.Size = new System.Drawing.Size(214, 116);
             this.groupBox6.TabIndex = 12;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "节拍单点操作";
+            // 
+            // button_BEEnhanceDownbeat
+            // 
+            this.button_BEEnhanceDownbeat.Location = new System.Drawing.Point(110, 20);
+            this.button_BEEnhanceDownbeat.Name = "button_BEEnhanceDownbeat";
+            this.button_BEEnhanceDownbeat.Size = new System.Drawing.Size(95, 23);
+            this.button_BEEnhanceDownbeat.TabIndex = 4;
+            this.button_BEEnhanceDownbeat.Text = "增强Downbeat";
+            this.button_BEEnhanceDownbeat.UseVisualStyleBackColor = true;
+            this.button_BEEnhanceDownbeat.Click += new System.EventHandler(this.button_BEEnhanceDownbeat_Click);
             // 
             // button_BEBarStart
             // 
@@ -1651,7 +1663,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Chord Editor";
+            this.Text = "b";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
@@ -1832,5 +1844,6 @@
         private System.Windows.Forms.Button button_BERemoveLeft;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button_BEEnhanceDownbeat;
     }
 }

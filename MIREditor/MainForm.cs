@@ -468,9 +468,16 @@ namespace MIREditor
         private void button_BEBarStart_Click(object sender, EventArgs e)
         {
             if (Program.TL != null)
-                Program.TL.BeatEditor.ModifyBarStartOfSingleBeat();
+                Program.TL.BeatEditor.ModifyBarStartOfSingleBeat(false);
 
         }
+        private void button_BEEnhanceDownbeat_Click(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.BeatEditor.ModifyBarStartOfSingleBeat(true);
+
+        }
+
 
         private void comboBox_Metre_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -908,7 +915,6 @@ namespace MIREditor
             if (Program.TL != null)
                 Program.TL.Info.TagConfigure.Confidence = comboBoxConfigConfidence.SelectedIndex;
         }
-
 
         private void checkBoxMouseSwitch_CheckedChanged(object sender, EventArgs e)
         {
