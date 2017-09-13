@@ -12,7 +12,6 @@ namespace Common
     {
         public const string VAMP_PATH = @"annotator\";
         public const string VAMP_EXE = @"sonic-annotator.exe";
-        public const string CHILDINO_N3 = @"test";
         private static string GetVampCSV(string n3Name, string inputFile)
         {
             using (Process process = new Process())
@@ -47,7 +46,7 @@ namespace Common
 
         public static List<RawChord> GetRawChord(string inputFile)
         {
-            StringBuilder result = new StringBuilder(GetVampCSV("test", inputFile));
+            StringBuilder result = new StringBuilder(GetVampCSV("simplechord", inputFile));
             if (result.Length == 0)
             {
                 return null;

@@ -11,10 +11,10 @@
 
 :transform a vamp:Transform ;
     vamp:plugin <http://vamp-plugins.org/rdf/plugins/nnls-chroma#chordino> ;
-    vamp:step_size "[__WIN_SHIFT__]"^^xsd:int ;
-    vamp:block_size "[__WIN_SIZE__]"^^xsd:int ;
+    vamp:step_size "2048"^^xsd:int ;
+    vamp:block_size "16384"^^xsd:int ;
     vamp:plugin_version """5""" ;
-    vamp:sample_rate "[__SR__]"^^xsd:int ;
+    vamp:sample_rate "44100"^^xsd:int ;
     vamp:parameter_binding [
         vamp:parameter [ vamp:identifier "boostn" ] ;
         vamp:value "0.1"^^xsd:float ;
