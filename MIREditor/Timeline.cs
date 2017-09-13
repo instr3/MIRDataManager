@@ -260,11 +260,16 @@ namespace MIREditor
                     else if (BeatEditor.Enabled)
                         BeatEditor.MoveSelectionEnd(CurrentTime);
                     break;
-                case Keys.OemQuestion:
+                case Keys.Oem5: // Blackslash
+                case Keys.OemBackslash:
                     if (ChordEditor.Enabled)
                         ChordEditor.ClearSelection();
                     else if (BeatEditor.Enabled)
                         BeatEditor.ClearSelection();
+                    break;
+                case Keys.OemQuestion: // Slash
+                    if (ChordEditor.Enabled)
+                        BeatEditor.InverseChord();
                     break;
                 case Keys.F9:
                 case Keys.F10:

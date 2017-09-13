@@ -165,6 +165,7 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button_CEInverse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -1046,7 +1047,7 @@
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelX);
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelN);
             this.groupBoxChordKeyboard.Controls.Add(this.dataGridViewChord);
-            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(6, 281);
+            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(606, 281);
             this.groupBoxChordKeyboard.Name = "groupBoxChordKeyboard";
             this.groupBoxChordKeyboard.Size = new System.Drawing.Size(614, 220);
             this.groupBoxChordKeyboard.TabIndex = 22;
@@ -1382,6 +1383,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button_CEInverse);
             this.groupBox1.Controls.Add(this.ChordLabelQ);
             this.groupBox1.Controls.Add(this.ChordLabelX);
             this.groupBox1.Controls.Add(this.ChordLabelN);
@@ -1648,6 +1650,16 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
+            // button_CEInverse
+            // 
+            this.button_CEInverse.Location = new System.Drawing.Point(344, 14);
+            this.button_CEInverse.Name = "button_CEInverse";
+            this.button_CEInverse.Size = new System.Drawing.Size(54, 23);
+            this.button_CEInverse.TabIndex = 22;
+            this.button_CEInverse.Text = "转位";
+            this.button_CEInverse.UseVisualStyleBackColor = true;
+            this.button_CEInverse.Click += new System.EventHandler(this.button_CEInverse_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1845,5 +1857,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button_BEEnhanceDownbeat;
+        private System.Windows.Forms.Button button_CEInverse;
     }
 }

@@ -320,10 +320,30 @@ namespace MIREditor
             Program.EditManager.BeforePreformEdit(Info, "插入切分和弦" + chord1 + "-" + chord2 + "(" + (int)(secondChordPrecent * 100) + "%)");
             beatInfo.SetChord(chord1, chord2, secondChordPrecent);
         }
+        public void InverseChord()
+        {
+            int beatID = GetPreviousBeatID(TL.CurrentTime);
+            if (beatID < 0 || beatID == Info.Beats.Count - 1) return;
+            BeatInfo beat = Info.Beats[beatID];
+            Chord originalChord = beat.Chord;
+            int leftBeatID = beatID, rightBeatID = beatID;
+            while (leftBeatID > 0 && beat.Chord == Info.Beats[leftBeatID - 1].Chord && beat.Tonality == Info.Beats[leftBeatID - 1].Tonality)
+                --leftBeatID;
+            while (rightBeatID < Info.Beats.Count - 1 && beat.Chord == Info.Beats[rightBeatID + 1].Chord && beat.Tonality == Info.Beats[rightBeatID + 1].Tonality)
+                ++rightBeatID;
+            Chord newChord = beat.Chord.GetNextInversion();
+            Program.EditManager.BeforePreformEdit(Info, "转位和弦至" + newChord.ToString());
+            for (int i=leftBeatID;i<=rightBeatID;++i)
+            {
+                Info.Beats[i].SetChord(newChord);
+            }
+
+        }
         public void SwitchCutSecondChord()
         {
             int beatID = GetPreviousBeatID(TL.CurrentTime);
             if (beatID < 0 || beatID == Info.Beats.Count - 1) return;
+            Program.EditManager.BeforePreformEdit(Info, "切分和弦");
             BeatInfo beat = Info.Beats[beatID];
             Chord previousChord = beatID > 0 ? Info.Beats[beatID - 1].GetEndingChord() : Chord.NoChord;
             Chord nextChord = beatID < Info.Beats.Count - 2 ? Info.Beats[beatID + 1].Chord : Chord.NoChord;

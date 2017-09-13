@@ -21,6 +21,7 @@ namespace Common
             public int[] Notes;
         }
         private static Chord[,] chordFlyweights;
+        private static int[] nextInversionTemplateID; // For inversion input only
         private static string[,] chordFlyweightLabels;
         public struct ScriptAnnotationStruct
         {
@@ -64,6 +65,7 @@ namespace Common
         static Chord()
         {
             List<RawChordTemplate> rawList = new List<RawChordTemplate>();
+            List<int> nextInversion = new List<int>();
             Dictionary<string, int> descriptionDict = new Dictionary<string, int>();
             List<string> lines;
             using (StreamReader sr = new StreamReader("ChordTemplate.ini"))
@@ -82,6 +84,7 @@ namespace Common
                     .ToArray();
                 descriptionDict[template.Description] = rawList.Count;
                 rawList.Add(template);
+                nextInversion.Add(nextInversion.Count);
                 if (template.Label == "{X}")
                     majorTraidID = rawList.Count - 1;
                 if (template.Label == "{X}m")
@@ -95,7 +98,7 @@ namespace Common
                         RawChordTemplate template_inversion = new RawChordTemplate();
                         template_inversion.Description = template.Description + " Slash " + Num2NoteString[new_root_delta];
                         template_inversion.Label = template.Label + suffix;
-                        template_inversion.Abbr = template.Abbr;
+                        template_inversion.Abbr = template.Abbr + "/" + Num2NoteString[new_root_delta];
                         template_inversion.RelativeLabel = template.RelativeLabel + "/" + Num2NoteString[new_root_delta];
                         template_inversion.ScriptAnnotation = template.ScriptAnnotation + suffix;
                         template_inversion.Parent = template.Description;
@@ -104,6 +107,11 @@ namespace Common
                             template_inversion.Notes[j] = template.Notes[(j + i) % template.Notes.Length];
                         descriptionDict[template_inversion.Description] = rawList.Count;
                         rawList.Add(template_inversion);
+                        nextInversion.Add(nextInversion.Count);
+                        // Adjust next inversion
+                        int temp = nextInversion[rawList.Count - 2];
+                        nextInversion[rawList.Count - 2] = nextInversion[rawList.Count - 1];
+                        nextInversion[rawList.Count - 1] = temp;
                     }
                 }
             }
@@ -112,6 +120,7 @@ namespace Common
                 throw new Exception("和弦文件格式错误：未找到大三或小三和弦");
             }
             templates = rawList.ToArray();
+            nextInversionTemplateID = nextInversion.ToArray();
             chordFlyweights = new Chord[templates.Length, 12];
             chordFlyweightLabels = new string[templates.Length, 12];
             chordFlyweightScriptAnnotations = new ScriptAnnotationStruct[templates.Length, 12];
@@ -191,6 +200,12 @@ namespace Common
         public static string GetChordTemplateAbbr(int templateID)
         {
             return templates[templateID].Abbr;
+        }
+        public Chord GetNextInversion()
+        {
+            if (scale == -1)
+                return this;
+            return chordFlyweights[nextInversionTemplateID[templateID], scale];
         }
         public Chord GetParentChord()
         {

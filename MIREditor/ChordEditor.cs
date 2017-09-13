@@ -255,6 +255,8 @@ namespace MIREditor
                 }
             }
         }
+
+
         double tempLastSwitchTime;
         Chord tempLastSwitchChord = null;
         Tonality tempLastSwitchTonality = null;

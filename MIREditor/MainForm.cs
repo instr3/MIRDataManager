@@ -665,6 +665,8 @@ namespace MIREditor
                 relativeChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = relativeChordRows[i];
                 row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
+                if (Chord.GetChordTemplateAbbr(i).Contains('/'))
+                    row.Visible = false; // Inverse chord are not shown
             }
             dataGridViewChord.Rows.AddRange(relativeChordRows);
             for (int i = 0; i < relativeChordRows.Length; ++i)
@@ -680,6 +682,8 @@ namespace MIREditor
                 absoluteChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = absoluteChordRows[i];
                 row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
+                if (Chord.GetChordTemplateAbbr(i).Contains('/'))
+                    row.Visible = false; // Inverse chord are not shown
                 row.HeaderCell.Style.Font = FontManager.Instance.ChordFont;
             }
             dataGridViewChord.Rows.AddRange(absoluteChordRows);
@@ -914,6 +918,12 @@ namespace MIREditor
         {
             if (Program.TL != null)
                 Program.TL.Info.TagConfigure.Confidence = comboBoxConfigConfidence.SelectedIndex;
+        }
+
+        private void button_CEInverse_Click(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.KeyEvent(Keys.OemQuestion, false, false, false);
         }
 
         private void checkBoxMouseSwitch_CheckedChanged(object sender, EventArgs e)
