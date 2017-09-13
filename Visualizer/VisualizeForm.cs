@@ -33,7 +33,7 @@ namespace Visualizer
             string filename = iniReader["File"];
             testSongInfo = ArchiveManager.ReadFromArchive(filename);
             
-            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, false, iniReader.Data);
+            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, false, checkBox1.Checked, iniReader.Data);
             
             button1.Visible = false;
             SubtitleVisualizer.Play();

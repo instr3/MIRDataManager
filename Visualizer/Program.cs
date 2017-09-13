@@ -20,12 +20,17 @@ namespace Visualizer
         static void Main()
         {
             Console.WriteLine("Chord Subtitle by instr3");
-            Console.WriteLine("[*] Press space to record");
+            Console.WriteLine("[R] Press R to record relative chord");
+            Console.WriteLine("[A] Press A to record absolute chord");
             Console.WriteLine("[*] Press anything else to preview");
             ConsoleKeyInfo key = Console.ReadKey();
-            if(key.Key==ConsoleKey.Spacebar)
+            if(key.Key==ConsoleKey.R)
             {
-                ToImages();
+                ToImages(false);
+            }
+            else if (key.Key == ConsoleKey.A)
+            {
+                ToImages(true);
             }
             else
             {
@@ -36,7 +41,7 @@ namespace Visualizer
             }
         }
 
-        static void ToImages()
+        static void ToImages(bool absoluteChord)
         {
             INIReader iniReader = new INIReader("Config.ini");
             string filename = iniReader["File"];
@@ -44,7 +49,7 @@ namespace Visualizer
             string musicPath = Settings.DatasetMusicFolder + "\\" + testSongInfo.MusicConfigure.Location;
             TimeSpan totalTime = TimeSpan.FromSeconds(MiscWrapper.GetMP3Length(musicPath));
 
-            SubtitleVisualizer SubtitleVisualizer = new SubtitleVisualizer(null, testSongInfo, true, iniReader.Data);
+            SubtitleVisualizer SubtitleVisualizer = new SubtitleVisualizer(null, testSongInfo, true, absoluteChord, iniReader.Data);
 
             int FRAMERATE = 60;
             int playerState = 0;
@@ -62,6 +67,8 @@ namespace Visualizer
                 Console.WriteLine("Frame " + frame + "(" + TimeSpan.FromSeconds(currentTime).ToString(@"hh\:mm\:ss\:fff") + "/" + totalTime.ToString(@"hh\:mm\:ss") + ")");
                 if (playerState == 0 && !SubtitleVisualizer.DrawFrame(currentTime))
                 {
+                    if (absoluteChord)
+                        break;
                     playerState = 2;
                     endTime = currentTime;
                 }

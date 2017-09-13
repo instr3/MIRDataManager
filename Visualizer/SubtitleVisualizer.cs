@@ -56,8 +56,9 @@ namespace Visualizer
         }
         private PictureBox pictureBox;
         private BufferedGraphics myBuffer;
+        private bool showAbsoluteChord;
 
-        public SubtitleVisualizer(PictureBox bindingPictureBox, SongInfo info, bool renderToFile,Dictionary<string,string> metaData)
+        public SubtitleVisualizer(PictureBox bindingPictureBox, SongInfo info, bool renderToFile, bool absoluteChord, Dictionary<string,string> metaData)
         {
             // 1. Preparing graph buffers
             if (renderToFile)
@@ -96,9 +97,20 @@ namespace Visualizer
             //Bass.BASS_ChannelPlay(MP3stream, true);
 
             // 3. Preparing song annotations
+            showAbsoluteChord = absoluteChord;
             MetaData = metaData;
             Info = info;
             PreprocessSongInfo();
+
+            // 4. Misc stuff
+            chordWidth = new int[Chord.GetChordTemplatesCount(), 12];
+            for (int i = 0; i < Chord.GetChordTemplatesCount(); ++i)
+            {
+                for (int j = 0; j < 12; ++j)
+                {
+                    chordWidth[i, j] = DrawChordText(Chord.EnumerateChord(i, j), 0, 0, 0, showAbsoluteChord ? null : Tonality.MajMinTonality(0, true));
+                }
+            }
         }
         public void Play()
         {
@@ -222,61 +234,90 @@ namespace Visualizer
                     result = (int)(G.MeasureString(text, scriptFont).Width);
                     return result - 8;
                 default:
-                    throw new NotImplementedException();
+                    throw new FormatException("Unknown font type");
             }
         }
 
         protected int DrawChordText(Chord chord, int left, int top, int alpha, Tonality tonality=null)
         {
+            bool isRelativeChord = true;
             if (tonality == null)
-                tonality = Tonality.NoTonality;
-            if(chord.Scale!=-1)
+                isRelativeChord = false;
+            if (chord.Scale!=-1)
             {
-                string scaleText = tonality.NoteNameUnderTonality(chord.Scale);
-                if (scaleText.Length == 2)
+                string scaleText = isRelativeChord ? tonality.NoteNameUnderTonality(chord.Scale) : Chord.Num2Char[chord.Scale];
+                if(isRelativeChord)
                 {
-                    if (scaleText[1] == 'b' || scaleText[1] == '#')
-                    {
-                        left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, top, alpha);
-                        left += DrawSimpleText(scaleText.Substring(0, 1), 0, left, top, alpha);
-                    }
-                    else
+                    if (scaleText.Length == 2)
                     {
                         left += DrawSimpleText(scaleText.Substring(0, 1), 1, left, top, alpha);
                         left += DrawSimpleText(scaleText.Substring(1, 1), 0, left, top, alpha);
-                    }
-                }
-                else
-                {
-                    left += DrawSimpleText(scaleText, 0, left, top, alpha);
-                }
-                Chord.ScriptAnnotationStruct suffixStruct = chord.ToScriptAnnotation();
-                left += DrawSimpleText(suffixStruct.suffix, 2, left, top, alpha);
-                int width1 = DrawSimpleText(suffixStruct.superscript, 1, left, top, alpha);
-                int width2 = DrawSimpleText(suffixStruct.subscript, 15, left, top, alpha);
-                left += Math.Max(width1, width2);
-                if(suffixStruct.inversion!=-1)
-                {
-                    left += DrawSimpleText("/", 2, left, top, alpha) - 4;
-                    scaleText = tonality.NoteNameUnderTonality(suffixStruct.inversion);
-                    if (scaleText.Length == 2)
-                    {
-                        left += 4;
-                        if (scaleText[1] == 'b' || scaleText[1] == '#')
-                        {
-                            left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, top, alpha);
-                            left += DrawSimpleText(scaleText.Substring(0, 1), 0, left, top, alpha);
-                        }
-                        else
-                        {
-                            left += DrawSimpleText(scaleText.Substring(0, 1), 1, left, top, alpha);
-                            left += DrawSimpleText(scaleText.Substring(1, 1), 0, left, top, alpha);
-                        }
                     }
                     else
                     {
                         left += DrawSimpleText(scaleText, 0, left, top, alpha);
                     }
+                }
+                else // Absolute chord
+                {
+                    if (scaleText.Length == 2)
+                    {
+                        left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, top, alpha);
+                        left += DrawSimpleText(scaleText.Substring(0, 1), 2, left, top, alpha);
+                    }
+                    else
+                    {
+                        left += DrawSimpleText(scaleText, 2, left, top, alpha);
+                    }
+
+                }
+                if(isRelativeChord)
+                {
+                    Chord.ScriptAnnotationStruct suffixStruct = chord.ToScriptAnnotation();
+                    left += DrawSimpleText(suffixStruct.suffix, 2, left, top, alpha);
+                    int width1 = DrawSimpleText(suffixStruct.superscript, 1, left, top, alpha);
+                    int width2 = DrawSimpleText(suffixStruct.subscript, 15, left, top, alpha);
+                    left += Math.Max(width1, width2);
+                    if (suffixStruct.inversion != -1)
+                    {
+                        left += DrawSimpleText("/", 2, left, top, alpha) - 4;
+                        scaleText = tonality.NoteNameUnderTonality(suffixStruct.inversion);
+                        if (scaleText.Length == 2)
+                        {
+                            left += 4;
+                            left += DrawSimpleText(scaleText.Substring(0, 1), 1, left, top, alpha);
+                            left += DrawSimpleText(scaleText.Substring(1, 1), 0, left, top, alpha);
+                        }
+                        else
+                        {
+                            left += DrawSimpleText(scaleText, 0, left, top, alpha);
+                        }
+                    }
+                }
+                else // Absolute chords
+                {
+                    string suffixString = chord.ToString().Replace("M", "maj");
+                    suffixString = suffixString.Substring(scaleText.Length);
+                    if(suffixString.Contains('/'))
+                    {
+                        int index = suffixString.IndexOf('/');
+
+                        scaleText = suffixString.Substring(index + 1);
+                        suffixString = suffixString.Substring(0, index + 1);
+                        left += DrawSimpleText(suffixString, 2, left, top, alpha);
+                        if (scaleText.Length == 2)
+                        {
+                            left += 4;
+                            left += DrawSimpleText(scaleText.Substring(1, 1), 1, left, top, alpha);
+                            left += DrawSimpleText(scaleText.Substring(0, 1), 2, left, top, alpha);
+                        }
+                        else
+                        {
+                            left += DrawSimpleText(scaleText, 2, left, top, alpha);
+                        }
+                    }
+                    else
+                        left += DrawSimpleText(suffixString, 2, left, top, alpha);
                 }
             }
             return left;
@@ -319,18 +360,23 @@ namespace Visualizer
         }
         protected void DrawChord(Chord chord, double left_percent, double width_percent, double row, double timespan, Tonality tonality = null)
         {
+            bool isRelativeChord = true;
             if (tonality == null)
-                throw new NotImplementedException();
+                isRelativeChord = false;
             if (timespan < 0)
                 return;
             int top = (int)Math.Round(ROW_BASE_HEIGHT - (row + 1) * 50);
             int left = (int)Math.Round((GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + left_percent * SUBTITLE_WIDTH);
             int width = (int)Math.Round(width_percent * SUBTITLE_WIDTH);
+            int text_left = left + 5;
+            int textWidth = isRelativeChord ? chordWidth[chord.TemplateID, (chord.Scale - tonality.Root + 12) % 12] : chordWidth[chord.TemplateID, chord.Scale];
+            if (width < textWidth + 10)
+                text_left = left + (width - textWidth) / 2 - 2;
             double keep_timespan = width_percent * BeatsPerSegment;
-            int[] scales = chord.ToRelativeScales(tonality.Root);
+            int[] scales = isRelativeChord ? chord.ToRelativeScales(tonality.Root) : chord.ToNotes();
             int chord_alpha = 0;
             int notes_alpha = 0;
-            if(keep_timespan+1e-6<(scales.Length)* RELATIVE_NOTES_SPEED) // To short to show notes data
+            if (!isRelativeChord || keep_timespan + 1e-6 < (scales.Length - 0.5) * RELATIVE_NOTES_SPEED) // To short to show notes data (or absolute chords)
             {
                 chord_alpha = (int)ClampedLerp(0, 255, (timespan) / RELATIVE_NOTES_SPEED);
                 notes_alpha = 0;
@@ -339,7 +385,7 @@ namespace Visualizer
             {
                 chord_alpha = (int)ClampedLerp(0, 255, (timespan - (scales.Length) * RELATIVE_NOTES_SPEED) / RELATIVE_NOTES_SPEED);
                 notes_alpha = (int)ClampedLerp(255, 0, (timespan - (scales.Length) * RELATIVE_NOTES_SPEED) / RELATIVE_NOTES_SPEED);
-                int scale_left = left + 5;
+                int scale_left = text_left;
                 int i = 0;
                 if (notes_alpha > 0)
                 {
@@ -353,8 +399,8 @@ namespace Visualizer
             else
             {
                 chord_alpha = 0;
-                int scale_left = left + 5;
                 int i = 0;
+                int scale_left = text_left;
                 while (i<scales.Length && timespan>0)
                 {
                     notes_alpha= (int)ClampedLerp(0, 255, (timespan) / RELATIVE_NOTES_SPEED);
@@ -366,7 +412,7 @@ namespace Visualizer
             using (GraphicsPath path = RoundedRect(new Rectangle(left, top, width, 40), 8))
             {
                 G.DrawPath(rectPen, path);
-                DrawChordText(chord, left + 5, top + 5, chord_alpha, tonality);
+                DrawChordText(chord, text_left, top + 5, chord_alpha, tonality);
             }
         }
         protected void DrawPivot(double percent,int row)
@@ -465,7 +511,7 @@ namespace Visualizer
                     else
                         row += TONALTY_INDICATION_HEIGHT_IN_ROW;
                     int left = (GRAPHIC_WIDTH - SUBTITLE_WIDTH) / 2 + 10;
-                    int top= (int)Math.Round(ROW_BASE_HEIGHT - row * 50 - 10);
+                    int top= (int)Math.Round(ROW_BASE_HEIGHT - row * 50 - 8);
                     int alpha = (int)(255 * ClampedLerp(0, 1, row / (1 + TONALTY_INDICATION_HEIGHT_IN_ROW)));
                     left += DrawSimpleText("^ 1 = ", 4, left, top, alpha) + 6;
                     left+=DrawSimpleText(new string(Chord.Num2Char[oldTonality.Root].Reverse().ToArray()), 4, left, top, alpha);
@@ -494,7 +540,7 @@ namespace Visualizer
             {
                 void SetChordSwitchPoint(double newTime, Chord nextChord, Tonality nextTonality, int beatID)
                 {
-                    DrawChord(lastChord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, lastTonality);
+                    DrawChord(lastChord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, showAbsoluteChord ? null : lastTonality);
                     lastChord = nextChord;
                     lastTonality = nextTonality;
                     lastTime = newTime;
@@ -731,14 +777,6 @@ namespace Visualizer
                     }
                 }
                 DFS(Chord.NoChord, 0);
-                chordWidth = new int[Chord.GetChordTemplatesCount(), 12];
-                for(int i=0;i< Chord.GetChordTemplatesCount();++i)
-                {
-                    for(int j=0;j<12;++j)
-                    {
-                        chordWidth[i, j] = DrawChordText(Chord.EnumerateChord(i, j), 0, 0, 0);
-                    }
-                }
             }
             G.Clear(Color.Black);
             int MAX_ROWS_PER_COLUMN = 13;
