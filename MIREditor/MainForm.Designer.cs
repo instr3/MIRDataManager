@@ -1047,7 +1047,7 @@
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelX);
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelN);
             this.groupBoxChordKeyboard.Controls.Add(this.dataGridViewChord);
-            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(606, 281);
+            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(6, 281);
             this.groupBoxChordKeyboard.Name = "groupBoxChordKeyboard";
             this.groupBoxChordKeyboard.Size = new System.Drawing.Size(614, 220);
             this.groupBoxChordKeyboard.TabIndex = 22;
