@@ -113,6 +113,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "VisualizeForm";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VisualizeForm_FormClosing);
             this.Load += new System.EventHandler(this.VisualizeForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.visualizePictureBox)).EndInit();
             this.ResumeLayout(false);

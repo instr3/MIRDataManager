@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MiscWrapper.cs" />
     <Compile Include="SubtitleVisualizer.cs" />
     <Compile Include="VisualizeForm.cs">
       <SubType>Form</SubType>
@@ -91,10 +92,17 @@
       <Project>{a32a9f03-5788-45c9-9645-e3c0e1861b62}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MIREditor\MIREditor.csproj">
-      <Project>{bc1efa1d-1ec3-40e2-bca3-935e019bc884}</Project>
-      <Name>MIREditor</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bass.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bassmidi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bass_fx.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

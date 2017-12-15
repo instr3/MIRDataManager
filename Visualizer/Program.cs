@@ -1,5 +1,4 @@
 ﻿using Common;
-using MIREditor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,11 +44,15 @@ namespace Visualizer
         {
             INIReader iniReader = new INIReader("Config.ini");
             string filename = iniReader["File"];
-            SongInfo testSongInfo = ArchiveManager.ReadFromArchive(filename);
+            SongInfo testSongInfo;
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                testSongInfo = new SongInfo(sr.ReadToEnd());
+            }
             string musicPath = Settings.DatasetMusicFolder + "\\" + testSongInfo.MusicConfigure.Location;
             TimeSpan totalTime = TimeSpan.FromSeconds(MiscWrapper.GetMP3Length(musicPath));
 
-            SubtitleVisualizer SubtitleVisualizer = new SubtitleVisualizer(null, testSongInfo, true, absoluteChord, iniReader.Data);
+            SubtitleVisualizer SubtitleVisualizer = new SubtitleVisualizer(null, testSongInfo, true, absoluteChord);
 
             int FRAMERATE = 60;
             int playerState = 0;

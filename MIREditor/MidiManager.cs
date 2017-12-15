@@ -52,7 +52,7 @@ namespace MIREditor
             Fonts[0].bank = 0;
             Fonts[0].preset = -1;
             NoteStreams = new int[256];
-            for (int i=60;i<=84;++i)
+            for (int i=60;i<=60+12*4;++i)
             {
                 NoteStreams[i]= BassMidi.BASS_MIDI_StreamCreateEvents(SingleNoteEvent(i), 100, 0, 0);
                 BassMidi.BASS_MIDI_StreamSetFonts(NoteStreams[i], Fonts, 1);

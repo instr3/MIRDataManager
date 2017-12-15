@@ -50,6 +50,8 @@
             this.编辑ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.撤销ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重做ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.暂停播放ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveInfoFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -70,13 +72,25 @@
             this.label10 = new System.Windows.Forms.Label();
             this.trackBarVolumeMain = new System.Windows.Forms.TrackBar();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button_Visualize = new System.Windows.Forms.Button();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.textBoxConfigVRelativeMovingSpeed = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.textBoxConfigVBeatsPerSeg = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.textBoxConfigVLine2 = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBoxConfigVLine1 = new System.Windows.Forms.TextBox();
+            this.textBoxConfigVTitle = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.checkBoxExportMusic = new System.Windows.Forms.CheckBox();
             this.button_ExportTXT = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
             this.textBoxOSUMapID = new System.Windows.Forms.TextBox();
-            this.buttonSave = new System.Windows.Forms.Button();
             this.comboBoxConfigConfidence = new System.Windows.Forms.ListBox();
             this.textBoxConfigTagger = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -144,6 +158,7 @@
             this.buttonRawChord = new System.Windows.Forms.Button();
             this.comboBoxAlignBeats = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button_CEInverse = new System.Windows.Forms.Button();
             this.ChordLabelQ = new System.Windows.Forms.Label();
             this.ChordLabelX = new System.Windows.Forms.Label();
             this.ChordLabelN = new System.Windows.Forms.Label();
@@ -165,7 +180,6 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button_CEInverse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -173,6 +187,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeMIDI)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeMain)).BeginInit();
             this.tabPage4.SuspendLayout();
+            this.groupBox13.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -340,7 +355,9 @@
             // 
             this.编辑ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.撤销ToolStripMenuItem,
-            this.重做ToolStripMenuItem});
+            this.重做ToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.暂停播放ToolStripMenuItem});
             this.编辑ToolStripMenuItem.Name = "编辑ToolStripMenuItem";
             this.编辑ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.编辑ToolStripMenuItem.Text = "编辑";
@@ -350,7 +367,7 @@
             // 
             this.撤销ToolStripMenuItem.Name = "撤销ToolStripMenuItem";
             this.撤销ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.撤销ToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.撤销ToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.撤销ToolStripMenuItem.Text = "撤销";
             this.撤销ToolStripMenuItem.Click += new System.EventHandler(this.撤销ToolStripMenuItem_Click);
             // 
@@ -359,9 +376,22 @@
             this.重做ToolStripMenuItem.Name = "重做ToolStripMenuItem";
             this.重做ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.Z)));
-            this.重做ToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.重做ToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.重做ToolStripMenuItem.Text = "重做";
             this.重做ToolStripMenuItem.Click += new System.EventHandler(this.重做ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(198, 6);
+            // 
+            // 暂停播放ToolStripMenuItem
+            // 
+            this.暂停播放ToolStripMenuItem.Name = "暂停播放ToolStripMenuItem";
+            this.暂停播放ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Space)));
+            this.暂停播放ToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.暂停播放ToolStripMenuItem.Text = "暂停/播放";
+            this.暂停播放ToolStripMenuItem.Click += new System.EventHandler(this.暂停播放ToolStripMenuItem_Click);
             // 
             // 帮助ToolStripMenuItem
             // 
@@ -385,7 +415,7 @@
             // 
             // openOSUFileDialog
             // 
-            this.openOSUFileDialog.Filter = "OSU文件|*.osu";
+            this.openOSUFileDialog.Filter = "OSU文件|*.osu|普通歌曲(mp3格式)|*.mp3";
             // 
             // groupBox4
             // 
@@ -563,7 +593,10 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.button_Visualize);
+            this.tabPage4.Controls.Add(this.groupBox13);
             this.tabPage4.Controls.Add(this.groupBox10);
+            this.tabPage4.Controls.Add(this.buttonSave);
             this.tabPage4.Controls.Add(this.groupBox7);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
@@ -572,13 +605,127 @@
             this.tabPage4.Text = "配置与导出";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // button_Visualize
+            // 
+            this.button_Visualize.Location = new System.Drawing.Point(435, 342);
+            this.button_Visualize.Name = "button_Visualize";
+            this.button_Visualize.Size = new System.Drawing.Size(177, 26);
+            this.button_Visualize.TabIndex = 4;
+            this.button_Visualize.Text = "可视化";
+            this.button_Visualize.UseVisualStyleBackColor = true;
+            this.button_Visualize.Click += new System.EventHandler(this.button_Visualize_Click);
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.textBoxConfigVRelativeMovingSpeed);
+            this.groupBox13.Controls.Add(this.label22);
+            this.groupBox13.Controls.Add(this.label21);
+            this.groupBox13.Controls.Add(this.textBoxConfigVBeatsPerSeg);
+            this.groupBox13.Controls.Add(this.label20);
+            this.groupBox13.Controls.Add(this.textBoxConfigVLine2);
+            this.groupBox13.Controls.Add(this.label18);
+            this.groupBox13.Controls.Add(this.textBoxConfigVLine1);
+            this.groupBox13.Controls.Add(this.textBoxConfigVTitle);
+            this.groupBox13.Controls.Add(this.label19);
+            this.groupBox13.Location = new System.Drawing.Point(231, 342);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(198, 155);
+            this.groupBox13.TabIndex = 3;
+            this.groupBox13.TabStop = false;
+            this.groupBox13.Text = "可视化Metadata";
+            // 
+            // textBoxConfigVRelativeMovingSpeed
+            // 
+            this.textBoxConfigVRelativeMovingSpeed.Location = new System.Drawing.Point(132, 125);
+            this.textBoxConfigVRelativeMovingSpeed.Name = "textBoxConfigVRelativeMovingSpeed";
+            this.textBoxConfigVRelativeMovingSpeed.Size = new System.Drawing.Size(50, 21);
+            this.textBoxConfigVRelativeMovingSpeed.TabIndex = 16;
+            this.textBoxConfigVRelativeMovingSpeed.TextChanged += new System.EventHandler(this.textBoxConfigVRelativeMovingSpeed_TextChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(6, 129);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(119, 12);
+            this.label22.TabIndex = 15;
+            this.label22.Text = "RelativeMovingSpeed";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 101);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(71, 12);
+            this.label21.TabIndex = 14;
+            this.label21.Text = "BeatsPerSeg";
+            // 
+            // textBoxConfigVBeatsPerSeg
+            // 
+            this.textBoxConfigVBeatsPerSeg.Location = new System.Drawing.Point(132, 98);
+            this.textBoxConfigVBeatsPerSeg.Name = "textBoxConfigVBeatsPerSeg";
+            this.textBoxConfigVBeatsPerSeg.Size = new System.Drawing.Size(50, 21);
+            this.textBoxConfigVBeatsPerSeg.TabIndex = 13;
+            this.textBoxConfigVBeatsPerSeg.TextChanged += new System.EventHandler(this.textBoxConfigVBeatsPerSeg_TextChanged);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(6, 76);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(35, 12);
+            this.label20.TabIndex = 12;
+            this.label20.Text = "作者2";
+            // 
+            // textBoxConfigVLine2
+            // 
+            this.textBoxConfigVLine2.Location = new System.Drawing.Point(49, 73);
+            this.textBoxConfigVLine2.Name = "textBoxConfigVLine2";
+            this.textBoxConfigVLine2.Size = new System.Drawing.Size(133, 21);
+            this.textBoxConfigVLine2.TabIndex = 11;
+            this.textBoxConfigVLine2.TextChanged += new System.EventHandler(this.textBoxConfigVLine2_TextChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 49);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(35, 12);
+            this.label18.TabIndex = 10;
+            this.label18.Text = "作者1";
+            // 
+            // textBoxConfigVLine1
+            // 
+            this.textBoxConfigVLine1.Location = new System.Drawing.Point(49, 46);
+            this.textBoxConfigVLine1.Name = "textBoxConfigVLine1";
+            this.textBoxConfigVLine1.Size = new System.Drawing.Size(133, 21);
+            this.textBoxConfigVLine1.TabIndex = 9;
+            this.textBoxConfigVLine1.TextChanged += new System.EventHandler(this.textBoxConfigVLine1_TextChanged);
+            // 
+            // textBoxConfigVTitle
+            // 
+            this.textBoxConfigVTitle.Location = new System.Drawing.Point(49, 20);
+            this.textBoxConfigVTitle.Name = "textBoxConfigVTitle";
+            this.textBoxConfigVTitle.Size = new System.Drawing.Size(133, 21);
+            this.textBoxConfigVTitle.TabIndex = 8;
+            this.textBoxConfigVTitle.TextChanged += new System.EventHandler(this.textBoxConfigVTitle_TextChanged);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 23);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(29, 12);
+            this.label19.TabIndex = 7;
+            this.label19.Text = "标题";
+            // 
             // groupBox10
             // 
             this.groupBox10.Controls.Add(this.checkBoxExportMusic);
             this.groupBox10.Controls.Add(this.button_ExportTXT);
             this.groupBox10.Location = new System.Drawing.Point(231, 288);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(260, 209);
+            this.groupBox10.Size = new System.Drawing.Size(381, 48);
             this.groupBox10.TabIndex = 2;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "导出";
@@ -586,7 +733,7 @@
             // checkBoxExportMusic
             // 
             this.checkBoxExportMusic.AutoSize = true;
-            this.checkBoxExportMusic.Location = new System.Drawing.Point(23, 53);
+            this.checkBoxExportMusic.Location = new System.Drawing.Point(179, 20);
             this.checkBoxExportMusic.Name = "checkBoxExportMusic";
             this.checkBoxExportMusic.Size = new System.Drawing.Size(96, 16);
             this.checkBoxExportMusic.TabIndex = 2;
@@ -595,7 +742,7 @@
             // 
             // button_ExportTXT
             // 
-            this.button_ExportTXT.Location = new System.Drawing.Point(23, 24);
+            this.button_ExportTXT.Location = new System.Drawing.Point(18, 17);
             this.button_ExportTXT.Name = "button_ExportTXT";
             this.button_ExportTXT.Size = new System.Drawing.Size(155, 23);
             this.button_ExportTXT.TabIndex = 1;
@@ -603,18 +750,27 @@
             this.button_ExportTXT.UseVisualStyleBackColor = true;
             this.button_ExportTXT.Click += new System.EventHandler(this.button_ExportTXT_Click);
             // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(39, 475);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(155, 22);
+            this.buttonSave.TabIndex = 3;
+            this.buttonSave.Text = "保存快捷键(Ctrl+S)";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.label17);
             this.groupBox7.Controls.Add(this.textBoxOSUMapID);
-            this.groupBox7.Controls.Add(this.buttonSave);
             this.groupBox7.Controls.Add(this.comboBoxConfigConfidence);
             this.groupBox7.Controls.Add(this.textBoxConfigTagger);
             this.groupBox7.Controls.Add(this.label16);
             this.groupBox7.Controls.Add(this.label13);
             this.groupBox7.Location = new System.Drawing.Point(7, 287);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(217, 210);
+            this.groupBox7.Size = new System.Drawing.Size(217, 185);
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "重要配置";
@@ -636,16 +792,6 @@
             this.textBoxOSUMapID.Size = new System.Drawing.Size(133, 21);
             this.textBoxOSUMapID.TabIndex = 5;
             this.textBoxOSUMapID.TextChanged += new System.EventHandler(this.textBoxOSUMapID_TextChanged);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Location = new System.Drawing.Point(32, 180);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(155, 22);
-            this.buttonSave.TabIndex = 3;
-            this.buttonSave.Text = "保存快捷键(Ctrl+S)";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // comboBoxConfigConfidence
             // 
@@ -1406,6 +1552,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "快捷输入";
             // 
+            // button_CEInverse
+            // 
+            this.button_CEInverse.Location = new System.Drawing.Point(344, 14);
+            this.button_CEInverse.Name = "button_CEInverse";
+            this.button_CEInverse.Size = new System.Drawing.Size(54, 23);
+            this.button_CEInverse.TabIndex = 22;
+            this.button_CEInverse.Text = "转位";
+            this.button_CEInverse.UseVisualStyleBackColor = true;
+            this.button_CEInverse.Click += new System.EventHandler(this.button_CEInverse_Click);
+            // 
             // ChordLabelQ
             // 
             this.ChordLabelQ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -1650,16 +1806,6 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
-            // button_CEInverse
-            // 
-            this.button_CEInverse.Location = new System.Drawing.Point(344, 14);
-            this.button_CEInverse.Name = "button_CEInverse";
-            this.button_CEInverse.Size = new System.Drawing.Size(54, 23);
-            this.button_CEInverse.TabIndex = 22;
-            this.button_CEInverse.Text = "转位";
-            this.button_CEInverse.UseVisualStyleBackColor = true;
-            this.button_CEInverse.Click += new System.EventHandler(this.button_CEInverse_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1688,6 +1834,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeMIDI)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeMain)).EndInit();
             this.tabPage4.ResumeLayout(false);
+            this.groupBox13.ResumeLayout(false);
+            this.groupBox13.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -1858,5 +2006,19 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button_BEEnhanceDownbeat;
         private System.Windows.Forms.Button button_CEInverse;
+        private System.Windows.Forms.GroupBox groupBox13;
+        private System.Windows.Forms.TextBox textBoxConfigVRelativeMovingSpeed;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.TextBox textBoxConfigVBeatsPerSeg;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox textBoxConfigVLine2;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBoxConfigVLine1;
+        private System.Windows.Forms.TextBox textBoxConfigVTitle;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem 暂停播放ToolStripMenuItem;
+        private System.Windows.Forms.Button button_Visualize;
     }
 }

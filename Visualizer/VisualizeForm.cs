@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MIREditor;
 using System.IO;
 using System.Diagnostics;
 
@@ -17,10 +16,20 @@ namespace Visualizer
     public partial class VisualizeForm : Form
     {
         internal static SubtitleVisualizer SubtitleVisualizer;
-        INIReader iniReader = new INIReader("Config.ini");
-        public VisualizeForm()
+        INIReader iniReader;
+        string rawFilename;
+        public VisualizeForm(string rawDataPath=null)
         {
             InitializeComponent();
+            if(rawDataPath!=null)
+            {
+                rawFilename = rawDataPath;
+            }
+            else
+            {
+                iniReader =new INIReader("Config.ini");
+                rawFilename = iniReader["File"];
+            }
         }
 
         private void VisualizeForm_Load(object sender, EventArgs e)
@@ -30,10 +39,12 @@ namespace Visualizer
         SongInfo testSongInfo;
         private void button1_Click(object sender, EventArgs e)
         {
-            string filename = iniReader["File"];
-            testSongInfo = ArchiveManager.ReadFromArchive(filename);
+            using (StreamReader sr = new StreamReader(rawFilename))
+            {
+                testSongInfo = new SongInfo(sr.ReadToEnd());
+            }
             
-            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, false, checkBox1.Checked, iniReader.Data);
+            SubtitleVisualizer = new SubtitleVisualizer(visualizePictureBox, testSongInfo, false, checkBox1.Checked);
             
             button1.Visible = false;
             SubtitleVisualizer.Play();
@@ -71,6 +82,12 @@ namespace Visualizer
         private void button2_Click(object sender, EventArgs e)
         {
             SubtitleVisualizer.CurrentTime += 5;
+        }
+
+        private void VisualizeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            timer.Enabled = false;
+            SubtitleVisualizer.Pause();
         }
     }
 }

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsuMapAnalyzer", "OsuMapAna
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visualizer", "Visualizer\Visualizer.csproj", "{C732487A-C393-4C91-94DE-BACE4A933E61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastBeatTracker", "..\Fast_Beat_Tracker\FastBeatTracker\FastBeatTracker.csproj", "{755219D6-7974-4249-B100-860D44788DB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C732487A-C393-4C91-94DE-BACE4A933E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C732487A-C393-4C91-94DE-BACE4A933E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C732487A-C393-4C91-94DE-BACE4A933E61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{755219D6-7974-4249-B100-860D44788DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{755219D6-7974-4249-B100-860D44788DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{755219D6-7974-4249-B100-860D44788DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{755219D6-7974-4249-B100-860D44788DB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,6 +28,10 @@ namespace Common
         {
             public string LinkedFile { get; set; }
             public int osuMapID { get; set; }
+            public string MetadataLine1 { get; set; }
+            public string MetadataLine2 { get; set; }
+            public int BeatsPerSegment { get; set; } = -1;
+            public double RelativeMovingSpeed { get; set; }
         }
         public MusicConfig MusicConfigure;
         public TagConfig TagConfigure;

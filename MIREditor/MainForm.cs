@@ -25,6 +25,7 @@ namespace MIREditor
         public string preCreateFile = null;
         MouseButtons listenMouseButton = MouseButtons.Right, inputMouseButton = MouseButtons.Left;
 
+        bool ignoreKeyInput = false; // true when inputing text to textboxes
         #region init
         public MainForm(string[] args)
         {
@@ -117,6 +118,11 @@ namespace MIREditor
                 comboBoxConfigConfidence.SelectedIndex = Program.TL.Info.TagConfigure.Confidence;
                 textBoxConfigTagger.Text = Program.TL.Info.TagConfigure.Tagger;
                 textBoxOSUMapID.Text = Program.TL.Info.MiscConfigure.osuMapID.ToString();
+                textBoxConfigVTitle.Text = Program.TL.Info.MusicConfigure.Title;
+                textBoxConfigVLine1.Text = Program.TL.Info.MiscConfigure.MetadataLine1;
+                textBoxConfigVLine2.Text = Program.TL.Info.MiscConfigure.MetadataLine2;
+                textBoxConfigVBeatsPerSeg.Text = Program.TL.Info.MiscConfigure.BeatsPerSegment.ToString();
+                textBoxConfigVRelativeMovingSpeed.Text = Program.TL.Info.MiscConfigure.RelativeMovingSpeed.ToString();
                 Text = "Edit Mode: " + Program.TL.Info.MusicConfigure.Title;
             }
             else
@@ -167,14 +173,21 @@ namespace MIREditor
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            e.SuppressKeyPress = true;
-            if (Program.TL != null)
-                Program.TL.KeyEvent(e.KeyCode, e.Control, e.Alt, e.Shift);
+            if(!ignoreKeyInput)
+            {
+                e.SuppressKeyPress = true;
+                if (Program.TL != null)
+                    Program.TL.KeyEvent(e.KeyCode, e.Control, e.Alt, e.Shift);
+            }
         }
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if (Program.TL != null)
-                Program.TL.KeyUp(e.KeyCode, e.Control, e.Alt, e.Shift);
+            if (!ignoreKeyInput)
+            {
+                e.SuppressKeyPress = true;
+                if (Program.TL != null)
+                    Program.TL.KeyUp(e.KeyCode, e.Control, e.Alt, e.Shift);
+            }
 
         }
         #endregion
@@ -331,8 +344,8 @@ namespace MIREditor
             if (Program.TL != null)
             {
                 saveInfoFileDialog.InitialDirectory = Settings.ArchiveFolder;
-                if (OsuAnalyzer.directoryName != null)
-                    saveInfoFileDialog.FileName = OsuAnalyzer.directoryName;
+                if (ImportAnalyzer.directoryName != null)
+                    saveInfoFileDialog.FileName = ImportAnalyzer.directoryName;
                 if (saveInfoFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
                     return;
@@ -348,7 +361,18 @@ namespace MIREditor
             {
                 return;
             }
-            SongInfo info = OsuAnalyzer.ExtractFromOSUFile(openOSUFileDialog.FileName, Settings.DatasetMusicFolder);
+            SongInfo info;
+            if (Path.GetExtension(openOSUFileDialog.FileName).ToLower()==".mp3")
+            {
+                FastBeatTracker.MainWindow window = new FastBeatTracker.MainWindow(openOSUFileDialog.FileName);
+                window.ShowDialog();
+                info = ImportAnalyzer.ExtractFromMusicAndBeats(openOSUFileDialog.FileName, window.ExportedBeats, Settings.DatasetMusicFolder);
+            }
+            else
+            {
+                info = ImportAnalyzer.ExtractFromOSUFile(openOSUFileDialog.FileName, Settings.DatasetMusicFolder);
+
+            }
             if (info != null)
             {
                 ArchiveManager.SwitchSongInfo(info);
@@ -393,6 +417,14 @@ namespace MIREditor
 
             }
 
+        }
+
+        private void 暂停播放ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                Program.TL.KeyEvent(Keys.Space, true, false, false);
+            }
         }
 
 
@@ -869,6 +901,7 @@ namespace MIREditor
             {
                 Program.TL.ChordEditor.Enabled = false;
                 Program.TL.BeatEditor.Enabled = false;
+                ignoreKeyInput = false;
                 switch (tabControl1.SelectedTab.Text)
                 {
                     case "和弦":
@@ -877,6 +910,10 @@ namespace MIREditor
                     case "节拍与调性":
                         Program.TL.BeatEditor.Enabled = true;
                         break;
+                    case "配置与导出":
+                        ignoreKeyInput = true;
+                        break;
+
                 }
             }
         }
@@ -908,9 +945,7 @@ namespace MIREditor
             {
                 int result;
                 if (int.TryParse(textBoxOSUMapID.Text, out result))
-                {
                     Program.TL.Info.MiscConfigure.osuMapID = result;
-                }
             }
         }
 
@@ -924,6 +959,55 @@ namespace MIREditor
         {
             if (Program.TL != null)
                 Program.TL.KeyEvent(Keys.OemQuestion, false, false, false);
+        }
+
+        private void textBoxConfigVBeatsPerSeg_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                int result;
+                if (int.TryParse(textBoxConfigVBeatsPerSeg.Text, out result))
+                    Program.TL.Info.MiscConfigure.BeatsPerSegment = result;
+            }
+        }
+
+        private void textBoxConfigVRelativeMovingSpeed_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                double result;
+                if (double.TryParse(textBoxConfigVRelativeMovingSpeed.Text, out result))
+                    Program.TL.Info.MiscConfigure.RelativeMovingSpeed = result;
+            }
+        }
+
+        private void textBoxConfigVTitle_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.Info.MusicConfigure.Title = textBoxConfigVTitle.Text;
+        }
+
+        private void textBoxConfigVLine1_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.Info.MiscConfigure.MetadataLine1 = textBoxConfigVLine1.Text;
+        }
+
+        private void textBoxConfigVLine2_TextChanged(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+                Program.TL.Info.MiscConfigure.MetadataLine2 = textBoxConfigVLine2.Text;
+        }
+
+        private void button_Visualize_Click(object sender, EventArgs e)
+        {
+            if (Program.TL != null)
+            {
+                if (Program.TL.Playing)
+                    Program.TL.KeyEvent(Keys.Space, false, false, false);
+                using (Visualizer.VisualizeForm visualizeForm = new Visualizer.VisualizeForm(Program.FullArchiveFilePath))
+                    visualizeForm.ShowDialog();
+            }
         }
 
         private void checkBoxMouseSwitch_CheckedChanged(object sender, EventArgs e)

@@ -93,7 +93,7 @@ namespace Common
                 {
                     for (int i = 1; i < template.Notes.Length; ++i) // Inversions
                     {
-                        int new_root_delta = template.Notes[i];
+                        int new_root_delta = template.Notes[i] % 12;
                         string suffix = "/{X+" + new_root_delta.ToString() + "}";
                         RawChordTemplate template_inversion = new RawChordTemplate();
                         template_inversion.Description = template.Description + " Slash " + Num2NoteString[new_root_delta];
@@ -104,7 +104,12 @@ namespace Common
                         template_inversion.Parent = template.Description;
                         template_inversion.Notes = new int[template.Notes.Length];
                         for (int j = 0; j < template_inversion.Notes.Length; ++j)
-                            template_inversion.Notes[j] = template.Notes[(j + i) % template.Notes.Length];
+                        {
+                            if (j + i >= template.Notes.Length)
+                                template_inversion.Notes[j] = template.Notes[j + i - template.Notes.Length] + 12; // Raise an octave
+                            else
+                                template_inversion.Notes[j] = template.Notes[j + i];
+                        }
                         descriptionDict[template_inversion.Description] = rawList.Count;
                         rawList.Add(template_inversion);
                         nextInversion.Add(nextInversion.Count);
@@ -301,7 +306,9 @@ namespace Common
         public int[] ToNotesUnclamped()
         {
             if (scale == -1) return new int[0];
-            return templates[templateID].Notes.Select(x => x + scale).ToArray();
+            // Adjust for inversions
+            int rebase = (templates[templateID].Notes[0] + scale) / 12;
+            return templates[templateID].Notes.Select(x => x + scale - rebase * 12).ToArray();
         }
         public object Clone()
         {

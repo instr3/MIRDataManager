@@ -23,7 +23,7 @@ namespace MIREditor
         public double BPM { get { return BeatLength > 0 ? 60000 / BeatLength : 0; } }
         public double Position { get { return Offset / 1000.0; } }
     }
-    public class OsuAnalyzer
+    public class ImportAnalyzer
     {
         public static string directoryName;
         static List<TimingPoint> timingPoints;
@@ -32,9 +32,51 @@ namespace MIREditor
             ExtractFromOSUFile(osuFilename);
             return timingPoints;
         }
-        public static SongInfo ExtractFromOSUFile(string osuFilename,string folderConstraint="", bool killIfTooOld=false)
+        public static SongInfo ExtractFromMusicAndBeats(string musicFileName, double[] beatTimes, string folderConstraint = "")
         {
-            if(!osuFilename.StartsWith(folderConstraint))
+            if(beatTimes==null)
+            {
+                Logger.Log("[Error]Beat not tracked.");
+                return null;
+            }
+            if (!musicFileName.StartsWith(folderConstraint))
+            {
+                Logger.Log("[Error]The mp3 file is not included in the dataset.");
+                return null;
+            }
+            string shortMusicFileName = musicFileName.Substring(folderConstraint.Length);
+            if (shortMusicFileName.StartsWith("/") || shortMusicFileName.StartsWith("\\"))
+                shortMusicFileName = shortMusicFileName.Substring(1);
+            SongInfo songinfo = new SongInfo();
+            songinfo.MusicConfigure = new SongInfo.MusicConfig();
+            songinfo.TagConfigure = new SongInfo.TagConfig();
+            songinfo.TagConfigure.Tagger = Settings.TaggerName;
+            songinfo.TagConfigure.Time = DateTime.Now;
+            songinfo.TagConfigure.Confidence = 1;
+            songinfo.MiscConfigure = new SongInfo.MiscConfig();
+            songinfo.MiscConfigure.LinkedFile = "";
+
+            songinfo.MusicConfigure.MetreNumber = 4;
+
+            FileInfo musicFile = new FileInfo(musicFileName);
+            songinfo.MusicConfigure.Location = shortMusicFileName;
+            songinfo.MusicConfigure.Extension = musicFile.Extension.Replace(".", "");
+            songinfo.MusicConfigure.MD5 = MiscWrapper.GetFileMD5(musicFile.FullName);
+            songinfo.MusicConfigure.Source = "MusicAndBeats";
+
+            songinfo.MusicConfigure.Title = Path.GetFileNameWithoutExtension(musicFileName);
+            songinfo.MiscConfigure.osuMapID = -1;
+
+            songinfo.Beats = beatTimes.Select(t => new BeatInfo()
+            {
+                Time = t,
+                BarAttribute = 0,
+            }).ToList();
+            return songinfo;
+        }
+        public static SongInfo ExtractFromOSUFile(string osuFileName,string folderConstraint="", bool killIfTooOld=false)
+        {
+            if(!osuFileName.StartsWith(folderConstraint))
             {
                 Logger.Log("[Error]The osu file is not included in the dataset.");
                 return null;
@@ -43,8 +85,8 @@ namespace MIREditor
             SongInfo songinfo = new SongInfo();
             //FileInfo osuFile = new FileInfo(osuFilename);
             //DirectoryInfo dir = osuFile.Directory;
-            string directoryPath = Path.GetDirectoryName(osuFilename);
-            string fileName = Path.GetFileName(osuFilename);
+            string directoryPath = Path.GetDirectoryName(osuFileName);
+            string fileName = Path.GetFileName(osuFileName);
             directoryName = Path.GetFileName(directoryPath);
 
             //TempOSUFolderName = dir.Name;
@@ -55,7 +97,7 @@ namespace MIREditor
             songinfo.TagConfigure.Confidence = 1;
             songinfo.MiscConfigure = new SongInfo.MiscConfig();
             songinfo.MiscConfigure.LinkedFile = directoryName + "/" + fileName;
-            using (StreamReader sr = new StreamReader(osuFilename))
+            using (StreamReader sr = new StreamReader(osuFileName))
             {
                 bool tpContext = false;
                 while (!sr.EndOfStream)
@@ -124,7 +166,7 @@ namespace MIREditor
                         match = Regex.Match(buffer, DivisorRegex);
                         if (match.Success)
                         {
-                            songinfo.MiscConfigure.osuMapID= int.Parse(match.Groups["n"].Value);
+                            songinfo.MiscConfigure.osuMapID = int.Parse(match.Groups["n"].Value);
                             continue;
                         }
                     }
@@ -154,7 +196,7 @@ namespace MIREditor
                     }
                 }*/
             }
-            GetBeatInfo(osuFilename, songinfo, timingPoints);
+            GetBeatInfo(osuFileName, songinfo, timingPoints);
             return songinfo;
         }
 

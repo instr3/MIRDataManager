@@ -19,7 +19,7 @@ namespace OsuMapAnalyzer
             string osuFilename = Path.Combine(Settings.DatasetMusicFolder, songInfo.MiscConfigure.LinkedFile);
             if (difficultyFilename != "")
                 osuFilename = Path.Combine(Path.GetDirectoryName(osuFilename), difficultyFilename);
-            osuMap.TimingPoints = OsuAnalyzer.GetTimingPoints(osuFilename);
+            osuMap.TimingPoints = ImportAnalyzer.GetTimingPoints(osuFilename);
             int processedTimingPoints = 0;
             double currentBeatLength = osuMap.TimingPoints[0].BeatLength;
             double currentSliderSpeedPercent = 1;
@@ -106,7 +106,7 @@ namespace OsuMapAnalyzer
         }
         public static OsuMap Analyze(string osuFilename)
         {
-            return Analyze(OsuAnalyzer.ExtractFromOSUFile(osuFilename,Settings.DatasetMusicFolder));
+            return Analyze(ImportAnalyzer.ExtractFromOSUFile(osuFilename,Settings.DatasetMusicFolder));
             
         }
     }
