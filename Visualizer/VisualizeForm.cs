@@ -87,7 +87,8 @@ namespace Visualizer
         private void VisualizeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             timer.Enabled = false;
-            SubtitleVisualizer.Pause();
+            if(SubtitleVisualizer!=null)
+                SubtitleVisualizer.Dispose();
         }
     }
 }

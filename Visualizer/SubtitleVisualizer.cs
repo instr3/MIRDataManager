@@ -110,6 +110,12 @@ namespace Visualizer
                 }
             }
         }
+
+        public void Dispose()
+        {
+            Bass.BASS_StreamFree(MP3stream);
+        }
+
         ~SubtitleVisualizer()
         {
             Bass.BASS_StreamFree(MP3stream);
@@ -288,10 +294,11 @@ namespace Visualizer
                 if (isRelativeChord)
                 {
                     Chord.ScriptAnnotationStruct suffixStruct = chord.ToScriptAnnotation();
-                    left += DrawSimpleText(suffixStruct.suffix, 2, left, top, color);
+                    left += DrawSimpleText(suffixStruct.suffix1, 2, left, top, color);
                     int width1 = DrawSimpleText(suffixStruct.superscript, 1, left, top, color);
                     int width2 = DrawSimpleText(suffixStruct.subscript, 15, left, top, color);
                     left += Math.Max(width1, width2);
+                    left += DrawSimpleText(suffixStruct.suffix2, 2, left, top, color);
                     if (suffixStruct.inversion != -1)
                     {
                         left += DrawSimpleText("/", 2, left, top, color) - 4;
@@ -555,12 +562,14 @@ namespace Visualizer
             }
             DrawFadingCover(HISTORY_FADING_START_ROW, MAX_HISTORY_DISPLAY);
         }
-        private void DrawSeg(double currentTime, int segID, double row)
+        private double DrawSeg(double currentTime, int segID, double row)
         {
             double startTime = Info.Beats[segments[segID].StartBeat].Time;
             double endTime = Info.Beats[segments[segID].EndBeat].Time;
             double duration = (endTime - startTime) / (segments[segID].EndBeat - segments[segID].StartBeat) * BeatsPerSegment;
             double lastTime = 0.0;
+            double lastPercent = 0.0;
+            double pivotPercent = 0.0;
             //BeatInfo lastBeat = Info.Beats[segments[segID].StartBeat];
             //int lastBeatID = segments[segID].StartBeat;
             Chord lastChord = Info.Beats[segments[segID].StartBeat].Chord;
@@ -568,12 +577,14 @@ namespace Visualizer
             double lastBeatDuration = Info.Beats[segments[segID].StartBeat + 1].Time - Info.Beats[segments[segID].StartBeat].Time;
             for (int i = segments[segID].StartBeat; i <= segments[segID].EndBeat; ++i)
             {
-                void SetChordSwitchPoint(double newTime, Chord nextChord, Tonality nextTonality, int beatID)
+                void SetChordSwitchPoint(double newPercent, double newTime, Chord nextChord, Tonality nextTonality, int beatID)
                 {
-                    DrawChord(lastChord, lastTime / duration, (newTime - lastTime) / duration, row, (currentTime - startTime - lastTime) / lastBeatDuration, showAbsoluteChord ? null : lastTonality);
+                    double widthPercent = (currentTime - startTime - lastTime) / lastBeatDuration;
+                    DrawChord(lastChord, lastPercent, newPercent - lastPercent, row, (currentTime - startTime - lastTime) / lastBeatDuration, showAbsoluteChord ? null : lastTonality);
                     lastChord = nextChord;
                     lastTonality = nextTonality;
                     lastTime = newTime;
+                    lastPercent = newPercent;
                     if (beatID < segments[segID].EndBeat)
                         lastBeatDuration = Info.Beats[beatID + 1].Time - Info.Beats[beatID].Time;
                     else
@@ -583,15 +594,24 @@ namespace Visualizer
                 if (i == segments[segID].EndBeat || beat.Chord != lastChord || beat.Tonality != lastTonality)
                 {
                     double newTime = beat.Time - startTime;
-                    SetChordSwitchPoint(newTime, beat.Chord, beat.Tonality, i);
+                    SetChordSwitchPoint((double)(i - segments[segID].StartBeat) / BeatsPerSegment, newTime, beat.Chord, beat.Tonality, i);
                 }
-                if (i < segments[segID].EndBeat && beat.SecondChordPercent > 0)
+                if (i < segments[segID].EndBeat)
                 {
                     BeatInfo nextBeat = Info.Beats[i + 1];
-                    double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent - startTime;
-                    SetChordSwitchPoint(insertTime, beat.SecondChord, beat.Tonality, i);
+                    if (beat.Time < currentTime && nextBeat.Time >= currentTime)
+                    {
+                        pivotPercent = (i - segments[segID].StartBeat +
+                            (currentTime - beat.Time) / (nextBeat.Time - beat.Time)) / BeatsPerSegment;
+                    }
+                    if (beat.SecondChordPercent > 0)
+                    {
+                        double insertTime = nextBeat.Time - (nextBeat.Time - beat.Time) * beat.SecondChordPercent - startTime;
+                        SetChordSwitchPoint((i - segments[segID].StartBeat + beat.SecondChordPercent) / BeatsPerSegment, insertTime, beat.SecondChord, beat.Tonality, i);
+                    }
                 }
             }
+            return pivotPercent;
         }
         private int DrawTonalityText(int root,int left, int top)
         {
@@ -671,11 +691,11 @@ namespace Visualizer
                 double startTime = Info.Beats[segments[currentSegID].StartBeat].Time;
                 double endTime = Info.Beats[segments[currentSegID].EndBeat].Time;
                 double duration = (endTime - startTime) / (segments[currentSegID].EndBeat - segments[currentSegID].StartBeat) * BeatsPerSegment;
-                double percent = (currentTime - startTime) / duration;
-                DrawSeg(currentTime, currentSegID, 0);
-                if (percent>=0)
-                    DrawPivot(percent, 0);
-                DrawScale(percent, 0);
+                // double percent = (currentTime - startTime) / duration;
+                double pivotPercent = DrawSeg(currentTime, currentSegID, 0);
+                if (pivotPercent >= 0)
+                    DrawPivot(pivotPercent, 0);
+                DrawScale(pivotPercent, 0);
             }
             else
                 DrawScale(0, 0);
