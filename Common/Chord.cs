@@ -25,9 +25,10 @@ namespace Common
         private static string[,] chordFlyweightLabels;
         public struct ScriptAnnotationStruct
         {
-            public string suffix;
+            public string suffix1;
             public string superscript;
             public string subscript;
+            public string suffix2;
             public int inversion;
         }
         private static ScriptAnnotationStruct[,] chordFlyweightScriptAnnotations;
@@ -89,7 +90,7 @@ namespace Common
                     majorTraidID = rawList.Count - 1;
                 if (template.Label == "{X}m")
                     minorTraidID = rawList.Count - 1;
-                if (true)
+                if (!template.Label.Contains("/"))
                 {
                     for (int i = 1; i < template.Notes.Length; ++i) // Inversions
                     {
@@ -98,7 +99,7 @@ namespace Common
                         RawChordTemplate template_inversion = new RawChordTemplate();
                         template_inversion.Description = template.Description + " Slash " + Num2NoteString[new_root_delta];
                         template_inversion.Label = template.Label + suffix;
-                        template_inversion.Abbr = template.Abbr + "/" + Num2NoteString[new_root_delta];
+                        template_inversion.Abbr = "";
                         template_inversion.RelativeLabel = template.RelativeLabel + "/" + Num2NoteString[new_root_delta];
                         template_inversion.ScriptAnnotation = template.ScriptAnnotation + suffix;
                         template_inversion.Parent = template.Description;
@@ -138,7 +139,16 @@ namespace Common
                     Chord chord = new Chord(j, i, MutedChordTypeEnum.NotMuted);
                     chordFlyweights[i, j] = chord;
                     string label = templates[i].Label.Replace("{X}", Num2Char[j]);
-                    string scriptAnnotation = templates[i].ScriptAnnotation.Replace("{X}", "");
+                    string scriptAnnotation;
+                    if (templates[i].ScriptAnnotation.StartsWith("{X}"))
+                    {
+                        scriptAnnotation = templates[i].ScriptAnnotation.Substring(3);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Unsupported Annotation Format: " + templates[i].ScriptAnnotation);
+                    }
+                    scriptAnnotation = scriptAnnotation.Replace("{X}", j.ToString());
                     for (int k = 0; k < 12; ++k)
                     {
                         label = label.Replace("{X+" + k.ToString() + "}", Num2Char[(j + k) % 12]);
@@ -165,9 +175,10 @@ namespace Common
                     string tmp;
                     scriptAnnotation = ClipSuffixPart(scriptAnnotation, '/', out tmp);
                     chordFlyweightScriptAnnotations[i, j].inversion = tmp == "" ? -1 : int.Parse(tmp);
+                    scriptAnnotation = ClipSuffixPart(scriptAnnotation, '+', out chordFlyweightScriptAnnotations[i, j].suffix2);
                     scriptAnnotation = ClipSuffixPart(scriptAnnotation, '_', out chordFlyweightScriptAnnotations[i, j].subscript);
                     scriptAnnotation = ClipSuffixPart(scriptAnnotation, '^', out chordFlyweightScriptAnnotations[i, j].superscript);
-                    chordFlyweightScriptAnnotations[i, j].suffix = scriptAnnotation;
+                    chordFlyweightScriptAnnotations[i, j].suffix1 = scriptAnnotation;
 
                 }
             }

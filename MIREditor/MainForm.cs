@@ -646,7 +646,7 @@ namespace MIREditor
                 if (checkBoxChordKeyboard.Checked)
                     InitChordKeyboard();
         }
-        private Color Lerp(Color c1, Color c2, float t)
+        /*private Color Lerp(Color c1, Color c2, float t)
         {
             return Color.FromArgb(Lerp(c1.R, c2.R, t), Lerp(c1.G, c2.G, t), Lerp(c1.B, c2.B, t));
         }
@@ -655,24 +655,24 @@ namespace MIREditor
         {
             float tp = 1.0f - t;
             return (int)(tp * a + t * b);
-        }
+        }*/
         private void SetGridCellChord(DataGridViewCell cell,Chord chord,Tonality tonality)
         {
-            int color = 255 - 40 * chord.ToNotes().Count(x => !tonality.IsOnNaturalScale(x));
+            // int color = 255 - 40 * chord.ToNotes().Count(x => !tonality.IsOnNaturalScale(x));
             cell.Tag = chord;
             cell.Value = chord.ToString(tonality);
             //cell.Style.BackColor = Color.FromArgb(color, color, color);
             KeyValuePair<Color,Color> colors = ColorSchema.GetGradientColorByChordName(chord.ToString(tonality));
-            cell.Style.BackColor =
-                Lerp(
+            cell.Style.BackColor = colors.Key;
+                /*Lerp(
                 colors.Key,
                 Color.FromArgb(color, color, color),
-                0.8f);
-            cell.Style.ForeColor =
-                Lerp(
+                0.8f);*/
+            cell.Style.ForeColor = colors.Value;
+                /*Lerp(
                 colors.Value,
                 Color.FromArgb(color, color, color),
-                0.8f);
+                0.8f);*/
             cell.Style.Font = FontManager.Instance.ChordFont;
             //if (color == 255)
             //    cell.Style.Font = new Font(cell.InheritedStyle.Font, FontStyle.Underline);
@@ -697,7 +697,7 @@ namespace MIREditor
                 relativeChordRows[i] = new DataGridViewRow();
                 DataGridViewRow row = relativeChordRows[i];
                 row.HeaderCell.Value = Chord.GetChordTemplateAbbr(i);
-                if (Chord.GetChordTemplateAbbr(i).Contains('/'))
+                if (Chord.GetChordTemplateAbbr(i)=="") // Inverse chord
                     row.Visible = false; // Inverse chord are not shown
             }
             dataGridViewChord.Rows.AddRange(relativeChordRows);
