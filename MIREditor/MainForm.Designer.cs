@@ -180,6 +180,9 @@
             this.buttonChroma = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ChordSuggestionListBox = new System.Windows.Forms.ListBox();
+            this.ChordSuggestionPictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ChordSuggestionPictureBox2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.TimelinePictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -210,6 +213,8 @@
             this.groupBox11.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ChordSuggestionPictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChordSuggestionPictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // TimelinePictureBox
@@ -415,7 +420,7 @@
             // 
             // openOSUFileDialog
             // 
-            this.openOSUFileDialog.Filter = "OSU文件|*.osu|普通歌曲(mp3格式)|*.mp3";
+            this.openOSUFileDialog.Filter = "OSU文件|*.osu|普通歌曲(mp3或wav格式)|*.mp3;*.wav";
             // 
             // groupBox4
             // 
@@ -1162,6 +1167,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.ChordSuggestionPictureBox2);
+            this.tabPage1.Controls.Add(this.ChordSuggestionPictureBox1);
+            this.tabPage1.Controls.Add(this.ChordSuggestionListBox);
             this.tabPage1.Controls.Add(this.checkBoxChordKeyboard);
             this.tabPage1.Controls.Add(this.groupBoxChordKeyboard);
             this.tabPage1.Controls.Add(this.groupBox3);
@@ -1193,7 +1201,7 @@
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelX);
             this.groupBoxChordKeyboard.Controls.Add(this.pianoLabelN);
             this.groupBoxChordKeyboard.Controls.Add(this.dataGridViewChord);
-            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(6, 281);
+            this.groupBoxChordKeyboard.Location = new System.Drawing.Point(606, 281);
             this.groupBoxChordKeyboard.Name = "groupBoxChordKeyboard";
             this.groupBoxChordKeyboard.Size = new System.Drawing.Size(614, 220);
             this.groupBoxChordKeyboard.TabIndex = 22;
@@ -1373,7 +1381,7 @@
             this.groupBox3.Controls.Add(this.pictureBox1);
             this.groupBox3.Location = new System.Drawing.Point(7, 366);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(611, 135);
+            this.groupBox3.Size = new System.Drawing.Size(323, 135);
             this.groupBox3.TabIndex = 16;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "剪切板";
@@ -1381,7 +1389,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(529, 109);
+            this.label8.Location = new System.Drawing.Point(274, 109);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(23, 12);
             this.label8.TabIndex = 11;
@@ -1401,14 +1409,14 @@
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Location = new System.Drawing.Point(68, 104);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(455, 24);
+            this.pictureBox4.Size = new System.Drawing.Size(200, 24);
             this.pictureBox4.TabIndex = 9;
             this.pictureBox4.TabStop = false;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(529, 79);
+            this.label6.Location = new System.Drawing.Point(274, 79);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(23, 12);
             this.label6.TabIndex = 8;
@@ -1428,14 +1436,14 @@
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Location = new System.Drawing.Point(68, 74);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(455, 24);
+            this.pictureBox3.Size = new System.Drawing.Size(200, 24);
             this.pictureBox3.TabIndex = 6;
             this.pictureBox3.TabStop = false;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(529, 49);
+            this.label4.Location = new System.Drawing.Point(274, 49);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(17, 12);
             this.label4.TabIndex = 5;
@@ -1455,14 +1463,14 @@
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Location = new System.Drawing.Point(68, 44);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(455, 24);
+            this.pictureBox2.Size = new System.Drawing.Size(200, 24);
             this.pictureBox2.TabIndex = 3;
             this.pictureBox2.TabStop = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(529, 19);
+            this.label3.Location = new System.Drawing.Point(274, 19);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 2;
@@ -1482,7 +1490,7 @@
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(68, 14);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(455, 24);
+            this.pictureBox1.Size = new System.Drawing.Size(200, 24);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -1806,6 +1814,34 @@
             this.panel1.Size = new System.Drawing.Size(619, 278);
             this.panel1.TabIndex = 11;
             // 
+            // ChordSuggestionListBox
+            // 
+            this.ChordSuggestionListBox.FormattingEnabled = true;
+            this.ChordSuggestionListBox.ItemHeight = 12;
+            this.ChordSuggestionListBox.Location = new System.Drawing.Point(337, 371);
+            this.ChordSuggestionListBox.Name = "ChordSuggestionListBox";
+            this.ChordSuggestionListBox.ScrollAlwaysVisible = true;
+            this.ChordSuggestionListBox.Size = new System.Drawing.Size(216, 124);
+            this.ChordSuggestionListBox.TabIndex = 23;
+            // 
+            // ChordSuggestionPictureBox1
+            // 
+            this.ChordSuggestionPictureBox1.BackColor = System.Drawing.Color.Black;
+            this.ChordSuggestionPictureBox1.Location = new System.Drawing.Point(563, 370);
+            this.ChordSuggestionPictureBox1.Name = "ChordSuggestionPictureBox1";
+            this.ChordSuggestionPictureBox1.Size = new System.Drawing.Size(16, 124);
+            this.ChordSuggestionPictureBox1.TabIndex = 24;
+            this.ChordSuggestionPictureBox1.TabStop = false;
+            // 
+            // ChordSuggestionPictureBox2
+            // 
+            this.ChordSuggestionPictureBox2.BackColor = System.Drawing.Color.Black;
+            this.ChordSuggestionPictureBox2.Location = new System.Drawing.Point(591, 370);
+            this.ChordSuggestionPictureBox2.Name = "ChordSuggestionPictureBox2";
+            this.ChordSuggestionPictureBox2.Size = new System.Drawing.Size(16, 124);
+            this.ChordSuggestionPictureBox2.TabIndex = 25;
+            this.ChordSuggestionPictureBox2.TabStop = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1821,7 +1857,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "b";
+            this.Text = "MIREditor";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
@@ -1864,6 +1900,8 @@
             this.groupBox11.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ChordSuggestionPictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChordSuggestionPictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2020,5 +2058,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem 暂停播放ToolStripMenuItem;
         private System.Windows.Forms.Button button_Visualize;
+        private System.Windows.Forms.PictureBox ChordSuggestionPictureBox1;
+        private System.Windows.Forms.ListBox ChordSuggestionListBox;
+        private System.Windows.Forms.PictureBox ChordSuggestionPictureBox2;
     }
 }

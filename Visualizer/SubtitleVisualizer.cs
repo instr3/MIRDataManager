@@ -388,7 +388,10 @@ namespace Visualizer
         {
             bool isRelativeChord = true;
             if (tonality == null)
+            {
                 isRelativeChord = false;
+                tonality = Tonality.NoTonality;
+            }
             if (timespan < 0)
                 return;
             int top = (int)Math.Round(ROW_BASE_HEIGHT - (row + 1) * 50);

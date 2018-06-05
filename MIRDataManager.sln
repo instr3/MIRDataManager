@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visualizer", "Visualizer\Vi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastBeatTracker", "..\Fast_Beat_Tracker\FastBeatTracker\FastBeatTracker.csproj", "{755219D6-7974-4249-B100-860D44788DB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChordEstimationInterface", "ChordEstimationInterface\ChordEstimationInterface.csproj", "{8B508041-AC33-404C-87C6-13B3B27AD44B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{755219D6-7974-4249-B100-860D44788DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{755219D6-7974-4249-B100-860D44788DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{755219D6-7974-4249-B100-860D44788DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B508041-AC33-404C-87C6-13B3B27AD44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B508041-AC33-404C-87C6-13B3B27AD44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B508041-AC33-404C-87C6-13B3B27AD44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B508041-AC33-404C-87C6-13B3B27AD44B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

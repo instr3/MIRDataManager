@@ -362,7 +362,8 @@ namespace MIREditor
                 return;
             }
             SongInfo info;
-            if (Path.GetExtension(openOSUFileDialog.FileName).ToLower()==".mp3")
+            string suffix = Path.GetExtension(openOSUFileDialog.FileName).ToLower();
+            if (suffix == ".mp3" || suffix == ".wav")
             {
                 FastBeatTracker.MainWindow window = new FastBeatTracker.MainWindow(openOSUFileDialog.FileName);
                 window.ShowDialog();

@@ -13,6 +13,7 @@ namespace Common
         {
             public string Description { get; set; }
             public string Label { get; set; }
+            public string MirexSuffix { get; set; }
             public string RelativeLabel { get; set; }
             public string SoundNotes { get; set; }
             public string ScriptAnnotation { get; set; }
@@ -101,6 +102,7 @@ namespace Common
                         template_inversion.Label = template.Label + suffix;
                         template_inversion.Abbr = "";
                         template_inversion.RelativeLabel = template.RelativeLabel + "/" + Num2NoteString[new_root_delta];
+                        template_inversion.MirexSuffix = template.MirexSuffix + "/" + Num2NoteString[new_root_delta];
                         template_inversion.ScriptAnnotation = template.ScriptAnnotation + suffix;
                         template_inversion.Parent = template.Description;
                         template_inversion.Notes = new int[template.Notes.Length];
@@ -228,6 +230,22 @@ namespace Common
             if (scale == -1)
                 return null;
             return parentChord[templateID, scale];
+        }
+        public string ToMirexString()
+        {
+            if (scale == -1)
+            {
+                switch (MutedChordType)
+                {
+                    case MutedChordTypeEnum.NMark:
+                        return "N";
+                    case MutedChordTypeEnum.XMark:
+                        return "X";
+                    case MutedChordTypeEnum.QMark:
+                        return "X";
+                }
+            }
+            return Num2Char[scale] + ":" + templates[templateID].MirexSuffix;
         }
         public override string ToString()
         {

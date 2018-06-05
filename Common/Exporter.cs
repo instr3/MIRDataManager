@@ -65,7 +65,7 @@ namespace Common
         }
         private void DrawChordBetween(double leftTime, double rightTime, Chord chord, Tonality tonality)
         {
-            AppendLine(ref ChordTags, leftTime.ToString("F7"), rightTime.ToString("F7"), chord.ToString());
+            AppendLine(ref ChordTags, leftTime.ToString("F7"), rightTime.ToString("F7"), chord.ToMirexString());
         }
         public Exporter(SongInfo songInfo,double MP3Length)
         {
